@@ -1,6 +1,6 @@
 ####Make a package skeleton####
 #Make a package in the existing local git directory.
-package.skeleton(name = "Argos", encoding = "UTF-8",path = "C:/Users/apple/git/ABMI", force=TRUE)
+package.skeleton(name = "Argos", encoding = "UTF-8",path = file.path(Sys.getenv("gitFolder"),"ABMI"), force=TRUE)
 #devtools::create_description()
 usethis::use_description()
 
@@ -29,5 +29,6 @@ for(i in 3:length(basePopulation)){
 }
 df<-na.omit(df)
 df$country='KOR'
+df$location='KOR'
 
 write.csv(df,file.path(Sys.getenv("gitFolder"),"ABMI/Argos/inst/census/KOR_mid_year_population.csv"),row.names = FALSE)

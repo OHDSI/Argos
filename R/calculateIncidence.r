@@ -20,13 +20,13 @@
 #'
 #'@export
 getIncidenceData<-function(connectionDetails, 
-                             cdmDatabaseSchema,
-                             cohortDatabaseSchema,
-                             cohortTable,
-                             covariateSettings,
-                             outcomeDatabaseSchema,
-                             cohortId,
-                             minDateUnit = 'year'){
+                           cdmDatabaseSchema,
+                           cohortDatabaseSchema,
+                           cohortTable,
+                           covariateSettings,
+                           outcomeDatabaseSchema,
+                           cohortId,
+                           minDateUnit = 'year'){
     plpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails, 
                                                   cdmDatabaseSchema = cdmDatabaseSchema,
                                                   cohortDatabaseSchema = cohortDatabaseSchema,
@@ -142,10 +142,17 @@ getIncidenceData<-function(connectionDetails,
     
     resultData<-aggregate(n~.-n,cov.df,sum,na.rm=TRUE)
     
-    #naming process should be revised
-    
+    #naming the columns
     colnames(resultData)<-c(as.character(covRef$covariateName[match(levels(as.factor(covariates$covariateId)),as.character(covRef$covariateId))]),
                             "aggregatedNum")
+    colnames(resultData)<-gsub("age in years","age", colnames(resultData))
+    
+    if("gender = MALE"%in%colnames(resultData) & "gender = FEMALE"%in%colnames(resultData)){
+        resultData$genderConceptId<-resultData[,grepl("gender = MALE",colnames(resultData))]*8507+resultData[,grepl("gender = FEMALE",colnames(resultData))]*8532
+        #remove number of population with both genders
+        resultData<-resultData[resultData$genderConceptId%in%c(8507,8532),]
+        resultData<-resultData[,!grepl("gender =",colnames(resultData))]
+    }
     
     resultData <- list(data=resultData,
                        cohortId = cohortId,

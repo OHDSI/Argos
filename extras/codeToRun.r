@@ -29,6 +29,8 @@ outcomeId <- 99
 
 ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
 
+
+####Create cohort####
 #create the cohort table
 connection<-DatabaseConnector::connect(connectionDetails)
 ParallelLogger::logInfo("Creating table for the cohorts")
@@ -77,7 +79,9 @@ sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "anyDeath.sql",
 # close(fileCon)
 DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverallTime = TRUE)
 
-##get plp data
+
+####Get incidence data####
+##create setting for covariates
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = TRUE, 
                                                                 useDemographicsAge = TRUE
                                                                 )
@@ -90,6 +94,8 @@ incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails,
                                          covariateSettings = covariateSettings,
                                          outcomeDatabaseSchema = cohortDatabaseSchema ,
                                          cohortId = cancerList$cohortId[i],
-                                         minDateUnit = "quarter")
-
+                                         minDateUnit = "year")
 basePopulation<-loadMidYearPopulation('KOR')
+df<-loadMidYearPopulation('KOR')
+
+head(basePopulation)
