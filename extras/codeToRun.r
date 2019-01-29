@@ -95,7 +95,23 @@ incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails,
                                          outcomeDatabaseSchema = cohortDatabaseSchema ,
                                          cohortId = cancerList$cohortId[i],
                                          minDateUnit = "year")
-basePopulation<-loadMidYearPopulation('KOR')
-df<-loadMidYearPopulation('KOR')
 
-head(basePopulation)
+basePop<-loadMidYearPopulation('KOR')
+basePop$population<-round(basePop$population*0.02,0)
+
+incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
+                                  basePopulation = basePop,
+                                  standardization = "direct",
+                                  Agestandardization = TRUE,
+                                  genderStandardization = TRUE,
+                                  startYearStandardization = TRUE,
+                                  AgeSet = list(30:39,
+                                                40:49,
+                                                50:59,
+                                                60:69,
+                                                70:79,
+                                                80:99),
+                                  genderSet = list(8507,8532),
+                                  startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                  birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
+incCal

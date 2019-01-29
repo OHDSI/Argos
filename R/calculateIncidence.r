@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#'calculate incidence
+#'get incidence data
 #' @param connectionDetails
 #' @param minDateUnit           minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')
 #'
@@ -159,4 +159,50 @@ getIncidenceData<-function(connectionDetails,
                        minDateUnit = minDateUnit)
     
     return(resultData)
+}
+
+#'calculate incidence data
+#' @param incidenceData
+#' @param basePopulation           
+#' @param baseVar           'startYear' or 'birthYear'
+#'@export
+calculateIncidence<-function(incidenceData = incidenceData,
+                             basePopulation = basePop,
+                             standardization = "direct",
+                             Agestandardization = TRUE,
+                             genderStandardization = TRUE,
+                             startYearStandardization = TRUE,
+                             AgeSet = list(30:39,
+                                                    40:49,
+                                                    50:59,
+                                                    60:69,
+                                                    70:79,
+                                                    80:99),
+                             genderSet = list(8507,8532),
+                             startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                             birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989)){
+    incD<-incidenceData$data
+    incPop<-dplyr::inner_join(incD,basePop,by = c("cohortStartYear"="startYear", "age" = "startAge", "genderConceptId"="genderConceptId") )
+    
+    settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet, birthYear = birthYearSet)
+    expanded.set<-expand.grid(settings)
+    
+    resultDf <- data.frame()
+    ##for loop should be replaced by apply function
+    for (i in seq(nrow(expanded.set))){
+        df<-incPop %>% 
+            filter(age %in% unlist(expanded.set[i,]$age))  %>%
+            filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
+            filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) )
+        
+        tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
+                           age = min(unlist(expanded.set[i,]$age)),
+                           genderConceptId = unlist(expanded.set[i,]$gender),
+                           targetPopNum = sum(df$aggregatedNum, na.rm = TRUE),
+                            basePop = sum(df$population, na.rum = TRUE),
+                   proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rum = TRUE))
+        resultDf<-rbind(resultDf,tempDf)
+    }
+    
+    return(resultDf)
 }
