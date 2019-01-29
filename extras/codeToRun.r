@@ -1,18 +1,19 @@
 ##Settings
-cdmDatabaseSchema <-""
+cdmDatabaseSchema <-Sys.getenv("NHIS_DB")
 vocabularyDatabaseSchema  <- cdmDatabaseSchema
 cohortDatabaseSchema <- "ONCOACHILLES.dbo"
 cohortTable <- "argos_cohort"
 outputFolder <- "D:/onco_achilles"
+options(fftempdir = Sys.getenv("local_fftempdir"))
 
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
 i=1
 j=1
 
 connectionDetails<-DatabaseConnector::createConnectionDetails(dbms = 'sql server',
-                                                              server = '',
-                                                              user = '',
-                                                              password = '')
+                                                              server = Sys.getenv("server53"),
+                                                              user = Sys.getenv("userID"),
+                                                              password = Sys.getenv("userPW"))
 
 cancerList<-list(cohortId = c(1,2,3,4,5,6),
                  cohortName = c("colon", 'lung', 'stomach','breast','liver','thyroid'),
@@ -77,33 +78,15 @@ sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "anyDeath.sql",
 DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverallTime = TRUE)
 
 ##get plp data
-
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = TRUE, 
                                              useDemographicsAge = TRUE
                                              )
-plpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails, 
-                                              cdmDatabaseSchema = cdmDatabaseSchema,
-                                              cohortDatabaseSchema = cohortDatabaseSchema,
-                                              cohortTable = cohortTable,
-                                              cohortId = cancerList$cohortId[i],
-                                              covariateSettings = covariateSettings,
-                                              outcomeDatabaseSchema = cohortDatabaseSchema,
-                                              outcomeTable = cohortTable,
-                                              outcomeIds = outcomeId,
-                                              sampleSize = NULL)
-PatientLevelPrediction::savePlpData(plpData,file.path(outputFolder,"plpData"))
 
-population <- PatientLevelPrediction::createStudyPopulation(plpData = plpData, 
-                                                            outcomeId = outcomeId,
-                                                            washoutPeriod = 0,
-                                                            firstExposureOnly = TRUE,
-                                                            removeSubjectsWithPriorOutcome = FALSE,
-                                                            priorOutcomeLookback = 99999,
-                                                            riskWindowStart = 0,
-                                                            riskWindowEnd = survivalTime[j],
-                                                            addExposureDaysToStart = FALSE,
-                                                            addExposureDaysToEnd = FALSE,
-                                                            minTimeAtRisk = survivalTime[j]-1,
-                                                            requireTimeAtRisk = TRUE,
-                                                            includeAllOutcomes = TRUE,
-                                                            verbosity = "DEBUG")
+##
+incidenceData <- getIncidenceData(connectionDetails = connectionDetails, 
+                          cdmDatabaseSchema = cdmDatabaseSchema,
+                          cohortDatabaseSchema = cohortDatabaseSchema,
+                          cohortTable = cohortTable,
+                          covariateSettings = covariateSettings,
+                          outcomeDatabaseSchema = cohortDatabaseSchema ,
+                          cohortId = cancerList$cohortId[i])
