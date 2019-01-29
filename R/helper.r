@@ -30,7 +30,7 @@ loadLifeExpectancy<-function(country){
 loadMidYearPopulation<-function(country){
     
     return(
-        read.csv(system.file("census",paste0(country,"_" ,"life_expectancy",".csv"), package = "Argos"))
+        read.csv(system.file("census",paste0(country,"_" ,"mid_year_population",".csv"), package = "Argos"))
     )
 }
 

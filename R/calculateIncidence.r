@@ -16,6 +16,7 @@
 
 #'calculate incidence
 #' @param connectionDetails
+#' @param minDateUnit           minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')
 #'
 #'@export
 getIncidenceData<-function(connectionDetails, 
@@ -24,7 +25,8 @@ getIncidenceData<-function(connectionDetails,
                              cohortTable,
                              covariateSettings,
                              outcomeDatabaseSchema,
-                             cohortId){
+                             cohortId,
+                             minDateUnit = 'year'){
     plpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails, 
                                                   cdmDatabaseSchema = cdmDatabaseSchema,
                                                   cohortDatabaseSchema = cohortDatabaseSchema,
@@ -64,25 +66,72 @@ getIncidenceData<-function(connectionDetails,
     covRef<-ff::as.ram(plpData$covariateRef)
     covariates<-ff::as.ram(plpData$covariates)
     
-    cohortStartDateRef <- data.frame(covariateId = c(-1,-2,-3,-4),
-                                     covariateName = c("cohortStartYear","cohortStartMonth","cohortStartDay","cohortStartQuarter"),
-                                     analysisId = -1,
-                                     conceptId = 0)
+    if(minDateUnit=='day'){
+        cohortStartDateRef <- data.frame(covariateId = c(-1,-2,-3,-4),
+                                         covariateName = c("cohortStartYear","cohortStartQuarter","cohortStartMonth","cohortStartDay"),
+                                         analysisId = -1,
+                                         conceptId = 0)
+        covariates<-rbind(covariates,
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -1,
+                                     covariateValue = lubridate::year(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -2,
+                                     covariateValue = lubridate::quarter(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -3,
+                                     covariateValue = lubridate::month(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -4,
+                                     covariateValue = lubridate::day(cohort$cohortStartDate))
+        )
+    }
+    
+    if(minDateUnit=='month'){
+        cohortStartDateRef <- data.frame(covariateId = c(-1,-2,-3),
+                                         covariateName = c("cohortStartYear","cohortStartQuarter","cohortStartMonth"),
+                                         analysisId = -1,
+                                         conceptId = 0)
+        covariates<-rbind(covariates,
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -1,
+                                     covariateValue = lubridate::year(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -2,
+                                     covariateValue = lubridate::quarter(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -3,
+                                     covariateValue = lubridate::month(cohort$cohortStartDate))
+        )
+    }
+    
+    if(minDateUnit=='quarter'){
+        cohortStartDateRef <- data.frame(covariateId = c(-1,-2),
+                                         covariateName = c("cohortStartYear","cohortStartQuarter"),
+                                         analysisId = -1,
+                                         conceptId = 0)
+        covariates<-rbind(covariates,
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -1,
+                                     covariateValue = lubridate::year(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -2,
+                                     covariateValue = lubridate::quarter(cohort$cohortStartDate))
+        )
+    }
+    
+    if(minDateUnit=='year'){
+        cohortStartDateRef <- data.frame(covariateId = c(-1),
+                                         covariateName = c("cohortStartYear"),
+                                         analysisId = -1,
+                                         conceptId = 0)
+        covariates<-rbind(covariates,
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -1,
+                                     covariateValue = lubridate::year(cohort$cohortStartDate))
+        )
+    }
     covRef<-rbind(covRef,cohortStartDateRef)
-    covariates<-rbind(covariates,
-                      data.frame(rowId=cohort$rowId,
-                                 covariateId = -1,
-                                 covariateValue = lubridate::year(cohort$cohortStartDate)),
-                      data.frame(rowId=cohort$rowId,
-                                 covariateId = -2,
-                                 covariateValue = lubridate::month(cohort$cohortStartDate)),
-                      data.frame(rowId=cohort$rowId,
-                                 covariateId = -3,
-                                 covariateValue = lubridate::day(cohort$cohortStartDate)),
-                      data.frame(rowId=cohort$rowId,
-                                 covariateId = -4,
-                                 covariateValue = lubridate::quarter(cohort$cohortStartDate))
-                      )
     covariates$newCovId<-as.numeric(as.factor(covariates$covariateId))
     
     #aggregate accroding to the covariates
@@ -91,11 +140,16 @@ getIncidenceData<-function(connectionDetails,
                                                          x=covariates$covariateValue)))
     cov.df$n = 1
     
-    resultData<-aggregate(n~.-n,df,sum)
+    resultData<-aggregate(n~.-n,cov.df,sum,na.rm=TRUE)
     
     #naming process should be revised
-    colnames(resultData)<-c(as.character(covRef$covariateName[as.numeric(as.factor(covRef$covariateId))]),"aggregatedNum")
-    resultData$cohortId = cohortId
+    
+    colnames(resultData)<-c(as.character(covRef$covariateName[match(levels(as.factor(covariates$covariateId)),as.character(covRef$covariateId))]),
+                            "aggregatedNum")
+    
+    resultData <- list(data=resultData,
+                       cohortId = cohortId,
+                       minDateUnit = minDateUnit)
     
     return(resultData)
 }

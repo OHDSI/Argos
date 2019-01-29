@@ -79,14 +79,17 @@ DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverall
 
 ##get plp data
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = TRUE, 
-                                             useDemographicsAge = TRUE
-                                             )
+                                                                useDemographicsAge = TRUE
+                                                                )
 
-##
-incidenceData <- getIncidenceData(connectionDetails = connectionDetails, 
-                          cdmDatabaseSchema = cdmDatabaseSchema,
-                          cohortDatabaseSchema = cohortDatabaseSchema,
-                          cohortTable = cohortTable,
-                          covariateSettings = covariateSettings,
-                          outcomeDatabaseSchema = cohortDatabaseSchema ,
-                          cohortId = cancerList$cohortId[i])
+##get incidence Data
+incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails, 
+                                         cdmDatabaseSchema = cdmDatabaseSchema,
+                                         cohortDatabaseSchema = cohortDatabaseSchema,
+                                         cohortTable = cohortTable,
+                                         covariateSettings = covariateSettings,
+                                         outcomeDatabaseSchema = cohortDatabaseSchema ,
+                                         cohortId = cancerList$cohortId[i],
+                                         minDateUnit = "quarter")
+
+basePopulation<-loadMidYearPopulation('KOR')
