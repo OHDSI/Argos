@@ -78,8 +78,7 @@ sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "anyDeath.sql",
                                          cdm_database_schema = cdmDatabaseSchema,
                                          vocabulary_database_schema = vocabularyDatabaseSchema,
                                          target_database_schema = cohortDatabaseSchema,
-                                         target_cohort_table = cohortTable,
-                                         include_descendant = F,
+                                         target_cohort_table = cohortTable
                                          target_cohort_id = outcomeId)
 # fileCon<-file(file.path(outputFolder,"output.txt"))
 # writeLines(sql,fileCon)
@@ -170,4 +169,3 @@ outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
                                                     1975:1979, 1980:1989)
                                 )
 
-outCal
