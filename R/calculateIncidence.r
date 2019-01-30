@@ -87,18 +87,16 @@ calculateIncidence<-function(incidenceData = incidenceData,
                              Agestandardization = TRUE,
                              genderStandardization = TRUE,
                              startYearStandardization = TRUE,
-                             AgeSet = list(30:39,
-                                                    40:49,
-                                                    50:59,
-                                                    60:69,
-                                                    70:79,
-                                                    80:99),
+                             AgeSet = list(30:39,40:49,50:59,60:69,70:79,80:99),
                              genderSet = list(8507,8532),
                              startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
                              birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989)){
-    incD<-incidenceData$data
-    incPop<-dplyr::inner_join(incD,basePop,by = c("cohortStartYear"="startYear", "age" = "startAge", "genderConceptId"="genderConceptId") )
     
+    incD<-incidenceData$data
+    incD$birthYear<-incD$cohortStartYear-incD$age
+    
+    incPop<-dplyr::inner_join(incD,basePop,by = c("cohortStartYear"="startYear", "age" = "startAge", "genderConceptId"="genderConceptId") )
+    incPop %>% arrange(cohortStartYear,age)
     settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet, birthYear = birthYearSet)
     expanded.set<-expand.grid(settings)
     
@@ -112,17 +110,19 @@ calculateIncidence<-function(incidenceData = incidenceData,
             df<-incPop %>% 
                 filter(age %in% unlist(expanded.set[i,]$age))  %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
-                filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) ) 
-            
+                filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) ) %>%
+                filter(birthYear %in% unlist(expanded.set[i,]$birthYear) )
+            if(nrow(df)==0) next
             df<-dplyr::inner_join(df,refPopulation,by=c("age"="startAge", "endAge"="endAge","genderConceptId"="genderConceptId"))
             
             tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                                age = min(unlist(expanded.set[i,]$age)),
+                               birthYear = min(unlist(expanded.set[i,]$birthYear)),
                                genderConceptId = unlist(expanded.set[i,]$gender),
                                targetPopNum = sum(df$aggregatedNum, na.rm = TRUE),
-                               basePop = sum(df$population, na.rum = TRUE),
-                               refPopulation = sum(df$standardPopulation, na.rum = TRUE),
-                               proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rum = TRUE),
+                               basePop = sum(df$population, na.rm = TRUE),
+                               refPopulation = sum(df$standardPopulation, na.rm = TRUE),
+                               proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rm = TRUE),
                                standProp = sum(df$stdWt* (df$aggregatedNum/df$population))
                                )
             resultDf<-rbind(resultDf,tempDf)
@@ -132,10 +132,12 @@ calculateIncidence<-function(incidenceData = incidenceData,
             df<-incPop %>% 
                 filter(age %in% unlist(expanded.set[i,]$age))  %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
-                filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) )
+                filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) ) %>%
+                filter(birthYear %in% unlist(expanded.set[i,]$birthYear) )
             
             tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                                age = min(unlist(expanded.set[i,]$age)),
+                               birthYear = min(unlist(expanded.set[i,]$birthYear)),
                                genderConceptId = unlist(expanded.set[i,]$gender),
                                targetPopNum = sum(df$aggregatedNum, na.rm = TRUE),
                                basePop = sum(df$population, na.rum = TRUE),
