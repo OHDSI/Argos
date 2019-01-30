@@ -2,12 +2,16 @@
 #Make a package in the existing local git directory.
 package.skeleton(name = "Argos", encoding = "UTF-8",path = file.path(Sys.getenv("gitFolder"),"ABMI"), force=TRUE)
 #devtools::create_description()
-usethis::use_description()
+#usethis::use_description()
+roxygen2::roxygenise()
 
 #####edit R environment to keep secrets####
 #https://cran.r-project.org/web/packages/httr/vignettes/secrets.html
 file.edit("~/.Renviron")
 #Note that .Renviron is only processed on startup, so you’ll need to restart R to see changes.
+
+####set import and suggest package####
+usethis::use_package()
 
 
 ####Write mid population csv file####
