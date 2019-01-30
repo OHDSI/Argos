@@ -84,7 +84,7 @@ DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverall
 ##create setting for covariates
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = TRUE, 
                                                                 useDemographicsAge = TRUE
-                                                                )
+)
 
 ##get incidence Data
 incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails, 
@@ -104,6 +104,8 @@ refPop<-basePop[basePop$startYear==2007,]
 refPop<-refPop[,c("startAge","endAge", "genderConceptId","population")]
 colnames(refPop)[4]<-"standardPopulation"
 
+
+##calculate the incidence
 incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
                                   basePopulation = basePop,
                                   refPopulation = refPop,
@@ -121,4 +123,19 @@ incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
                                   startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
                                   birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
 
-incCal
+####calculate the mortality####
+
+##get outcome Data
+outcomeData <- Argos::getOutcomeData(connectionDetails = connectionDetails, 
+                                     cdmDatabaseSchema = cdmDatabaseSchema,
+                                     cohortDatabaseSchema = cohortDatabaseSchema,
+                                     cohortTable = cohortTable,
+                                     covariateSettings = covariateSettings,
+                                     outcomeDatabaseSchema = cohortDatabaseSchema ,
+                                     cohortId = cancerList$cohortId[i],
+                                     outcomeId = outcomeId,
+                                     requireTimeAtRisk = TRUE,
+                                     riskWindowStart = 0,
+                                     riskWindowEnd = 365,
+                                     removeSubjectsWithPriorOutcome = removeSubjectsWithPriorOutcome,
+                                     minDateUnit = "year")

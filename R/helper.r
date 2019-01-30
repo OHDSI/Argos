@@ -67,3 +67,125 @@ MapCovariates <- function(covariates, covariateRef, population, map=NULL){
                 covariateRef=covariateRef,
                 map=map))
 }
+
+#' function to limit covariates of plpData to population
+limitCovariatesToPopulation <- function(covariates, rowIds) {
+    idx <- !is.na(ffbase::ffmatch(covariates$rowId, rowIds))
+    if(sum(idx)!=0){
+        covariates <- covariates[ffbase::ffwhich(idx, idx == TRUE), ]
+    }else{
+        stop('No covariates')
+    }
+    return(covariates)
+}
+
+#' function to calculate number per covariate per time unit
+#' 
+#' @param cohort  cohort should be data frame with at least four columns 'rowId', 'subjectId', 'cohortId', 'cohortStartDate'
+calculateNumberPerCovTime <- function(plpData,
+                                      population = NULL,
+                                      minDateUnit = 'year'){
+    if(is.null(population)){
+        cohort<-ff::as.ram(plpData$cohort)
+        covRef<-ff::as.ram(plpData$covariateRef)
+        covariates<-ff::as.ram(plpData$covariates)
+    } else {
+        #load covariates
+        #limit covariates of plpData to the population
+        covariates<-ff::as.ram(limitCovariatesToPopulation(covariates = plpData$covariates,rowIds = ff::as.ff(population$rowId)))
+        #load covariate reference
+        covRef<-ff::as.ram(plpData$covariateRef)
+        #limit covarite Ref to the existing covarites in the population
+        covRef <- covRef [covRef$covariateId %in% unique(covariates$covariateId), ]
+        cohort<-population
+    }
+    
+    if(minDateUnit=='day'){
+        cohortStartDateRef <- data.frame(covariateId = c(-1,-2,-3,-4),
+                                         covariateName = c("cohortStartYear","cohortStartQuarter","cohortStartMonth","cohortStartDay"),
+                                         analysisId = -1,
+                                         conceptId = 0)
+        covariates<-rbind(covariates,
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -1,
+                                     covariateValue = lubridate::year(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -2,
+                                     covariateValue = lubridate::quarter(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -3,
+                                     covariateValue = lubridate::month(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -4,
+                                     covariateValue = lubridate::day(cohort$cohortStartDate))
+        )
+    }
+    
+    if(minDateUnit=='month'){
+        cohortStartDateRef <- data.frame(covariateId = c(-1,-2,-3),
+                                         covariateName = c("cohortStartYear","cohortStartQuarter","cohortStartMonth"),
+                                         analysisId = -1,
+                                         conceptId = 0)
+        covariates<-rbind(covariates,
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -1,
+                                     covariateValue = lubridate::year(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -2,
+                                     covariateValue = lubridate::quarter(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -3,
+                                     covariateValue = lubridate::month(cohort$cohortStartDate))
+        )
+    }
+    
+    if(minDateUnit=='quarter'){
+        cohortStartDateRef <- data.frame(covariateId = c(-1,-2),
+                                         covariateName = c("cohortStartYear","cohortStartQuarter"),
+                                         analysisId = -1,
+                                         conceptId = 0)
+        covariates<-rbind(covariates,
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -1,
+                                     covariateValue = lubridate::year(cohort$cohortStartDate)),
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -2,
+                                     covariateValue = lubridate::quarter(cohort$cohortStartDate))
+        )
+    }
+    
+    if(minDateUnit=='year'){
+        cohortStartDateRef <- data.frame(covariateId = c(-1),
+                                         covariateName = c("cohortStartYear"),
+                                         analysisId = -1,
+                                         conceptId = 0)
+        covariates<-rbind(covariates,
+                          data.frame(rowId=cohort$rowId,
+                                     covariateId = -1,
+                                     covariateValue = lubridate::year(cohort$cohortStartDate))
+        )
+    }
+    covRef<-rbind(covRef,cohortStartDateRef)
+    covariates$newCovId<-as.numeric(as.factor(covariates$covariateId))
+    
+    #aggregate accroding to the covariates
+    cov.df<-as.data.frame(as.matrix(Matrix::sparseMatrix(i=covariates$rowId,
+                                                         j=covariates$newCovId,
+                                                         x=covariates$covariateValue)))
+    cov.df$n = 1
+    
+    resultData<-aggregate(n~.-n,cov.df,sum,na.rm=TRUE)
+    
+    #naming the columns
+    colnames(resultData)<-c(as.character(covRef$covariateName[match(levels(as.factor(covariates$covariateId)),as.character(covRef$covariateId))]),
+                            "aggregatedNum")
+    colnames(resultData)<-gsub("age in years","age", colnames(resultData))
+    
+    if("gender = MALE"%in%colnames(resultData) & "gender = FEMALE"%in%colnames(resultData)){
+        resultData$genderConceptId<-resultData[,grepl("gender = MALE",colnames(resultData))]*8507+resultData[,grepl("gender = FEMALE",colnames(resultData))]*8532
+        #remove number of population with both genders
+        resultData<-resultData[resultData$genderConceptId%in%c(8507,8532),]
+        resultData<-resultData[,!grepl("gender =",colnames(resultData))]
+    }
+    return(resultData)
+}

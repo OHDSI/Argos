@@ -2,6 +2,7 @@
 
 export(calculateIncidence)
 export(getIncidenceData)
+export(getOutcomeData)
 export(loadLifeExpectancy)
 export(loadMidYearPopulation)
 import(dplyr)
