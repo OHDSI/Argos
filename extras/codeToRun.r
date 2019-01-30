@@ -126,7 +126,7 @@ incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
                                                 70:79,
                                                 80:99),
                                   genderSet = list(8507,8532),
-                                  startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                  startYearSet = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
                                   birthYearSet = list(1910:1919, 1920:1929,
                                                      1930:1939, 1940:1949,
                                                      1950:1959, 1960:1964, 
@@ -161,11 +161,12 @@ outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
                                               60:69,70:79,
                                               80:99),
                                 genderSet = list(8507,8532),
-                                startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                startYearSet = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
                                 birthYearSet = list(1910:1919, 1920:1929,
                                                     1930:1939, 1940:1949,
                                                     1950:1959, 1960:1964, 
                                                     1965:1969, 1970:1974, 
                                                     1975:1979, 1980:1989)
                                 )
+
 
