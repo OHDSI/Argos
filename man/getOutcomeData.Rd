@@ -10,8 +10,8 @@ getOutcomeData(connectionDetails = connectionDetails,
   cohortTable = cohortTable, covariateSettings = covariateSettings,
   outcomeDatabaseSchema = cohortDatabaseSchema,
   cohortId = cancerList$cohortId[i], outcomeId = outcomeId,
-  requireTimeAtRisk = TRUE, riskWindowStart = 0, riskWindowEnd = 365,
-  removeSubjectsWithPriorOutcome = TRUE, minDateUnit = "year")
+  requireTimeAtRisk = TRUE, riskWindowStart = 0, riskWindowEnd = 365
+  * 2, removeSubjectsWithPriorOutcome = TRUE, minDateUnit = "year")
 }
 \arguments{
 \item{basePopulation}{}

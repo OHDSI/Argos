@@ -85,7 +85,7 @@ DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverall
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = TRUE, 
                                                                 useDemographicsAge = TRUE
 )
-
+i=1
 ##get incidence Data
 incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails, 
                                          cdmDatabaseSchema = cdmDatabaseSchema,
@@ -121,7 +121,11 @@ incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
                                                 80:99),
                                   genderSet = list(8507,8532),
                                   startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
-                                  birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
+                                  birthYearSet = list(1910:1919, 1920:1929,
+                                                     1930:1939, 1940:1949,
+                                                     1950:1959, 1960:1964, 
+                                                     1965:1969, 1970:1974, 
+                                                     1975:1979, 1980:1989))
 
 ####calculate the mortality####
 
@@ -141,18 +145,22 @@ outcomeData <- Argos::getOutcomeData(connectionDetails = connectionDetails,
                                      minDateUnit = "year")
 
 outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
-                                basePopulation = basePop,
                                 refPopulation = refPop,
                                 standardization = "direct",
                                 Agestandardization = TRUE,
                                 genderStandardization = TRUE,
                                 startYearStandardization = TRUE,
-                                AgeSet = list(30:39,
-                                              40:49,
-                                              50:59,
-                                              60:69,
-                                              70:79,
+                                AgeSet = list(20:29,30:39,
+                                              40:49,50:59,
+                                              60:69,70:79,
                                               80:99),
                                 genderSet = list(8507,8532),
                                 startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
-                                birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
+                                birthYearSet = list(1910:1919, 1920:1929,
+                                                    1930:1939, 1940:1949,
+                                                    1950:1959, 1960:1964, 
+                                                    1965:1969, 1970:1974, 
+                                                    1975:1979, 1980:1989)
+                                )
+
+outCal

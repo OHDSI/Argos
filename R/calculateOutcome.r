@@ -101,7 +101,12 @@ calculateOutcome <- function(outcomeData=outcomeData,
     
     pop<-dplyr::left_join(outcomeData$targetCohort,outcomeData$outcomeCohort,
                              by = c("cohortStartYear"="cohortStartYear", "age" = "age", "genderConceptId"="genderConceptId") )
+    #set birthYear
+    pop$birthYear <- pop$cohortStartYear-pop$age
+    
+    #replace NA to 0 in outcome
     pop$outcomeNum[is.na(pop$outcomeNum)]<-0
+    
     
     settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet, birthYear = birthYearSet)
     expanded.set<-expand.grid(settings)
@@ -116,15 +121,18 @@ calculateOutcome <- function(outcomeData=outcomeData,
             df<-pop %>% 
                 filter(age %in% unlist(expanded.set[i,]$age))  %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
-                filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) )
+                filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) ) %>%
+                filter(birthYear %in% unlist(expanded.set[i,]$birthYear) )
+            if(nrow(df)==0) next
             
             df<-dplyr::inner_join(df,refPopulation,by=c("age"="startAge", "genderConceptId"="genderConceptId"))
             tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                                age = min(unlist(expanded.set[i,]$age)),
+                               birthYear = min(unlist(expanded.set[i,]$birthYear)),
                                genderConceptId = unlist(expanded.set[i,]$gender),
                                targetPopNum = sum(df$targetNum, na.rm = TRUE),
                                outcomePopNum = sum(df$outcomeNum, na.rm = TRUE),
-                               refPopulation = sum(df$standardPopulation, na.rum = TRUE),
+                               refPopulation = sum(df$standardPopulation, na.rm = TRUE),
                                outcomeProportion = sum(df$outcomeNum, na.rm = TRUE)/sum(df$targetNum, na.rm = TRUE),
                                standProp = sum(df$stdWt* (df$outcomeNum/df$targetNum))
             )
@@ -135,14 +143,17 @@ calculateOutcome <- function(outcomeData=outcomeData,
             df<-pop %>% 
                 filter(age %in% unlist(expanded.set[i,]$age))  %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
-                filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) )
+                filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) ) %>%
+                filter(birthYear %in% unlist(expanded.set[i,]$birthYear) )
+            if(nrow(df)==0) next
             
             tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                                age = min(unlist(expanded.set[i,]$age)),
+                               birthYear = min(unlist(expanded.set[i,]$birthYear)),
                                genderConceptId = unlist(expanded.set[i,]$gender),
                                targetPopNum = sum(df$targetNum, na.rm = TRUE),
                                outcomePopNum = sum(df$outcomeNum, na.rm = TRUE),
-                               basePop = sum(df$population, na.rum = TRUE),
+                               basePop = sum(df$population, na.rm = TRUE),
                                outcomeProportion = sum(df$outcomeNum, na.rm = TRUE)/sum(df$targetNum, na.rm = TRUE))
             resultDf<-rbind(resultDf,tempDf)
         }

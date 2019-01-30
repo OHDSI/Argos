@@ -134,17 +134,18 @@ calculateIncidence<-function(incidenceData = incidenceData,
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) ) %>%
                 filter(birthYear %in% unlist(expanded.set[i,]$birthYear) )
+            if(nrow(df)==0) next
             
             tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                                age = min(unlist(expanded.set[i,]$age)),
                                birthYear = min(unlist(expanded.set[i,]$birthYear)),
                                genderConceptId = unlist(expanded.set[i,]$gender),
                                targetPopNum = sum(df$aggregatedNum, na.rm = TRUE),
-                               basePop = sum(df$population, na.rum = TRUE),
-                               proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rum = TRUE))
+                               basePop = sum(df$population, na.rm = TRUE),
+                               proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rm = TRUE))
             resultDf<-rbind(resultDf,tempDf)
         }
     }
-    
+    resultDf<-unique(resultDf)
     return(resultDf)
 }
