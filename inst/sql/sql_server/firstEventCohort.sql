@@ -10,6 +10,7 @@ SELECT ancestor_concept_id, descendant_concept_id
  WHERE ancestor_concept_id IN (@outcome_ids)
 ;
 
+DELETE @target_database_schema.@target_cohort_table where cohort_definition_id = @target_cohort_id
 
 INSERT INTO @target_database_schema.@target_cohort_table (
 	subject_id,
@@ -35,8 +36,15 @@ FROM (
 FROM @cdm_database_schema.condition_occurrence d
 INNER JOIN #Codesets c 
 ON d.condition_concept_id= {@include_descendant}? {c.concept_id}:{c.ancestor_concept_id}
+INNER JOIN @cdm_database_schema.observation_period ob
+ON d.person_id = ob.person_id 
+AND d.condition_start_date >= dateadd(day,@prior_observation_period, ob.observation_period_start_date)
+AND d.condition_start_date <= ob.observation_period_end_date
+
+{@specific_condition_type}? {WHERE d.condition_type_concept_id in (@condition_type_concept_ids)}:{}
     ) e
 ) s
+
 WHERE s.ordinal = 1
 ;
 

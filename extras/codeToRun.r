@@ -6,6 +6,8 @@ cohortTable <- "argos_cohort"
 outputFolder <- "D:/onco_achilles"
 options(fftempdir = Sys.getenv("local_fftempdir"))
 
+samplingPop = 0.02 ##sampling proportion (for NHIS-NSC : 0.02 , HIRA : 1)
+
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
 i=1
 j=1
@@ -24,6 +26,8 @@ cancerList<-list(cohortId = c(1,2,3,4,5,6),
                                      c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
                                      c(4178976)))
 outcomeId <- 99
+
+conditionTypeConceptIds<-c(45756835,45756843,44786627)#primary diagnosis or first position diagnosis
 
 #start log
 
@@ -54,11 +58,14 @@ for (i in cancerList$cohortId){
                                              target_database_schema = cohortDatabaseSchema,
                                              target_cohort_table = cohortTable,
                                              include_descendant = F,
+                                             prior_observation_period = 365,
+                                             specific_condition_type = T,
+                                             condition_type_concept_ids = paste0(conditionTypeConceptIds,collapse=","),
                                              outcome_ids = paste(cancerList$conceptIdSet[[i]],collapse=","),
                                              target_cohort_id = cancerList$cohortId[i])
-    # fileCon<-file(file.path(outputFolder,"output.txt"))
-    # writeLines(sql,fileCon)
-    # close(fileCon)
+     # fileCon<-file(file.path(outputFolder,"output.txt"))
+     # writeLines(sql,fileCon)
+     # close(fileCon)
     DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverallTime = TRUE)
 }
 
@@ -97,7 +104,7 @@ incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails,
                                          minDateUnit = "year")
 
 basePop<-loadMidYearPopulation('KOR')
-basePop$population<-round(basePop$population*0.02,0)
+basePop$population<-round(basePop$population*samplingPop,0)
 
 #set reference population as population in 2007
 refPop<-basePop[basePop$startYear==2007,]
@@ -141,7 +148,7 @@ outcomeData <- Argos::getOutcomeData(connectionDetails = connectionDetails,
                                      requireTimeAtRisk = TRUE,
                                      riskWindowStart = 0,
                                      riskWindowEnd = 365,
-                                     removeSubjectsWithPriorOutcome = removeSubjectsWithPriorOutcome,
+                                     removeSubjectsWithPriorOutcome = TRUE,
                                      minDateUnit = "year")
 
 outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
