@@ -11,7 +11,7 @@ file.edit("~/.Renviron")
 #Note that .Renviron is only processed on startup, so you’ll need to restart R to see changes.
 
 ####set import and suggest package####
-usethis::use_package()
+usethis::use_package("dplyr")
 
 
 ####Write mid population csv file####

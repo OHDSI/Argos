@@ -19,6 +19,8 @@
 #' @param minDateUnit           minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')
 #'
 #'@export
+#'
+#'@import dplyr
 getIncidenceData<-function(connectionDetails, 
                            cdmDatabaseSchema,
                            cohortDatabaseSchema,
@@ -169,7 +171,7 @@ getIncidenceData<-function(connectionDetails,
 calculateIncidence<-function(incidenceData = incidenceData,
                              basePopulation = basePop,
                              standardization = "direct",
-                             standPopulation = standPop,
+                             refPopulation = NULL,
                              Agestandardization = TRUE,
                              genderStandardization = TRUE,
                              startYearStandardization = TRUE,
@@ -192,25 +194,26 @@ calculateIncidence<-function(incidenceData = incidenceData,
     ##for loop should be replaced by apply function
     
     if(standardization=="direct"){
+        refPopulation$stdWt<-refPopulation$standardPopulation/sum(refPopulation$standardPopulation)
+        
         for (i in seq(nrow(expanded.set))){
             df<-incPop %>% 
                 filter(age %in% unlist(expanded.set[i,]$age))  %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) ) 
             
-            df<-dplyr::inner_join(df,standPopulation,by=c("age"="startAge", "endAge"="endAge","genderConceptId"="genderConceptId"))
+            df<-dplyr::inner_join(df,refPopulation,by=c("age"="startAge", "endAge"="endAge","genderConceptId"="genderConceptId"))
             
             tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                                age = min(unlist(expanded.set[i,]$age)),
                                genderConceptId = unlist(expanded.set[i,]$gender),
                                targetPopNum = sum(df$aggregatedNum, na.rm = TRUE),
                                basePop = sum(df$population, na.rum = TRUE),
-                               standPop = sum(df$standardPopulation, na.rum = TRUE),
+                               refPopulation = sum(df$standardPopulation, na.rum = TRUE),
                                proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rum = TRUE),
                                standProp = sum(df$stdWt* (df$aggregatedNum/df$population))
                                )
             resultDf<-rbind(resultDf,tempDf)
-            standardProportion<-sum(resultDf$standProp)
         }
     }else{
         for (i in seq(nrow(expanded.set))){
@@ -226,11 +229,8 @@ calculateIncidence<-function(incidenceData = incidenceData,
                                basePop = sum(df$population, na.rum = TRUE),
                                proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rum = TRUE))
             resultDf<-rbind(resultDf,tempDf)
-            standardProportion=NULL
         }
     }
     
-    return(list(result=resultDf,
-                standardProportion=standardProportion)
-           )
+    return(resultDf)
 }
