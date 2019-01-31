@@ -1,7 +1,8 @@
 ####special Settings####
 samplingPop = 0.02 ##sampling proportion (for NHIS-NSC : 0.02 , HIRA : 1)
-startYearSetHIRA = list(2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017)
+startYearSetHIRA = list(2008,2009,2010,2011,2012,2013,2014,2015,2016,2017)
 startYearSetNHIS = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013)
+startYearSet=startYearSetNHIS
 
 ##Settings
 cdmDatabaseSchema <-"NHIS_NSC.dbo"
@@ -9,11 +10,10 @@ vocabularyDatabaseSchema  <- "NHIS_NSC.dbo"
 cohortDatabaseSchema <- "ONCOACHILLES.dbo"
 
 cohortTable <- "argos_cohort"
+outputFolder <- "D:/onco_achilles"
+options(fftempdir = "D:/FFtemp")
 
-outputFolder <- "/home/dbwls5223/output/Argos"
-options(fftempdir = "/home/dbwls5223/tempff")
 
-startYearSet=startYearSetNHIS
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
 
 connectionDetails<-DatabaseConnector::createConnectionDetails(dbms = 'sql server',
@@ -29,7 +29,8 @@ cancerList<-list(cohortId = c(1,2,3,4,5,6),
                                      c(137809,4188544,4158563,4162253,4155292,4187850,4188545,432845#,81251
                                        ),
                                      c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
-                                     c(4178976)))
+                                     c(4178976)),
+                 representConceptId = c())
 outcomeId <- 99
 
 conditionTypeConceptIds<-c(45756835,45756843,44786627)#primary diagnosis or first position diagnosis
@@ -172,8 +173,10 @@ for (i in seq(cancerList$cohortId)){
                                              riskWindowEnd = survivalTime[j],
                                              removeSubjectsWithPriorOutcome = TRUE,
                                              minDateUnit = "year")
-        
         saveRDS(outcomeData,file.path(outputFolder,paste0("OutcomeData_cohortId_",cancerList$cohortId[[i]],"survivalTime_",as.character(survivalTime[j]),".rds" )))
+        
+        outcomeData$plpData
+        
         outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
                                         refPopulation = refPop,
                                         standardization = "direct",
@@ -207,6 +210,8 @@ for (i in seq(cancerList$cohortId)){
                             ageSpefileName = paste0(cancerList$cohortName[[i]],"Cancer", "MortalityPropAgeSpe", "_", survivalTime[j], "Duration"),
                             ageAdjfileName = paste0(cancerList$cohortName[[i]],"Cancer", "MortalityPropAgeAdj", "_", survivalTime[j], "Duration"),
                             imageExtension = "png")
+        
+        
     }
 }
 
@@ -241,5 +246,8 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
     write.csv(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
 }
+
+disabilityWeight <- loadDisabilityWeight('KOR',2012)
+lifeExp <- loadLifeExpectancy('KOR')
 
 

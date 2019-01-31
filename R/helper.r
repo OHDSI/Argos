@@ -34,6 +34,16 @@ loadMidYearPopulation<-function(country){
     )
 }
 
+#' Load default disability weight  data
+#' @param country  'IHME' or or 3-digit Coutry code (eg 'KOR' = 'Republic of Korea')
+#' @param year
+#' @export
+loadDisabilityWeight<-function(country,year){
+    return(
+        read.csv(system.file("disability_weight",paste0(country,year,"_disability_weight.csv"), package = "Argos"))
+    )
+}
+
 
 # restricts to pop and saves/creates mapping
 MapCovariates <- function(covariates, covariateRef, population, map=NULL){

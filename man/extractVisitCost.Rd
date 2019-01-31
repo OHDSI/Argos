@@ -4,10 +4,11 @@
 \alias{extractVisitCost}
 \title{get cost data}
 \usage{
-extractVisitCost(connectionDetails, cdmDatabaseSchema, cohortDatabaseSchema,
-  vocabularyDatabaseSchema, cohortTable, cohortId = -1,
-  costWindowStart = -60, costWindowEnd = 365, minCostDateUnit = "quarter",
-  specifyCondition = FALSE, conditionConceptIds = NULL)
+extractVisitCost(connectionDetails, cdmDatabaseSchema,
+  cohortDatabaseSchema, vocabularyDatabaseSchema, cohortTable,
+  cohortId = -1, costWindowStart = -60, costWindowEnd = 365,
+  minCostDateUnit = "quarter", specifyCondition = FALSE,
+  conditionConceptIds = NULL)
 }
 \arguments{
 \item{cohortId}{target Cohort Id, if this is -1, it will extract cost data for whole subject in the cohortTable}

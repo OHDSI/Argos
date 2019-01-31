@@ -71,7 +71,8 @@ getOutcomeData<-function(connectionDetails = connectionDetails,
     return(list(targetCohort=targetCohort,
                 outcomeCohort=outcomeCohort,
                 cohortId = cohortId,
-                minDateUnit = minDateUnit))
+                minDateUnit = minDateUnit,
+                plpData = plpData))
 }
 
 
