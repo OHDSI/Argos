@@ -2,6 +2,7 @@
 
 export(calculateIncidence)
 export(calculateOutcome)
+export(extractVisitCost)
 export(getIncidenceData)
 export(getOutcomeData)
 export(loadLifeExpectancy)

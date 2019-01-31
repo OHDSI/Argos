@@ -33,10 +33,10 @@ conditionTypeConceptIds<-c(45756835,45756843,44786627)#primary diagnosis or firs
 
 ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
 
-
+#Connection
+connection<-DatabaseConnector::connect(connectionDetails)
 ####Create cohort####
 #create the cohort table
-connection<-DatabaseConnector::connect(connectionDetails)
 ParallelLogger::logInfo("Creating table for the cohorts")
 sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "CreateCohortTable.sql",
                                          packageName = "Argos",
@@ -61,11 +61,11 @@ for (i in cancerList$cohortId){
                                              prior_observation_period = 365,
                                              specific_condition_type = T,
                                              condition_type_concept_ids = paste0(conditionTypeConceptIds,collapse=","),
-                                             outcome_ids = paste(cancerList$conceptIdSet[[i]],collapse=","),
+                                             condition_concept_ids = paste(cancerList$conceptIdSet[[i]],collapse=","),
                                              target_cohort_id = cancerList$cohortId[i])
-     # fileCon<-file(file.path(outputFolder,"output.txt"))
-     # writeLines(sql,fileCon)
-     # close(fileCon)
+    # fileCon<-file(file.path(outputFolder,"output.txt"))
+    # writeLines(sql,fileCon)
+    # close(fileCon)
     DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverallTime = TRUE)
 }
 
@@ -128,10 +128,10 @@ incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
                                   genderSet = list(8507,8532),
                                   startYearSet = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
                                   birthYearSet = list(1910:1919, 1920:1929,
-                                                     1930:1939, 1940:1949,
-                                                     1950:1959, 1960:1964, 
-                                                     1965:1969, 1970:1974, 
-                                                     1975:1979, 1980:1989))
+                                                      1930:1939, 1940:1949,
+                                                      1950:1959, 1960:1964, 
+                                                      1965:1969, 1970:1974, 
+                                                      1975:1979, 1980:1989))
 
 ####calculate the mortality####
 
@@ -167,6 +167,20 @@ outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
                                                     1950:1959, 1960:1964, 
                                                     1965:1969, 1970:1974, 
                                                     1975:1979, 1980:1989)
-                                )
+)
 
+##Extract Cost Data
+
+i=1
+costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
+                                  cdmDatabaseSchema=cdmDatabaseSchema,
+                                  cohortDatabaseSchema=cohortDatabaseSchema,
+                                  vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+                                  cohortTable=cohortTable,
+                                  cohortId=cancerList$cohortId[i],
+                                  costWindowStart = -60,
+                                  costWindowEnd =180,
+                                  minCostDateUnit = 'quarter',
+                                  specifyCondition = TRUE,
+                                  conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
 

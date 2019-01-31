@@ -16,16 +16,50 @@
 
 #'get cost data
 #' @param connectionDetails
-#' @param minDateUnit           minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')
-#'
+#' @param minCostDateUnit           minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'week' > day')
+#' @param cohortId           target Cohort Id, if this is -1, it will extract cost data for whole subject in the cohortTable
 #'@export
 #'
 #'@import dplyr
-extractInitialCost<-function(connectionDetails, 
-                             cdmDatabaseSchema,
-                             cohortDatabaseSchema,
-                             cohortTable,
-                             outcomeDatabaseSchema,
-                             cohortId,
-                             minDateUnit = 'year'){
+extractVisitCost<-function(connectionDetails, 
+                           cdmDatabaseSchema,
+                           cohortDatabaseSchema,
+                           vocabularyDatabaseSchema,
+                           cohortTable,
+                           cohortId=-1,
+                           costWindowStart = -60,
+                           costWindowEnd =365,
+                           minCostDateUnit = 'quarter',
+                           specifyCondition = FALSE,
+                           conditionConceptIds=NULL){
+    connection<-DatabaseConnector::connect(connectionDetails)
+    
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "extractVisitCost.sql",
+                                             packageName = "Argos",
+                                             dbms = attr(connection,"dbms"),
+                                             oracleTempSchema = oracleTempSchema,
+                                             cdm_database_schema=cdmDatabaseSchema,
+                                             target_database_schema = cohortDatabaseSchema,
+                                             vocabulary_database_schema=vocabularyDatabaseSchema,
+                                             target_cohort_table = cohortTable,
+                                             min_date_unit = minCostDateUnit,
+                                             target_cohort_id = cohortId,
+                                             cost_window_start = costWindowStart,
+                                             cost_window_end = costWindowEnd,
+                                             specify_condition = specifyCondition,
+                                             condition_concept_ids=conditionConceptIds
+    )
+    # fileCon<-file(file.path(getwd(),"output.txt"))
+    # writeLines(sql,fileCon)
+    # close(fileCon)
+    
+    costData<-DatabaseConnector::querySql(connection, sql)
+    
+    colnames(costData)<-SqlRender::snakeCaseToCamelCase(colnames(costData))
+    
+    #costData %>% dplyr::arrange(dateUnit,cohortDefinitionId,visitConceptId)
+    
+    
+    
+    return(costData)
 }

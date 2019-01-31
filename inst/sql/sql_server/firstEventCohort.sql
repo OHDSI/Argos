@@ -7,7 +7,7 @@ CREATE TABLE #Codesets (
 INSERT INTO #Codesets (ancestor_concept_id, concept_id)
 SELECT ancestor_concept_id, descendant_concept_id
  FROM @cdm_database_schema.CONCEPT_ANCESTOR
- WHERE ancestor_concept_id IN (@outcome_ids)
+ WHERE ancestor_concept_id IN (@condition_concept_ids)
 ;
 
 DELETE @target_database_schema.@target_cohort_table where cohort_definition_id = @target_cohort_id

@@ -1,0 +1,23 @@
+SELECT cohort_definition_id, DATEDIFF(quarter,COHORT_START_DATE,visit.visit_start_date) as date_unit, visit.visit_concept_id, concept.concept_name as visit_concept_name, COUNT(visit.visit_occurrence_id) AS visit_count, COUNT(cohort.subject_id) AS subject_count, SUM(cost.paid_by_payer) AS paid_by_payer_sum,   SUM(cost.total_charge) AS total_charge_sum, SUM(cost.paid_by_payer) AS paid_by_payer_sum, SUM(cost.paid_by_patient) AS paid_by_patient_sum
+    FROM ONCOACHILLES.dbo.argos_cohort cohort
+    INNER JOIN NHIS_NSC.dbo.VISIT_OCCURRENCE visit
+        ON cohort.subject_id = visit.person_id
+        AND  cohort.cohort_definition_id = 1
+        AND visit.visit_start_date >= DATEADD(DAY,-60,cohort.cohort_start_date)
+        AND visit.visit_start_date <= DATEADD(DAY,180,cohort.cohort_end_date)
+    INNER JOIN NHIS_NSC.dbo.COST cost 
+        ON visit.visit_occurrence_id = cost.cost_event_id 
+        AND cost.cost_domain_id = 'visit'
+    INNER JOIN NHIS_NSC.dbo.concept
+        ON visit.visit_concept_id = concept.concept_id
+    WHERE visit.visit_occurrence_id IN (select distinct condition.visit_occurrence_id 
+                                                                FROM NHIS_NSC.dbo.condition_occurrence condition
+                                                                JOIN (SELECT * FROM ONCOACHILLES.dbo.argos_cohort
+                                                                		WHERE  cohort.cohort_definition_id = 1) AS cohort
+                                                                  ON cohort.subject_id = condition.person_id
+                                                                  AND condition_concept_id IN (4089661,4180790,4180791,4180792,4181344,435754,443381,443382,443383,443384,443391)
+                                                                  AND condition.condition_start_date >= DATEADD(DAY,-60,cohort.cohort_start_date)
+        														  AND condition.condition_start_date <= DATEADD(DAY,180,cohort.cohort_end_date)
+                                                                
+    GROUP BY cohort_definition_id, DATEDIFF(quarter,COHORT_START_DATE,visit.visit_start_date), visit.visit_concept_id, concept.concept_name
+    ;
