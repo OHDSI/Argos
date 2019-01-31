@@ -26,7 +26,7 @@ PlotByBirthMort<- function (mortalityPropdata,
                         outputFolder,
                         fileName,
                         imageExtension = "png"){
-    bybirth<- outCal %>%
+    bybirth<- mortalityPropdata %>%
               mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
               group_by(birthYear, age, genderConceptId) %>%
               summarise( proportion = sum(outcomePopNum)/sum(targetPopNum),
@@ -50,20 +50,20 @@ PlotByBirthMort<- function (mortalityPropdata,
 #'@import ggplot2
 #'@import dplyr
 ## mortality proportion plot by diagnosis year 
-PlotByDiagnosisMort <- function(incidencePropdata,
+PlotByDiagnosisMort <- function(mortalityPropdata,
                             ageSpetitle,
                             ageAdjtitle,
                             outputFolder,
                             ageSpefileName,
                             ageAdjfileName,
                             imageExtension = "png"){
-    ageSpe<- incCal %>%
+    ageSpe<- mortalityPropdata %>%
              mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, age, genderConceptId) %>%
-             summarise( proportion = sum(targetPopNum)/sum(refPopulation),
+             summarise( proportion = sum(outcomePopNum)/sum(targetPopNum),
                         stdproportion = sum(standProp))
     
-    ageAdj<- incCal %>%
+    ageAdj<- mortalityPropdata %>%
              mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, genderConceptId) %>%
              summarize( AgeadjProp = sum(standProp))

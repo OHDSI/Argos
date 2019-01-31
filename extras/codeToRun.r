@@ -1,3 +1,8 @@
+####special Settings####
+samplingPop = 0.02 ##sampling proportion (for NHIS-NSC : 0.02 , HIRA : 1)
+startYearSetHIRA = list(2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017)
+startYearSetNHIS = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013)
+
 ##Settings
 cdmDatabaseSchema <-"NHIS_NSC.dbo"
 vocabularyDatabaseSchema  <- "NHIS_NSC.dbo"
@@ -8,16 +13,11 @@ cohortTable <- "argos_cohort"
 outputFolder <- "/home/dbwls5223/output/Argos"
 options(fftempdir = "/home/dbwls5223/tempff")
 
-samplingPop = 1 ##sampling proportion (for NHIS-NSC : 0.02 , HIRA : 1)
-
+startYearSet=startYearSetNHIS
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
-startYearSetHIRA = list(2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017)
-startYearSetNHIS = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013)
-
-startYearSet=startYearSetHIRA
 
 connectionDetails<-DatabaseConnector::createConnectionDetails(dbms = 'sql server',
-                                                              server = "128.1.99.53",
+                                                              server = Sys.getenv("server53"),
                                                               user = Sys.getenv("userID"),
                                                               password = Sys.getenv("userPW"))
 
@@ -185,7 +185,7 @@ for (i in seq(cancerList$cohortId)){
                                                       60:69,70:79,
                                                       80:99),
                                         genderSet = list(8507,8532),
-                                        startYearSet = startYearSet,
+                                        startYearSet = startYearSet[seq(length(startYearSet)-j)],
                                         birthYearSet = list(1910:1919, 1920:1929,
                                                             1930:1939, 1940:1949,
                                                             1950:1959, 1960:1964, 
@@ -200,7 +200,7 @@ for (i in seq(cancerList$cohortId)){
                         fileName = paste0(cancerList$cohortName[[i]],"Cancer", "MortalityPropbyBirth", "_", survivalTime[j], "Duration"),
                         imageExtension = "png")
         
-        PlotByDiagnosisMort(incidencePropdata = outCal,
+        PlotByDiagnosisMort(mortalityPropdata = outCal,
                             ageSpetitle = paste(cancerList$cohortName[[i]],"Cancer", "MortalityProportion Age Specified", survivalTime[j], "Duration", sep = " "),
                             ageAdjtitle = paste(cancerList$cohortName[[i]],"Cancer", "MortalityProportion Age Adjusted", survivalTime[j], "Duration", sep = " "),
                             outputFolder = outputFolder,
@@ -224,8 +224,8 @@ for (i in seq(cancerList$cohortId)){
                                       specifyCondition = FALSE,
                                       conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
     
-    saveRDS(outcomeData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
-    write.csv(outcomeData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
+    saveRDS(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
+    write.csv(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
     
     costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
                                       cdmDatabaseSchema=cdmDatabaseSchema,
@@ -238,8 +238,8 @@ for (i in seq(cancerList$cohortId)){
                                       minCostDateUnit = 'year',
                                       specifyCondition = FALSE,
                                       conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
-    saveRDS(outcomeData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
-    write.csv(outcomeData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
+    saveRDS(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
+    write.csv(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
 }
 
 

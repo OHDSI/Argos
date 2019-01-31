@@ -25,8 +25,8 @@ PlotByBirthInc<- function (incidencePropdata,
     bybirth<- incidencePropdata %>%
               mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
               group_by(birthYear, age, genderConceptId) %>%
-              summarise( proportion = sum(targetPopNum)/sum(refPopulation),
-                         stdproportion = sum(standProp))
+              summarise( proportion = (sum(targetPopNum)/sum(refPopulation))*100000,
+                         stdproportion = sum(standProp)*100000)
     
     bybirthPlot<- ggplot2::ggplot(data = bybirth, ggplot2::aes(x = as.factor(birthYear), y = proportion, group = age, colour = as.factor(age))) + 
                   ggplot2::geom_point() + 
@@ -53,13 +53,13 @@ PlotByDiagnosisInc <- function(incidencePropdata,
     ageSpe<- incidencePropdata %>%
              mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, age, genderConceptId) %>%
-             summarise( proportion = sum(targetPopNum)/sum(refPopulation),
-                        stdproportion = sum(standProp))
+             summarise( proportion = (sum(targetPopNum)/sum(refPopulation))*100000,
+                        stdproportion = sum(standProp)*100000)
     
     ageAdj<- incidencePropdata %>%
              mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, genderConceptId) %>%
-             summarize( AgeadjProp = sum(standProp))
+             summarize( AgeadjProp = sum(standProp)*100000)
     
     ageSpePlot<- ggplot2::ggplot(data = ageSpe, ggplot2::aes(x = as.factor(startYear), y = proportion, group = age, colour = as.factor(age))) + 
                  ggplot2::geom_point() + 
