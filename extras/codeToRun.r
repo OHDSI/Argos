@@ -200,7 +200,7 @@ for (i in seq(cancerList$cohortId)){
                         fileName = paste0(cancerList$cohortName[[i]],"Cancer", "MortalityPropbyBirth", "_", survivalTime[j], "Duration"),
                         imageExtension = "png")
         
-        PlotByDiagnosisMort(incidencePropdata = outCal,
+        PlotByDiagnosisMort(mortalityPropdata = outCal,
                             ageSpetitle = paste(cancerList$cohortName[[i]],"Cancer", "MortalityProportion Age Specified", survivalTime[j], "Duration", sep = " "),
                             ageAdjtitle = paste(cancerList$cohortName[[i]],"Cancer", "MortalityProportion Age Adjusted", survivalTime[j], "Duration", sep = " "),
                             outputFolder = outputFolder,
