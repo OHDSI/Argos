@@ -4,7 +4,7 @@
 \alias{PlotByDiagnosisMort}
 \title{plot mortality proportion}
 \usage{
-PlotByDiagnosisMort(incidencePropdata, ageSpetitle, ageAdjtitle, outputFolder,
+PlotByDiagnosisMort(mortalityPropdata, ageSpetitle, ageAdjtitle, outputFolder,
   ageSpefileName, ageAdjfileName, imageExtension = "png")
 }
 \description{
