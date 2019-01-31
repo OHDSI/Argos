@@ -9,6 +9,11 @@ options(fftempdir = Sys.getenv("local_fftempdir"))
 samplingPop = 0.02 ##sampling proportion (for NHIS-NSC : 0.02 , HIRA : 1)
 
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
+startYearSetHIRA = list(2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017)
+startYearSetNHIS = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013)
+
+startYearSet=startYearSetNHIS
+
 i=1
 j=1
 
@@ -29,8 +34,17 @@ outcomeId <- 99
 
 conditionTypeConceptIds<-c(45756835,45756843,44786627)#primary diagnosis or first position diagnosis
 
-#start log
+#set base population
+basePop<-loadMidYearPopulation('KOR')
+basePop$population<-round(basePop$population*samplingPop,0)
 
+#set reference population as population in 2007
+refPop<-basePop[basePop$startYear==2007,]
+refPop<-refPop[,c("startAge","endAge", "genderConceptId","population")]
+colnames(refPop)[4]<-"standardPopulation"
+
+
+#start log
 ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
 
 #Connection
@@ -48,7 +62,7 @@ DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverall
 
 #create the target cohort
 ParallelLogger::logInfo("Creating target cohorts")
-for (i in cancerList$cohortId){
+for (i in seq(cancerList$cohortId)){
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "firstEventCohort.sql",
                                              packageName = "Argos",
                                              dbms = attr(connection,"dbms"),
@@ -91,96 +105,108 @@ DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverall
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = TRUE, 
                                                                 useDemographicsAge = TRUE
 )
-i=1
-##get incidence Data
-incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails, 
-                                         cdmDatabaseSchema = cdmDatabaseSchema,
-                                         cohortDatabaseSchema = cohortDatabaseSchema,
-                                         cohortTable = cohortTable,
-                                         covariateSettings = covariateSettings,
-                                         outcomeDatabaseSchema = cohortDatabaseSchema ,
-                                         cohortId = cancerList$cohortId[i],
-                                         minDateUnit = "year")
 
-basePop<-loadMidYearPopulation('KOR')
-basePop$population<-round(basePop$population*samplingPop,0)
-
-#set reference population as population in 2007
-refPop<-basePop[basePop$startYear==2007,]
-refPop<-refPop[,c("startAge","endAge", "genderConceptId","population")]
-colnames(refPop)[4]<-"standardPopulation"
-
-
-##calculate the incidence
-incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
-                                  basePopulation = basePop,
-                                  refPopulation = refPop,
-                                  standardization = "direct",
-                                  Agestandardization = TRUE,
-                                  genderStandardization = TRUE,
-                                  startYearStandardization = TRUE,
-                                  AgeSet = list(30:39,
-                                                40:49,
-                                                50:59,
-                                                60:69,
-                                                70:79,
-                                                80:99),
-                                  genderSet = list(8507,8532),
-                                  startYearSet = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
-                                  birthYearSet = list(1910:1919, 1920:1929,
-                                                      1930:1939, 1940:1949,
-                                                      1950:1959, 1960:1964, 
-                                                      1965:1969, 1970:1974, 
-                                                      1975:1979, 1980:1989))
+for (i in seq(cancerList$cohortId)){
+    ##get incidence Data
+    incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails, 
+                                             cdmDatabaseSchema = cdmDatabaseSchema,
+                                             cohortDatabaseSchema = cohortDatabaseSchema,
+                                             cohortTable = cohortTable,
+                                             covariateSettings = covariateSettings,
+                                             outcomeDatabaseSchema = cohortDatabaseSchema ,
+                                             cohortId = cancerList$cohortId[i],
+                                             minDateUnit = "year")
+    saveRDS(incidenceData,file.path(outputFolder,paste0("incidenceData_cohortId_",cancerList$cohortId[i], ".rds" )))
+    ##calculate the incidence
+    incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
+                                      basePopulation = basePop,
+                                      refPopulation = refPop,
+                                      standardization = "direct",
+                                      Agestandardization = TRUE,
+                                      genderStandardization = TRUE,
+                                      startYearStandardization = TRUE,
+                                      AgeSet = list(30:39,
+                                                    40:49,
+                                                    50:59,
+                                                    60:69,
+                                                    70:79,
+                                                    80:99),
+                                      genderSet = list(8507,8532),
+                                      startYearSet = startYearSet,
+                                      birthYearSet = list(1910:1919, 1920:1929,
+                                                          1930:1939, 1940:1949,
+                                                          1950:1959, 1960:1964, 
+                                                          1965:1969, 1970:1974, 
+                                                          1975:1979, 1980:1989))
+    saveRDS(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".rds" )))
+}
 
 ####calculate the mortality####
-
-##get outcome Data
-outcomeData <- Argos::getOutcomeData(connectionDetails = connectionDetails, 
-                                     cdmDatabaseSchema = cdmDatabaseSchema,
-                                     cohortDatabaseSchema = cohortDatabaseSchema,
-                                     cohortTable = cohortTable,
-                                     covariateSettings = covariateSettings,
-                                     outcomeDatabaseSchema = cohortDatabaseSchema ,
-                                     cohortId = cancerList$cohortId[i],
-                                     outcomeId = outcomeId,
-                                     requireTimeAtRisk = TRUE,
-                                     riskWindowStart = 0,
-                                     riskWindowEnd = 365,
-                                     removeSubjectsWithPriorOutcome = TRUE,
-                                     minDateUnit = "year")
-
-outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
-                                refPopulation = refPop,
-                                standardization = "direct",
-                                Agestandardization = TRUE,
-                                genderStandardization = TRUE,
-                                startYearStandardization = TRUE,
-                                AgeSet = list(20:29,30:39,
-                                              40:49,50:59,
-                                              60:69,70:79,
-                                              80:99),
-                                genderSet = list(8507,8532),
-                                startYearSet = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
-                                birthYearSet = list(1910:1919, 1920:1929,
-                                                    1930:1939, 1940:1949,
-                                                    1950:1959, 1960:1964, 
-                                                    1965:1969, 1970:1974, 
-                                                    1975:1979, 1980:1989)
-)
+for (i in seq(cancerList$cohortId)){
+    for (j in seq(survivalTime)){
+        ##get outcome Data
+        outcomeData <- Argos::getOutcomeData(connectionDetails = connectionDetails, 
+                                             cdmDatabaseSchema = cdmDatabaseSchema,
+                                             cohortDatabaseSchema = cohortDatabaseSchema,
+                                             cohortTable = cohortTable,
+                                             covariateSettings = covariateSettings,
+                                             outcomeDatabaseSchema = cohortDatabaseSchema ,
+                                             cohortId = cancerList$cohortId[[i]],
+                                             outcomeId = outcomeId,
+                                             requireTimeAtRisk = TRUE,
+                                             riskWindowStart = 0,
+                                             riskWindowEnd = survivalTime[j],
+                                             removeSubjectsWithPriorOutcome = TRUE,
+                                             minDateUnit = "year")
+        
+        saveRDS(outcomeData,file.path(outputFolder,paste0("OutcomeData_cohortId_",cancerList$cohortId[[i]],"survivalTime_",as.character(survivalTime[j]),".rds" )))
+        outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
+                                        refPopulation = refPop,
+                                        standardization = "direct",
+                                        Agestandardization = TRUE,
+                                        genderStandardization = TRUE,
+                                        startYearStandardization = TRUE,
+                                        AgeSet = list(20:29,30:39,
+                                                      40:49,50:59,
+                                                      60:69,70:79,
+                                                      80:99),
+                                        genderSet = list(8507,8532),
+                                        startYearSet = startYearSet,
+                                        birthYearSet = list(1910:1919, 1920:1929,
+                                                            1930:1939, 1940:1949,
+                                                            1950:1959, 1960:1964, 
+                                                            1965:1969, 1970:1974, 
+                                                            1975:1979, 1980:1989))
+        saveRDS(outCal,file.path(outputFolder,paste0("OutcomeCalData_cohortId_",cancerList$cohortId[[i]],"survivalTime_",as.character(survivalTime[j]),".rds" )))
+    }
+}
 
 ##Extract Cost Data
-
-i=1
-costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
-                                  cdmDatabaseSchema=cdmDatabaseSchema,
-                                  cohortDatabaseSchema=cohortDatabaseSchema,
-                                  vocabularyDatabaseSchema = vocabularyDatabaseSchema,
-                                  cohortTable=cohortTable,
-                                  cohortId=cancerList$cohortId[i],
-                                  costWindowStart = -60,
-                                  costWindowEnd =180,
-                                  minCostDateUnit = 'quarter',
-                                  specifyCondition = TRUE,
-                                  conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
-
+for (i in seq(cancerList$cohortId)){
+    costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
+                                      cdmDatabaseSchema=cdmDatabaseSchema,
+                                      cohortDatabaseSchema=cohortDatabaseSchema,
+                                      vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+                                      cohortTable=cohortTable,
+                                      cohortId=cancerList$cohortId[[i]],
+                                      costWindowStart = -60,
+                                      costWindowEnd =365,
+                                      minCostDateUnit = 'month',
+                                      specifyCondition = FALSE,
+                                      conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
+    
+    saveRDS(outcomeData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
+    
+    costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
+                                      cdmDatabaseSchema=cdmDatabaseSchema,
+                                      cohortDatabaseSchema=cohortDatabaseSchema,
+                                      vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+                                      cohortTable=cohortTable,
+                                      cohortId=cancerList$cohortId[[i]],
+                                      costWindowStart = -60,
+                                      costWindowEnd =365*5,
+                                      minCostDateUnit = 'year',
+                                      specifyCondition = FALSE,
+                                      conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
+    saveRDS(outcomeData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
+}

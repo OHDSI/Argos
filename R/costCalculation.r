@@ -52,14 +52,17 @@ extractVisitCost<-function(connectionDetails,
     # fileCon<-file(file.path(getwd(),"output.txt"))
     # writeLines(sql,fileCon)
     # close(fileCon)
-    
     costData<-DatabaseConnector::querySql(connection, sql)
-    
     colnames(costData)<-SqlRender::snakeCaseToCamelCase(colnames(costData))
+    costData %>% dplyr::arrange(dateUnit,cohortDefinitionId,visitConceptId)
     
-    #costData %>% dplyr::arrange(dateUnit,cohortDefinitionId,visitConceptId)
+    costData$totalChargePerVisit <-costData$totalChargeSum/costData$visitCount
+    costData$paidByPayerPerVisit <-costData$paidByPayerSum/costData$visitCount
+    costData$paidByPatientPerVisit <-costData$paidByPatientSum/costData$visitCount
     
-    
+    costData$totalChargePerActivePatient <-costData$totalChargeSum/costData$subjectCount
+    costData$paidByPayerPerActivePatient <-costData$paidByPayerSum/costData$subjectCount
+    costData$paidByPatientPerActivePatient <-costData$paidByPatientSum/costData$subjectCount
     
     return(costData)
 }
