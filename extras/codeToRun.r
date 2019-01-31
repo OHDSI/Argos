@@ -214,7 +214,7 @@ for (i in seq(cancerList$cohortId)){
         
     }
 }
-
+i<-1
 ##Extract Cost Data
 for (i in seq(cancerList$cohortId)){
     costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
