@@ -23,7 +23,7 @@ createStandSettings<-function(ageStandardization=TRUE,
                               ethnicityStandardization=FALSE,
                               mode = "direct",
                               basePopulation,
-                              year = 2006){
+                              year = 2007){
     AGStandardSettings<-list(ageStandardization = ageStandardization,
                              ageGroupStandardization = ageGroupStandardization,
                              genderStandardization = genderStandardization,

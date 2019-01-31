@@ -13,17 +13,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-#'plot incidence proportion
-#'
-
-### incidence plot ###
-## data aggregate
+#'@import dplyr
+#'@import ggplot2
+#'@export
 ## incidence proportion plot by birth Year
-PlotByBirth<- function (incidencePropdata = incCal,
-                        savefile = outputFolder,
+PlotByBirthInc<- function (incidencePropdata,
+                        title,
+                        outputFolder,
+                        fileName,
                         imageExtension = "png"){
-    bybirth<- incCal %>%
+    bybirth<- incidencePropdata %>%
               mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
               group_by(birthYear, age, genderConceptId) %>%
               summarise( proportion = sum(targetPopNum)/sum(refPopulation),
@@ -35,22 +34,29 @@ PlotByBirth<- function (incidencePropdata = incCal,
                   ggplot2::xlab("Year of Birth") + 
                   ggplot2::ylab("incidence proportion") + 
                   ggplot2::facet_wrap(~genderConceptId) +
-                  ggplot2::ggtitle(paste(cancerList$cohortName[i], "Cancer", "Incidence Proportion By Birth Year", sep = " ")) + 
+                  ggplot2::ggtitle(title) + 
                   ggplot2::theme_bw()
-    ggplot2::ggsave(bybirthPlot, file.path(savefile, paste0(cancerList$cohortName[i],"CancerIP_byBirthYr.", imageExtension)), width = 30,height = 15,units = "cm" ) 
+    ggplot2::ggsave(file.path(outputFolder, paste0(fileName,".",imageExtension) ), bybirthPlot, width = 30,height = 15,units = "cm" )  
 }
 
+#'@import dplyr
+#'@import ggplot2
+#'@export
 ## incidence proportion plot by diagnosis year 
-PlotByDiagnosis <- function(incidencePropdata = incCal,
-                            savefile = outputFolder,
+PlotByDiagnosisInc <- function(incidencePropdata,
+                            ageSpetitle,
+                            ageAdjtitle,
+                            outputFolder,
+                            ageSpefileName,
+                            ageAdjfileName,
                             imageExtension = "png"){
-    ageSpe<- incCal %>%
+    ageSpe<- incidencePropdata %>%
              mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, age, genderConceptId) %>%
              summarise( proportion = sum(targetPopNum)/sum(refPopulation),
                         stdproportion = sum(standProp))
     
-    ageAdj<- incCal %>%
+    ageAdj<- incidencePropdata %>%
              mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, genderConceptId) %>%
              summarize( AgeadjProp = sum(standProp))
@@ -61,9 +67,9 @@ PlotByDiagnosis <- function(incidencePropdata = incCal,
                  ggplot2::xlab("Diagnosis Time") + 
                  ggplot2::ylab("incidence proportion") + 
                  ggplot2::facet_wrap(~genderConceptId) +
-                 ggplot2::ggtitle(paste(cancerList$cohortName[i], "Cancer", "Age Specified Incidence Proportion", sep = " ")) + 
+                 ggplot2::ggtitle(ageSpetitle) +  
                  ggplot2::theme_bw()
-    ggplot2::ggsave(ageSpePlot, file.path(savefile, paste0(cancerList$cohortName[i],"CancerASIP_byDiagnosisYr.", imageExtension)), width = 30,height = 15,units = "cm" ) 
+    ggplot2::ggsave(file.path(outputFolder, paste0(ageSpefileName,".",imageExtension) ),ageSpePlot,  width = 30,height = 15,units = "cm" ) 
     
     ageAdjPlot<- ggplot2::ggplot(data = ageAdj, ggplot2::aes(x = as.factor(startYear), y = AgeadjProp, group = 1)) + 
                  ggplot2::geom_point() + 
@@ -71,7 +77,7 @@ PlotByDiagnosis <- function(incidencePropdata = incCal,
                  ggplot2::xlab("Diagnosis Time") + 
                  ggplot2::ylab("incidence proportion") + 
                  ggplot2::facet_wrap(~genderConceptId) +
-                 ggplot2::ggtitle(paste(cancerList$cohortName[i], "Cancer", "Age Adjusted Incidence Proportion", sep = " ")) + 
+                 ggplot2::ggtitle(ageAdjtitle) + 
                  ggplot2::theme_bw()
-    ggplot2::ggsave(ageAdjPlot, file.path(savefile, paste0(cancerList$cohortName[i],"CancerADIP_byDiagnosisYr.", imageExtension)), width = 30,height = 15,units = "cm" ) 
+    ggplot2::ggsave(file.path(outputFolder, paste0(ageAdjfileName,".",imageExtension) ), ageAdjPlot, width = 30,height = 15,units = "cm" ) 
 }
