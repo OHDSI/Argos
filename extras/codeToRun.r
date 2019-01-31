@@ -139,6 +139,7 @@ for (i in seq(cancerList$cohortId)){
                                                           1965:1969, 1970:1974, 
                                                           1975:1979, 1980:1989))
     saveRDS(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".rds" )))
+    write.csv(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".csv" )))
 }
 
 ####calculate the mortality####
@@ -178,6 +179,7 @@ for (i in seq(cancerList$cohortId)){
                                                             1965:1969, 1970:1974, 
                                                             1975:1979, 1980:1989))
         saveRDS(outCal,file.path(outputFolder,paste0("OutcomeCalData_cohortId_",cancerList$cohortId[[i]],"survivalTime_",as.character(survivalTime[j]),".rds" )))
+        write.csv(outCal,file.path(outputFolder,paste0("OutcomeCalData_cohortId_",cancerList$cohortId[[i]],"survivalTime_",as.character(survivalTime[j]),".csv" )))
     }
 }
 
