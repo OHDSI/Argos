@@ -26,7 +26,7 @@ PlotByBirthMort<- function (mortalityPropdata,
                         outputFolder,
                         fileName,
                         imageExtension = "png"){
-    bybirth<- outCal %>%
+    bybirth<- mortalityPropdata %>%
               mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
               group_by(birthYear, age, genderConceptId) %>%
               summarise( proportion = sum(outcomePopNum)/sum(targetPopNum),
