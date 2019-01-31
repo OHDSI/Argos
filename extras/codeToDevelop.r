@@ -36,3 +36,29 @@ df$country='KOR'
 df$location='KOR'
 
 write.csv(df,file.path(Sys.getenv("gitFolder"),"ABMI/Argos/inst/census/KOR_mid_year_population.csv"),row.names = FALSE)
+
+####Write Life Expectancy csv file####
+lifeExp<-read.csv(file.path(Sys.getenv("gitFolder"),"ABMI/Argos/extras/KOR_life_expectancy.csv"),stringsAsFactors=FALSE)
+library(dplyr)
+
+lifeExp<-lifeExp%>%filter(item=="expectation_of_life_at_age") %>%filter(gender !="both")
+colnames(lifeExp)[1]<-"year"
+
+df<-data.frame()
+for(i in 4:length(lifeExp)){
+    if(colnames(lifeExp)[i] %in% c("X100.","X80.") )next
+    age<-as.numeric(sub("X","",colnames(lifeExp)[i]))
+    
+    
+    tempDf<-data.frame(startYear = lifeExp[,c(1)], 
+                       endYear = lifeExp[,c(1)],
+                       genderConceptId = ifelse(lifeExp[,c(3)]=="male", 8507,8532), 
+                       startAge = as.numeric(sub("X","",colnames(lifeExp)[i])),
+                       endAge = as.numeric(sub("X","",colnames(lifeExp)[i])),
+                       expectedLifeRemained = lifeExp[,i])
+    df<-rbind(df,tempDf)
+}
+df$country='KOR'
+df$location='KOR'
+
+write.csv(df,file.path(Sys.getenv("gitFolder"),"ABMI/Argos/inst/census/KOR_life_expectancy.csv"),row.names = FALSE)

@@ -1,0 +1,229 @@
+"condition_concept_id","included_condition_concept_ids","conditions","disability_weight","lb95","ubb95"
+NA,"","Tuberculosis",0.464,0.367,0.563
+NA,"","HIV disease resulting in mycobacterial infection",0.837,0.77,0.891
+NA,"","HIV disease resulting in other specified or unspecified diseases",0.794,0.717,0.859
+NA,"","Cholera",0.324,0.237,0.421
+NA,"","Other Salmonella infections",0.283,0.199,0.381
+NA,"","Shigellosis",0.372,0.278,0.475
+NA,"","Enteropathogenic E. coli infection",0.257,0.174,0.357
+NA,"","Enterotoxigenic E. coli infection",0.347,0.255,0.449
+NA,"","Campylobacter enteritis",0.206,0.133,0.298
+NA,"","Amoebiasis",0.461,0.364,0.561
+NA,"","Cryptosporidiosis",0.583,0.486,0.676
+NA,"","Rotaviral enteritis",0.152,0.091,0.233
+NA,"","Intestinal infection",0.155,0.091,0.243
+NA,"","Typhoid and paratyphoid fevers",0.347,0.252,0.452
+NA,"","Influenza",0.131,0.075,0.211
+NA,"","Pneumococcal pneumonia",0.385,0.288,0.49
+NA,"","H. influenza type B pneumonia",0.309,0.215,0.418
+NA,"","Respiratory syncytial virus pneumonia",0.26,0.177,0.36
+NA,"","Upper respiratory infections",0.088,0.045,0.154
+NA,"","Otitis media",0.138,0.078,0.222
+NA,"","Pneumococcal meningitis",0.551,0.458,0.642
+NA,"","H. influenza type B meningitis",0.523,0.427,0.62
+NA,"","Meningococcal infection",0.598,0.5,0.691
+NA,"","Encephalitis",0.721,0.636,0.798
+NA,"","Diphtheria",0.389,0.291,0.495
+NA,"","Whooping cough",0.256,0.176,0.351
+NA,"","Tetanus",0.524,0.425,0.623
+NA,"","Measles",0.279,0.192,0.383
+NA,"","Varicella",0.223,0.147,0.316
+NA,"","Malaria",0.471,0.373,0.573
+NA,"","Chagas disease",0.647,0.55,0.739
+NA,"","Leishmaniasis",0.411,0.317,0.512
+NA,"","African trypanosomiasis",0.515,0.416,0.616
+NA,"","Schistosomiasis",0.34,0.253,0.435
+NA,"","Cysticercosis",0.471,0.37,0.577
+NA,"","Echinococcosis",0.354,0.264,0.454
+NA,"","Lymphatic filariasis",0.564,0.465,0.661
+NA,"","Onchocerciasis",0.357,0.268,0.455
+NA,"","Trachoma",0.431,0.333,0.535
+NA,"","Dengue",0.428,0.331,0.53
+NA,"","Yellow fever",0.496,0.392,0.602
+NA,"","Rabies",0.797,0.718,0.864
+NA,"","Ascariasis",0.256,0.175,0.352
+NA,"","Trichuriasis",0.32,0.229,0.422
+NA,"","Hookworm disease",0.302,0.211,0.407
+NA,"","Food-borne trematodiases",0.329,0.238,0.43
+NA,"","Tsutsugamushi fever",0.317,0.23,0.417
+NA,"","Typhus fever",0.435,0.341,0.533
+NA,"","Hantaan virus disease",0.479,0.382,0.58
+NA,"","Intestinal helminth",0.341,0.25,0.443
+NA,"","Maternal hemorrhage",0.514,0.415,0.613
+NA,"","Maternal sepsis",0.825,0.755,0.881
+NA,"","Hypertensive disorders of pregnancy",0.508,0.405,0.61
+NA,"","Obstructed labor",0.471,0.374,0.572
+NA,"","Abortion",0.455,0.358,0.556
+NA,"","Preterm birth complications",0.678,0.584,0.763
+NA,"","Neonatal encephalopathy (birth asphyxia and birth trauma)",0.911,0.858,0.949
+NA,"","Sepsis and other infectious disorders of the newborn baby",0.758,0.677,0.829
+NA,"","Protein-energy malnutrition",0.362,0.27,0.465
+NA,"","Iodine deficiency",0.166,0.101,0.253
+NA,"","Vitamin A deficiency",0.223,0.146,0.317
+NA,"","Iron-deficiency anemia",0.122,0.067,0.199
+NA,"","Syphilis",0.519,0.422,0.617
+NA,"","Sexually transmitted chlamydial diseases",0.413,0.317,0.516
+NA,"","Gonococcal infection",0.345,0.252,0.448
+NA,"","Trichomoniasis",0.346,0.253,0.448
+NA,"","Herpes genitalia",0.442,0.344,0.545
+NA,"","Acute hepatitis A",0.346,0.254,0.448
+NA,"","Acute hepatitis B",0.483,0.384,0.583
+NA,"","Acute hepatitis C",0.646,0.548,0.738
+NA,"","Acute hepatitis E",0.462,0.369,0.558
+NA,"","Leprosy",0.815,0.74,0.878
+NA,"","Legionnaires' disease",0.447,0.348,0.55
+NA,"","Leptospirosis",0.362,0.27,0.464
+NA,"","Rubella",0.366,0.27,0.47
+NA,"","Mumps",0.193,0.123,0.282
+NA,"","Esophageal cancer",0.875,0.809,0.924
+443387,"4149838;197803;4095320;4149837;4095319;4094856;4092061;443387;4095317","Stomach cancer",0.724,0.64,0.799
+NA,"","Liver cancer secondary to hepatitis B",0.857,0.791,0.909
+NA,"","Liver cancer secondary to hepatitis C",0.819,0.745,0.881
+NA,"","Liver cancer secondary to alcohol use",0.824,0.748,0.885
+NA,"","Larynx cancer",0.872,0.812,0.919
+442139,"442139;4092217;4094876;4151250;4157333;258375","Trachea; bronchus; and lung cancers",0.917,0.864,0.953
+4162253,"137809;4188544;4158563;4162253;4155292;4187850;4188545;432845","Breast cancer",0.704,0.614,0.787
+NA,"","Cervical cancer",0.744,0.659,0.819
+NA,"","Uterine cancer",0.745,0.659,0.82
+NA,"","Prostate cancer",0.701,0.609,0.783
+4180790,"4089661;4180790;4180791;4180792;4181344;435754;443381;443382;443383;443384;443391","Colon and rectum cancers",0.759,0.673,0.834
+NA,"","Mouth cancer",0.883,0.824,0.929
+NA,"","Nasopharynx cancer",0.816,0.739,0.879
+NA,"","Cancer of other parts of pharynx and oropharynx",0.89,0.837,0.931
+NA,"","Gallbladder and biliary tract cancer",0.827,0.757,0.886
+NA,"","Pancreatic cancer",0.938,0.891,0.968
+NA,"","Malignant melanoma of skin",0.79,0.706,0.86
+NA,"","Non-melanoma skin cancer",0.634,0.534,0.728
+NA,"","Ovarian cancer",0.791,0.713,0.856
+NA,"","Testicular cancer",0.799,0.721,0.865
+NA,"","Kidney cancer",0.777,0.698,0.846
+NA,"","Other urinary organ cancers",0.754,0.668,0.828
+NA,"","Bladder cancer",0.792,0.714,0.857
+NA,"","Brain and nervous system cancers",0.874,0.809,0.924
+4178976,"4178976","Thyroid cancer",0.466,0.369,0.564
+NA,"","Hodgkin's disease",0.718,0.631,0.795
+NA,"","Non-Hodgkin's lymphoma",0.754,0.672,0.827
+NA,"","Multiple myeloma",0.768,0.69,0.836
+NA,"","Leukemia",0.845,0.77,0.904
+NA,"","Bone and connective tissue cancer",0.816,0.744,0.876
+NA,"","Benign neoplasm of brain and other parts of central nervous system",0.571,0.472,0.667
+NA,"","Rheumatic heart disease",0.685,0.592,0.769
+NA,"","Ischemic heart disease",0.79,0.714,0.856
+NA,"","Ischemic stroke",0.809,0.734,0.872
+NA,"","Hemorrhagic and other non-ischemic stroke",0.864,0.796,0.917
+NA,"","Hypertensive heart disease",0.575,0.472,0.675
+NA,"","Cardiomyopathy and myocarditis",0.753,0.667,0.828
+NA,"","Atrial fibrillation and flutter",0.551,0.451,0.65
+NA,"","Aortic aneurysm",0.727,0.644,0.803
+NA,"","Peripheral vascular disease",0.53,0.432,0.627
+NA,"","Endocarditis",0.668,0.576,0.752
+NA,"","Hemorrhoids",0.171,0.103,0.26
+NA,"","Varicose veins of lower extremities",0.232,0.154,0.327
+NA,"","Chronic obstructive pulmonary disease",0.69,0.593,0.779
+NA,"","Pneumoconiosis",0.733,0.647,0.809
+NA,"","Asthma",0.367,0.269,0.477
+NA,"","Interstitial lung disease and pulmonary sarcoidosis",0.701,0.617,0.778
+NA,"","Cirrhosis of the liver secondary to hepatitis B",0.716,0.63,0.792
+NA,"","Cirrhosis of the liver secondary to hepatitis C",0.748,0.66,0.826
+NA,"","Cirrhosis of the liver secondary to alcohol use",0.614,0.517,0.706
+NA,"","Peptic ulcer disease",0.375,0.282,0.477
+NA,"","Gastritis and duodenitis",0.181,0.111,0.272
+NA,"","Appendicitis",0.133,0.077,0.212
+NA,"","Paralytic ileus and intestinal obstruction without hernia",0.491,0.39,0.594
+NA,"","Inguinal or femoral hernia",0.208,0.133,0.302
+NA,"","Crohn's disease",0.72,0.631,0.8
+NA,"","Ulcerative colitis",0.664,0.568,0.751
+NA,"","Vascular disorders of intestine",0.542,0.443,0.638
+NA,"","Gall bladder and bile duct disease",0.389,0.299,0.487
+NA,"","Pancreatitis",0.513,0.411,0.615
+NA,"","Gastroesophageal reflux disease",0.214,0.139,0.307
+NA,"","Alzheimer's disease and other dementias",0.854,0.784,0.911
+NA,"","Parkinson's disease",0.78,0.703,0.847
+NA,"","Epilepsy",0.778,0.698,0.846
+NA,"","Multiple sclerosis",0.778,0.696,0.848
+NA,"","Migraine",0.314,0.227,0.413
+NA,"","Tension-type headache",0.165,0.099,0.253
+NA,"","Schizophrenia",0.885,0.824,0.931
+NA,"","Alcohol use disorders",0.436,0.338,0.539
+NA,"","Opioid use disorders",0.453,0.354,0.555
+NA,"","Cocaine use disorders",0.441,0.343,0.544
+NA,"","Amphetamine use disorders",0.461,0.364,0.562
+NA,"","Cannabis use disorders",0.318,0.231,0.415
+NA,"","Major depressive disorders",0.606,0.508,0.7
+NA,"","Dysthymia",0.194,0.122,0.286
+NA,"","Bipolar affective disorder",0.61,0.515,0.7
+NA,"","Panic disorder",0.526,0.424,0.628
+NA,"","Obsessive-compulsive disorder",0.391,0.294,0.495
+NA,"","Post-traumatic stress disorder",0.435,0.338,0.538
+NA,"","Anorexia nervosa",0.488,0.392,0.586
+NA,"","Bulimia nervosa",0.411,0.316,0.513
+NA,"","Autism",0.758,0.672,0.832
+NA,"","Asperger's syndrome",0.685,0.591,0.771
+NA,"","Attention-deficit hyperactivity disorder",0.379,0.288,0.48
+NA,"","Conduct disorder",0.502,0.399,0.606
+NA,"","Idiopathic intellectual disability",0.676,0.586,0.76
+NA,"","Borderline personality disorder",0.603,0.504,0.698
+NA,"","Diabetes mellitus",0.593,0.496,0.686
+NA,"","Acute glomerulonephritis",0.445,0.345,0.55
+NA,"","Chronic kidney disease due to diabetes mellitus",0.837,0.769,0.893
+NA,"","Chronic kidney disease due to hypertension",0.748,0.662,0.823
+NA,"","Tubulointerstitial nephritis; pyelonephritis; and urinary tract infections",0.483,0.384,0.584
+NA,"","Urolithiasis",0.283,0.199,0.382
+NA,"","Benign prostatic hyperplasia",0.289,0.205,0.387
+NA,"","Male infertility",0.588,0.494,0.68
+NA,"","Urinary incontinence",0.343,0.25,0.445
+NA,"","Uterine fibroids",0.242,0.163,0.338
+NA,"","Polycystic ovarian syndrome",0.439,0.338,0.544
+NA,"","Female infertility",0.561,0.466,0.655
+NA,"","Endometriosis",0.413,0.318,0.514
+NA,"","Genital prolapse",0.458,0.364,0.555
+NA,"","Premenstrual syndrome",0.142,0.082,0.225
+NA,"","Thalassemias",0.501,0.403,0.6
+NA,"","Sickle cell disorders",0.509,0.415,0.604
+NA,"","G6PD deficiency",0.679,0.588,0.763
+NA,"","Rheumatoid arthritis",0.549,0.449,0.647
+NA,"","Osteoarthritis",0.37,0.276,0.474
+NA,"","Low back pain",0.315,0.225,0.417
+NA,"","Neck pain",0.213,0.137,0.308
+NA,"","Gout",0.395,0.299,0.499
+NA,"","Systemic lupus erythematosus (SLE)",0.634,0.538,0.726
+NA,"","Neural tube defects",0.897,0.837,0.94
+NA,"","Congenital heart anomalies",0.686,0.596,0.769
+NA,"","Cleft lip and cleft palate",0.424,0.332,0.522
+NA,"","Down's syndrome",0.908,0.845,0.951
+NA,"","Eczema",0.162,0.098,0.248
+NA,"","Psoriasis",0.28,0.196,0.377
+NA,"","Cellulitis",0.302,0.214,0.404
+NA,"","Abscess; impetigo; and other bacterial skin diseases",0.205,0.133,0.295
+NA,"","Scabies",0.197,0.128,0.285
+NA,"","Fungal skin diseases",0.283,0.198,0.382
+NA,"","Viral skin diseases",0.24,0.159,0.337
+NA,"","Acne vulgaris",0.106,0.057,0.18
+NA,"","Alopecia areata",0.237,0.157,0.335
+NA,"","Pruritus",0.174,0.109,0.258
+NA,"","Urticaria",0.084,0.042,0.151
+NA,"","Decubitus ulcer",0.431,0.334,0.535
+NA,"","Glaucoma",0.64,0.545,0.727
+NA,"","Cataracts",0.384,0.294,0.483
+NA,"","Macular degeneration",0.576,0.48,0.669
+NA,"","Refraction and accommodation disorders",0.428,0.332,0.528
+NA,"","Dental caries",0.137,0.078,0.219
+NA,"","Periodontal disease",0.209,0.137,0.299
+NA,"","Edentulism",0.651,0.556,0.738
+NA,"","Pedestrian injury by road vehicle",0.534,0.437,0.629
+NA,"","Pedal cycle vehicle",0.357,0.266,0.458
+NA,"","Motorized vehicle with two wheels",0.529,0.428,0.63
+NA,"","Motorized vehicle with three or more wheels",0.588,0.487,0.685
+NA,"","Falls",0.613,0.513,0.708
+NA,"","Drowning",0.66,0.568,0.745
+NA,"","Fire; heat; and hot substances",0.545,0.443,0.645
+NA,"","Poisonings",0.546,0.447,0.644
+NA,"","Mechanical forces (firearm)",0.634,0.534,0.728
+NA,"","Adverse effects of medical treatment",0.385,0.286,0.494
+NA,"","Animal contact (venomous)",0.398,0.3,0.505
+NA,"","Animal contact (non-venomous)",0.107,0.059,0.176
+NA,"","Self-harm",0.614,0.517,0.706
+NA,"","Assault by firearm",0.611,0.516,0.701
+NA,"","Assault by sharp object",0.3,0.215,0.399
+NA,"","Exposure to forces of nature",0.389,0.292,0.494
+NA,"","Collective violence and legal intervention",0.613,0.52,0.702

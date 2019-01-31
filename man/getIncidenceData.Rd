@@ -4,9 +4,9 @@
 \alias{getIncidenceData}
 \title{get incidence data}
 \usage{
-getIncidenceData(connectionDetails, cdmDatabaseSchema, cohortDatabaseSchema,
-  cohortTable, covariateSettings, outcomeDatabaseSchema, cohortId,
-  minDateUnit = "year")
+getIncidenceData(connectionDetails, cdmDatabaseSchema,
+  cohortDatabaseSchema, cohortTable, covariateSettings,
+  outcomeDatabaseSchema, cohortId, minDateUnit = "year")
 }
 \arguments{
 \item{minDateUnit}{minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')}
