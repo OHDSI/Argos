@@ -60,7 +60,7 @@ PlotByDiagnosisMort <- function(mortalityPropdata,
     ageSpe<- mortalityPropdata %>%
              mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, age, genderConceptId) %>%
-             summarise( proportion = sum(targetPopNum)/sum(refPopulation),
+             summarise( proportion = sum(outcomePopNum)/sum(targetPopNum),
                         stdproportion = sum(standProp))
     
     ageAdj<- mortalityPropdata %>%
