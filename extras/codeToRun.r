@@ -11,7 +11,7 @@ cohortDatabaseSchema <- "ONCOACHILLES.dbo"
 cohortTable <- "argos_cohort"
 
 outputFolder <- "/home/dbwls5223/output/Argos"
-options(fftempdir = "/home/dbwls5223/tempff")
+options(fftempdir = Sys.getenv("local_fftempdir"))
 
 startYearSet=startYearSetNHIS
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
@@ -209,7 +209,7 @@ for (i in seq(cancerList$cohortId)){
                             imageExtension = "png")
     }
 }
-
+i<-1
 ##Extract Cost Data
 for (i in seq(cancerList$cohortId)){
     costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
