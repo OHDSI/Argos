@@ -14,7 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#'calculate outcome incidence data
+#' get outcome  data
+#' @param connectionDetails
+#' @param cdmDatabaseSchema
+#' @param cohortDatabaseSchema
+#' @param
+#' @param
+#' @param
+#' @param
 #' @param incidenceData
 #' @param basePopulation           
 #' @param baseVar           'startYear' or 'birthYear'
@@ -23,11 +30,11 @@
 getOutcomeData<-function(connectionDetails = connectionDetails, 
                          cdmDatabaseSchema = cdmDatabaseSchema,
                          cohortDatabaseSchema = cohortDatabaseSchema,
+                         outcomeDatabaseSchema = cohortDatabaseSchema ,
                          cohortTable = cohortTable,
                          covariateSettings = covariateSettings,
-                         outcomeDatabaseSchema = cohortDatabaseSchema ,
-                         cohortId = cancerList$cohortId[i],
-                         outcomeId = outcomeId,
+                         targetCohortId,
+                         outcomeId,
                          requireTimeAtRisk = TRUE,
                          riskWindowStart = 0,
                          riskWindowEnd = 365*2,
@@ -37,7 +44,7 @@ getOutcomeData<-function(connectionDetails = connectionDetails,
                                                   cdmDatabaseSchema = cdmDatabaseSchema,
                                                   cohortDatabaseSchema = cohortDatabaseSchema,
                                                   cohortTable = cohortTable,
-                                                  cohortId = cohortId,
+                                                  cohortId = targetCohortId,
                                                   covariateSettings = covariateSettings,
                                                   outcomeDatabaseSchema = cohortDatabaseSchema,
                                                   outcomeTable = cohortTable,
@@ -70,15 +77,17 @@ getOutcomeData<-function(connectionDetails = connectionDetails,
                                              minDateUnit = minDateUnit)
     return(list(targetCohort=targetCohort,
                 outcomeCohort=outcomeCohort,
-                cohortId = cohortId,
+                targetCohortId = targetCohortId,
                 minDateUnit = minDateUnit,
-                plpData = plpData))
+                plpData = plpData,
+                population = population))
 }
 
 
 #' Calculating outcome function
 #' @export
-#' @import dplyr
+#' @export
+#' @export
 #' 
 #' 
 calculateOutcome <- function(outcomeData=outcomeData,

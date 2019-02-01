@@ -113,9 +113,8 @@ for (i in seq(cancerList$cohortId)){
                                              cdmDatabaseSchema = cdmDatabaseSchema,
                                              cohortDatabaseSchema = cohortDatabaseSchema,
                                              cohortTable = cohortTable,
-                                             covariateSettings = covariateSettings,
                                              outcomeDatabaseSchema = cohortDatabaseSchema ,
-                                             cohortId = cancerList$cohortId[i],
+                                             targetCohortId = cancerList$cohortId[i],
                                              minDateUnit = "year")
     saveRDS(incidenceData,file.path(outputFolder,paste0("incidenceData_cohortId_",cancerList$cohortId[i], ".rds" )))
     ##calculate the incidence
@@ -166,7 +165,7 @@ for (i in seq(cancerList$cohortId)){
                                              cohortTable = cohortTable,
                                              covariateSettings = covariateSettings,
                                              outcomeDatabaseSchema = cohortDatabaseSchema ,
-                                             cohortId = cancerList$cohortId[[i]],
+                                             targetCohortId = cancerList$cohortId[[i]],
                                              outcomeId = outcomeId,
                                              requireTimeAtRisk = TRUE,
                                              riskWindowStart = 0,
@@ -175,7 +174,9 @@ for (i in seq(cancerList$cohortId)){
                                              minDateUnit = "year")
         saveRDS(outcomeData,file.path(outputFolder,paste0("OutcomeData_cohortId_",cancerList$cohortId[[i]],"survivalTime_",as.character(survivalTime[j]),".rds" )))
         
-        outcomeData$plpData
+        #head(outcomeData$plpData$cohorts)
+        #head(outcomeData$population)  
+        
         
         outCal<-Argos::calculateOutcome(outcomeData=outcomeData,
                                         refPopulation = refPop,

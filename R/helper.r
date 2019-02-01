@@ -199,3 +199,14 @@ calculateNumberPerCovTime <- function(plpData,
     }
     return(resultData)
 }
+
+
+##Helper function (calculates integral)
+f<-function(x,ageWeighting,C = 0.1658, beta = 0.04, discount, age){
+    ageWeighting * C *x *exp(-beta*x)*exp(-discount*(x-age))+ (1-ageWeighting)*exp(-discount*(x-age))
+}
+
+##Burden calculation function
+burden <- function(disabilityWeight,disabilityStartAge,duration,ageWeighting,discount,age){
+    disabilityWeight * integrate(f, lower = disabilityStartAge, upper = disabilityStartAge+duration, ageWeighting=ageWeighting, discount=discount, age=age )$value
+}
