@@ -95,6 +95,7 @@ limitCovariatesToPopulation <- function(covariates, rowIds) {
 calculateNumberPerCovTime <- function(plpData,
                                       population = NULL,
                                       minDateUnit = 'year'){
+    
     if(is.null(population)){
         cohort<-ff::as.ram(plpData$cohort)
         covRef<-ff::as.ram(plpData$covariateRef)
@@ -102,11 +103,12 @@ calculateNumberPerCovTime <- function(plpData,
     } else {
         #load covariates
         #limit covariates of plpData to the population
-        covariates<-ff::as.ram(limitCovariatesToPopulation(covariates = plpData$covariates,rowIds = ff::as.ff(population$rowId)))
-        #load covariate reference
-        covRef<-ff::as.ram(plpData$covariateRef)
-        #limit covarite Ref to the existing covarites in the population
-        covRef <- covRef [covRef$covariateId %in% unique(covariates$covariateId), ]
+        plpData.mapped<-MapCovariates(covariates = plpData$covariates, 
+                                      covariateRef = plpData$covariateRef, 
+                                      population= population, 
+                                      map=NULL)
+        covariates<-ff::as.ram(plpData.mapped$covariates)
+        covRef<-ff::as.ram(plpData.mapped$covariateRef)
         cohort<-population
     }
     
@@ -200,45 +202,3 @@ calculateNumberPerCovTime <- function(plpData,
     return(resultData)
 }
 
-# restricts to pop and saves/creates mapping
-MapCovariates <- function(covariates, covariateRef, population, map){
-    
-    # restrict to population for speed
-    OhdsiRTools::logTrace('restricting to population for speed...')
-    idx <- ffbase::ffmatch(x = covariates$rowId, table = ff::as.ff(population$rowId))
-    idx <- ffbase::ffwhich(idx, !is.na(idx))
-    covariates <- covariates[idx, ]
-    
-    OhdsiRTools::logTrace('Now converting covariateId...')
-    oldIds <- as.double(ff::as.ram(covariateRef$covariateId))
-    newIds <- 1:nrow(covariateRef)
-    
-    if(!is.null(map)){
-        OhdsiRTools::logTrace('restricting to model variables...')
-        OhdsiRTools::logTrace(paste0('oldIds: ',length(map[,'oldIds'])))
-        OhdsiRTools::logTrace(paste0('newIds:', max(as.double(map[,'newIds']))))
-        ind <- ffbase::ffmatch(x=covariateRef$covariateId, table=ff::as.ff(as.double(map[,'oldIds'])))
-        ind <- ffbase::ffwhich(ind, !is.na(ind))
-        covariateRef <- covariateRef[ind,]
-        
-        ind <- ffbase::ffmatch(x=covariates$covariateId, table=ff::as.ff(as.double(map[,'oldIds'])))
-        ind <- ffbase::ffwhich(ind, !is.na(ind))
-        covariates <- covariates[ind,]
-    }
-    if(is.null(map))
-        map <- data.frame(oldIds=oldIds, newIds=newIds)
-    
-    return(list(covariates=covariates,
-                covariateRef=covariateRef,
-                map=map))
-}
-
-##Helper function (calculates integral)
-f<-function(x,ageWeighting,C = 0.1658, beta = 0.04, discount, age){
-    ageWeighting * C *x *exp(-beta*x)*exp(-discount*(x-age))+ (1-ageWeighting)*exp(-discount*(x-age))
-}
-
-##Burden calculation function
-burden <- function(disabilityWeight,disabilityStartAge,duration,ageWeighting,discount,age){
-    disabilityWeight * integrate(f, lower = disabilityStartAge, upper = disabilityStartAge+duration, ageWeighting=ageWeighting, discount=discount, age=age )$value
-}

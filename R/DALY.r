@@ -86,3 +86,26 @@ calculateDALY <- function (outcomeData,
     return (result)
 }
 
+##Helper function for calculating integral in DALY function
+f<-function(x,ageWeighting,C = 0.1658, beta = 0.04, discount, age){
+    ageWeighting * C *x *exp(-beta*x)*exp(-discount*(x-age))+ (1-ageWeighting)*exp(-discount*(x-age))
+}
+
+#'Burden calculation function
+#'@param disabilityWeight
+#'@param disabilityStartAge
+#'@param duration
+#'@param ageWeighting
+#'@param discount
+#'@param age
+#'@export
+burden <- function(disabilityWeight,
+                   disabilityStartAge,
+                   duration,
+                   ageWeighting,
+                   discount,
+                   age){
+    burdenValue=disabilityWeight * integrate(f, lower = disabilityStartAge, upper = disabilityStartAge+duration, ageWeighting=ageWeighting, discount=discount, age=age )$value
+    return(burdenValue)
+}
+
