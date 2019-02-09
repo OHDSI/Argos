@@ -15,70 +15,59 @@
 # limitations under the License.
 
 #'get incidence data
-#' @param connectionDetails
-#' @param minDateUnit           minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')
-#'
+#'@param connectionDetails
+#'@param cdmDatabaseSchema          
+#'@param cohortDatabaseSchema
+#'@param outcomeDatabaseSchema
+#'@param covariateSettings
+#'@param cohortTable
+#'@param targetCohortId
+#'@param minDateUnit                minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')
 #'@export
 #'
-#'@import dplyr
 getIncidenceData<-function(connectionDetails, 
                            cdmDatabaseSchema,
                            cohortDatabaseSchema,
-                           cohortTable,
-                           covariateSettings,
                            outcomeDatabaseSchema,
-                           cohortId,
+                           cohortTable,
+                           targetCohortId,
                            minDateUnit = 'year'){
+    
+    
     plpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails, 
                                                   cdmDatabaseSchema = cdmDatabaseSchema,
                                                   cohortDatabaseSchema = cohortDatabaseSchema,
                                                   cohortTable = cohortTable,
-                                                  cohortId = cohortId,
+                                                  cohortId = targetCohortId,
                                                   covariateSettings = covariateSettings,
                                                   outcomeDatabaseSchema = cohortDatabaseSchema,
                                                   outcomeTable = cohortTable,
-                                                  outcomeIds = cohortId,
+                                                  outcomeIds = targetCohortId,
                                                   sampleSize = NULL)
-    #PatientLevelPrediction::savePlpData(plpData,file.path(outputFolder,paste0("plpData",Sys.time())))
     
-    # population <- PatientLevelPrediction::createStudyPopulation(plpData = plpData, 
-    #                                                             outcomeId = outcomeId,
-    #                                                             washoutPeriod = 0,
-    #                                                             firstExposureOnly = TRUE,
-    #                                                             removeSubjectsWithPriorOutcome = removeSubjectsWithPriorOutcome,
-    #                                                             priorOutcomeLookback = 99999,
-    #                                                             riskWindowStart = 0,
-    #                                                             riskWindowEnd = 0,
-    #                                                             addExposureDaysToStart = FALSE,
-    #                                                             addExposureDaysToEnd = FALSE,
-    #                                                             minTimeAtRisk = survivalTime[j]-1,
-    #                                                             requireTimeAtRisk = TRUE,
-    #                                                             includeAllOutcomes = TRUE,
-    #                                                             verbosity = "DEBUG")
-    
-    # covariateData <- FeatureExtraction::getDbCovariateData(connectionDetails = connectionDetails,
-    #                                                        cdmDatabaseSchema = cdmDatabaseSchema,
-    #                                                        cohortDatabaseSchema = cohortDatabaseSchema,
-    #                                                        cohortTable = cohortTable,
-    #                                                        cohortId = cohortId,
-    #                                                        rowIdField = "subject_id",
-    #                                                        covariateSettings = covariateSettings)
-
     resultData<-calculateNumberPerCovTime(plpData = plpData,
                                           population = NULL,
                                           minDateUnit = minDateUnit)
+    result<-list(data=resultData,
+                 targetCohortId = targetCohortId,
+                 minDateUnit = minDateUnit)
+    class(result)<-"incidenceData"
     
-    resultData <- list(data=resultData,
-                       cohortId = cohortId,
-                       minDateUnit = minDateUnit)
-    
-    return(resultData)
+    return(result)
 }
 
 #'calculate incidence data
-#' @param incidenceData
-#' @param basePopulation           
-#' @param baseVar           'startYear' or 'birthYear'
+#'@param incidenceData
+#'@param basePopulation
+#'@param standardization
+#'@param refPopulation
+#'@param Agestandardization
+#'@param genderStandardization
+#'@param startYearStandardization
+#'@param AgeSet
+#'@param genderSet
+#'@param startYearSet
+#'@param birthYearSet           
 #'@export
 calculateIncidence<-function(incidenceData = incidenceData,
                              basePopulation = basePop,

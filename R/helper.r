@@ -95,6 +95,7 @@ limitCovariatesToPopulation <- function(covariates, rowIds) {
 calculateNumberPerCovTime <- function(plpData,
                                       population = NULL,
                                       minDateUnit = 'year'){
+    
     if(is.null(population)){
         cohort<-ff::as.ram(plpData$cohort)
         covRef<-ff::as.ram(plpData$covariateRef)
@@ -102,11 +103,12 @@ calculateNumberPerCovTime <- function(plpData,
     } else {
         #load covariates
         #limit covariates of plpData to the population
-        covariates<-ff::as.ram(limitCovariatesToPopulation(covariates = plpData$covariates,rowIds = ff::as.ff(population$rowId)))
-        #load covariate reference
-        covRef<-ff::as.ram(plpData$covariateRef)
-        #limit covarite Ref to the existing covarites in the population
-        covRef <- covRef [covRef$covariateId %in% unique(covariates$covariateId), ]
+        plpData.mapped<-MapCovariates(covariates = plpData$covariates, 
+                                      covariateRef = plpData$covariateRef, 
+                                      population= population, 
+                                      map=NULL)
+        covariates<-ff::as.ram(plpData.mapped$covariates)
+        covRef<-ff::as.ram(plpData.mapped$covariateRef)
         cohort<-population
     }
     
@@ -199,3 +201,4 @@ calculateNumberPerCovTime <- function(plpData,
     }
     return(resultData)
 }
+
