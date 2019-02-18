@@ -26,64 +26,102 @@
 #'@import cowplot
 
 
-plotforCostPerMt<- function(costData,
-                            title,
-                            outputFolder,
-                            fileName,
-                            imageExtension = "png"){
+plotforCostPerMt<- function(costData,){
     costperMt<- costData %>%
+                filter( dateUnit<=12 & dateUnit>=-2) %>%
                 group_by(cohortStartYear, dateUnit) %>%
-                summarise(avgCostSumperMt = sum(totalChargeSum)/sum(subjectCount),
-                          avgCostPatientperMt = sum(paidByPatientSum)/sum(subjectCount),
-                          avgCostPayerperMt = sum(paidByPayerSum)/sum(subjectCount))
+                summarise( avgCostPatientperMt = (sum(paidByPatientSum)/sum(subjectCount))*0.001,
+                           avgCostPayerperMt = (sum(paidByPayerSum)/sum(subjectCount))*0.001,
+                           avgCostTotalperMt = ((sum(paidByPatientSum)+sum(paidByPayerSum))/sum(subjectCount))*0.001)
+    write.csv(costperMt, file = file.path(outputFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "csv")))
     
-    plottotalCostperMt<- ggplot2::ggplot(data = costperMt, ggplot2::aes(x = as.factor(dateUnit), y = avgCostSumperMt, group = cohortStartYear, colour = as.factor(cohortStartYear)))+
+    plottotalCostperMt<- ggplot2::ggplot(data = costperMt, ggplot2::aes(x = as.factor(dateUnit), y = avgCostTotalperMt, group = cohortStartYear, colour = as.factor(cohortStartYear)))+
                          ggplot2::geom_line()+ 
                          ggplot2::xlab("0 = diagnosis month") + 
-                         ggplot2::ylab("Total Cost per Month (won)") + 
-                         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Total Cost per month 1mt before and 10mt after diagnosis", sep = " ")) +
+                         ggplot2::ylab("Cost Paid by Patient per Month (won)") + 
+                         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Total Cost per month 2mt before and 11mt after diagnosis", sep = " ")) +
                          ggplot2::theme_bw()+
-                         ggplot2::theme(legend.title = ggplot2::element_blank())
-    ggplot2::ggsave(file.path(outputFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "imageExtension")), plottotalCostperMt, height = 30, width = 120, units = "cm")
-    
-    plotPatientCostperMt<- ggplot2::ggplot(data = costperMt, ggplot2::aes(x = as.factor(dateUnit), y = avgCostPatientperMt, group = cohortStartYear, colour = as.factor(cohortStartYear)))+
-                           ggplot2::geom_line()+
-                           ggplot2::xlab("0 = diagnosis month (won)")+
-                           ggplot2::ylab("Cost Paid by Patient per Month")+
-                           ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Cost by patient per month 1mt before and 10mt after diagnosis", sep = " ")) +
-                           ggplot2::theme_bw()+
-                           ggplot2::theme(legend.title = ggplot2::element_blank())
-    ggplot2::ggsave(file.path(outputFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PatientCostperMt", ".", "imageExtension")), plotPatientCostperMt, height = 30, width = 120, units = "cm")
-    
-    plotpayerCostperMt<- ggplot2::ggplot(data = costperMt, ggplot2::aes(x = as.factor(dateUnit), y = avgCostPayerperMt, group = cohortStartYear, colour = as.factor(cohortStartYear)))+
-                         ggplot2::geom_line()+
-                         ggplot2::xlab("0 = diagnosis month (won)")+
-                         ggplot2::ylab("Cost Paid by Payer per Month")+
-                         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Cost by payer per month 1mt before and 10mt after diagnosis", sep = " ")) +
-                         ggplot2::theme_bw()+
-                         ggplot2::theme(legend.title = ggplot2::element_blank())
-    ggplot2::ggsave(file.path(outputFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PayerCostperMt", ".", "imageExtension")), plotpayerCostperMt, height = 30, width = 120, units = "cm")
+                         ggplot2::scale_color_discrete(name = "diagnosis year")+
+                         ggplot2::theme(legend.title = element_blank(),
+                                        legend.text = element_text(size = 15),
+                                        plot.title = element_text(size = 17),
+                                        axis.text.x = element_text(size = 12),
+                                        axis.title.x = element_text(size = 15),
+                                        axis.text.y = element_text(size = 12),
+                                        axis.title.y = element_text(size = 15))    ggplot2::ggsave(file.path(outputFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "imageExtension")), plottotalCostperMt, height = 30, width = 120, units = "cm")
     
 }
 
-plotforCostPerYr<- function(costData,
-                            title,
-                            outputFolder,
-                            fileName,
-                            imageExtension = "png"){
-    costperYr<- costData %>%
-                mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
-                group_by(cohortStartYear, visitConceptId) %>%
-                summarise(avgCostSumperMt = sum(totalChargeSum)/sum(subjectCount)) 
+plotforCostPerYr<- function(costData){
+    costperYrTotalDiv<- costData %>%
+        filter( dateUnit == 0 ) %>%
+        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
+        group_by(cohortStartYear, visitConceptId) %>%
+        summarise(avgCostSumperYr = ((sum(paidByPayerSum)+sum(paidByPatientSum))/sum(subjectCount))*0.001) 
     
-    plotperYr<- ggplot2::ggplot(data = costperYr, ggplot2::aes(x = as.factor(cohortStartYear), y = avgCostSumperMt, group = visitConceptId, colour = as.factor(visitConceptId)))+
-                ggplot2::geom_point()+
-                ggplot2::geom_line()+
-                ggplot2::xlab("visit year")+
-                ggplot2::ylab("Total Cost per Year(won)")+
-                ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Cost per Year", sep = " "))+
-                ggplot2::theme_bw()+
-                ggplot2::theme(legend.title = ggplot2::element_blank())
-    ggplot2::ggsave(file.path(outputFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperYr", ".", "imageExtension")), plotperYr, height = 30, width = 100, units = "cm")
+    costperYrTotal<- costData %>%
+        filter( dateUnit == 0 ) %>%
+        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
+        group_by(cohortStartYear) %>%
+        summarise(avgCostSumperYr = ((sum(paidByPayerSum)+sum(paidByPatientSum))/sum(subjectCount))*0.001) %>%
+        mutate( visitConceptId = "totalAverage") 
+    
+    costpayerperYr<- costData %>%
+        filter( dateUnit == 0 ) %>%
+        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
+        group_by(cohortStartYear, visitConceptId) %>%
+        summarise(avgCostSumperYr = (sum(paidByPayerSum)/sum(subjectCount))*0.001) 
+    
+    costpatientperYr<- costData %>%
+        filter( dateUnit == 0 ) %>%
+        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
+        group_by(cohortStartYear, visitConceptId) %>%
+        summarise(avgCostSumperYr = (sum(paidByPatientSum)/sum(subjectCount))*0.001) 
+    
+    PlottotalcostperYrdiv<-ggplot2::ggplot(data = costperYrTotalDiv, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, group = visitConceptId, colour = visitConceptId))+
+        ggplot2::geom_point()+
+        ggplot2::geom_line(size = 0.8)+
+        ggplot2::geom_point(data = costperYrTotal, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, group = 1))+
+        ggplot2::geom_line(data = costperYrTotal, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, group = 1), size = 1.5, linetype = "dashed")+
+        ggplot2::xlab("diagnosis year")+
+        ggplot2::ylab("Total Cost per Year(1000 won)")+
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Total Cost during 1year after diagnosis", sep = " "))+
+        ggplot2::theme_bw()+
+        ggplot2::theme(legend.title = element_blank(),
+                       legend.text = element_text(size = 15),
+                       plot.title = element_text(size = 17),
+                       axis.text.x = element_text(size = 12),
+                       axis.title.x = element_text(size = 15),
+                       axis.text.y = element_text(size = 12),
+                       axis.title.y = element_text(size = 15))
+    
+    plotperYr_barplot_payer<- ggplot2::ggplot(data = costpayerperYr, ggplot2::aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
+        ggplot2::geom_bar(position = "dodge", stat = "identity", width = 0.5)+
+        ggplot2::xlab("diagnosis year")+
+        ggplot2::ylab("Total Cost per Year(1000 won)")+
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Cost paid by payer during 1year after diagnosis", sep = " "))+
+        ggplot2::theme_bw()+
+        ggplot2::theme(legend.title = element_blank(),
+                       legend.text = element_text(size = 15),
+                       plot.title = element_text(size = 17),
+                       axis.text.x = element_text(size = 12),
+                       axis.title.x = element_text(size = 15),
+                       axis.text.y = element_text(size = 12),
+                       axis.title.y = element_text(size = 15))
+    
+    plotperYr_barplot_patient<- ggplot2::ggplot(data = costpatientperYr, ggplot2::aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
+        ggplot2::geom_bar(position = "dodge", stat = "identity", width = 0.5)+
+        #ggplot2::geom_line(aes(colour = visitConceptId, group = visitConceptId), size = 0.8)+
+        ggplot2::xlab("diagnosis year")+
+        ggplot2::ylab("Total Cost per Year(1000 won)")+
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Cost paid by patient during 1year after diagnosis", sep = " "))+
+        ggplot2::theme_bw()+
+        ggplot2::theme(legend.title = element_blank(),
+                       legend.text = element_text(size = 15),
+                       plot.title = element_text(size = 17),
+                       axis.text.x = element_text(size = 12),
+                       axis.title.x = element_text(size = 15),
+                       axis.text.y = element_text(size = 12),
+                       axis.title.y = element_text(size = 15))
     
 }
