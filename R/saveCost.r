@@ -20,7 +20,7 @@
 #' @param cohortId           target Cohort Id, if this is -1, it will extract cost data for whole subject in the cohortTable
 #'@export
 #'
-#'@import dplyr
+#'@import ggplot2
 
 savecost<-function(outputFolder,
                       imageExtension = "png"){
