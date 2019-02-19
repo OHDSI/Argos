@@ -19,9 +19,7 @@
 ## incidence proportion plot by birth Year
 PlotByBirthInc<- function (incidencePropdata,
                         title,
-                        outputFolder,
-                        fileName,
-                        imageExtension = "png"){
+                        outputFolder){
     bybirth<- incidencePropdata %>%
               mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
               group_by(birthYear, age, genderConceptId) %>%
@@ -36,7 +34,6 @@ PlotByBirthInc<- function (incidencePropdata,
                   ggplot2::facet_wrap(~genderConceptId) +
                   ggplot2::ggtitle(title) + 
                   ggplot2::theme_bw()
-    ggplot2::ggsave(file.path(outputFolder, paste0(fileName,".",imageExtension) ), bybirthPlot, width = 30,height = 15,units = "cm" )  
 }
 
 #'@import dplyr
@@ -46,10 +43,7 @@ PlotByBirthInc<- function (incidencePropdata,
 PlotByDiagnosisInc <- function(incidencePropdata,
                             ageSpetitle,
                             ageAdjtitle,
-                            outputFolder,
-                            ageSpefileName,
-                            ageAdjfileName,
-                            imageExtension = "png"){
+                            outputFolder){
     ageSpe<- incidencePropdata %>%
              mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, age, genderConceptId) %>%
@@ -69,8 +63,7 @@ PlotByDiagnosisInc <- function(incidencePropdata,
                  ggplot2::facet_wrap(~genderConceptId) +
                  ggplot2::ggtitle(ageSpetitle) +  
                  ggplot2::theme_bw()
-    ggplot2::ggsave(file.path(outputFolder, paste0(ageSpefileName,".",imageExtension) ),ageSpePlot,  width = 30,height = 15,units = "cm" ) 
-    
+      
     ageAdjPlot<- ggplot2::ggplot(data = ageAdj, ggplot2::aes(x = as.factor(startYear), y = AgeadjProp, group = 1)) + 
                  ggplot2::geom_point() + 
                  ggplot2::geom_line(size = 1) +
@@ -79,5 +72,4 @@ PlotByDiagnosisInc <- function(incidencePropdata,
                  ggplot2::facet_wrap(~genderConceptId) +
                  ggplot2::ggtitle(ageAdjtitle) + 
                  ggplot2::theme_bw()
-    ggplot2::ggsave(file.path(outputFolder, paste0(ageAdjfileName,".",imageExtension) ), ageAdjPlot, width = 30,height = 15,units = "cm" ) 
 }
