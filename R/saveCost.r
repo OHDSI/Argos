@@ -15,20 +15,16 @@
 # limitations under the License.
 
 #'get cost data
-#' @param connectionDetails
-#' @param minCostDateUnit           minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'week' > day')
-#' @param cohortId           target Cohort Id, if this is -1, it will extract cost data for whole subject in the cohortTable
+#' @param 
 #'@export
 #'
 #'@import ggplot2
 
 savecost<-function(outputFolder,
-                      imageExtension = "png"){
+                   imageExtension = "png"){
     dir.create(file.path(outputFolder, "cost"))
     costFolder<-paste(outputFolder, "cost", sep = "/")
     
-    saveRDS(costData,file.path(costFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
-    write.csv(costData,file.path(costFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
     write.csv(costperMt, file = file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "csv")))
     
     ggsave(file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "png")), plottotalCostperMt, height = 15, width = 30, units = "cm")
@@ -41,5 +37,5 @@ savecost<-function(outputFolder,
     ggsave(file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperYr", ".", "png")), PlottotalcostperYrdiv, height = 10, width = 30, units = "cm")
     ggsave(file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PayerCostperYr", ".", "png")), plotperYr_barplot_payer, height = 10, width = 30, units = "cm")
     ggsave(file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PatientCostperYr", ".", "png")), plotperYr_barplot_patient, height = 10, width = 30, units = "cm")
-    
- }
+}
+
