@@ -33,7 +33,6 @@ plotforCostPerMt<- function(costData){
                 summarise( avgCostPatientperMt = (sum(paidByPatientSum)/sum(subjectCount))*0.001,
                            avgCostPayerperMt = (sum(paidByPayerSum)/sum(subjectCount))*0.001,
                            avgCostTotalperMt = ((sum(paidByPatientSum)+sum(paidByPayerSum))/sum(subjectCount))*0.001)
-    write.csv(costperMt, file = file.path(outputFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "csv")))
     
     plottotalCostperMt<- ggplot2::ggplot(data = costperMt, ggplot2::aes(x = as.factor(dateUnit), y = avgCostTotalperMt, group = cohortStartYear, colour = as.factor(cohortStartYear)))+
                          ggplot2::geom_line()+ 
@@ -48,8 +47,7 @@ plotforCostPerMt<- function(costData){
                                         axis.text.x = element_text(size = 12),
                                         axis.title.x = element_text(size = 15),
                                         axis.text.y = element_text(size = 12),
-                                        axis.title.y = element_text(size = 15))    ggplot2::ggsave(file.path(outputFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "imageExtension")), plottotalCostperMt, height = 30, width = 120, units = "cm")
-    
+                                        axis.title.y = element_text(size = 15))     
 }
 
 plotforCostPerYr<- function(costData){
