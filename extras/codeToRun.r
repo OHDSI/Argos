@@ -141,18 +141,13 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".rds" )))
     write.csv(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".csv" )))
 
-    PlotByBirthInc(incidencePropdata = incCal, 
-                   title = paste(cancerList$cohortName[[i]],"Cancer", "IncidenceProportionByBirthYr", sep = " "),
-                   outputFolder = outputFolder,
-                   fileName = paste0(cancerList$cohortName[[i]],"Cancer", "IncidenceProporByBirthyr"),
-                   imageExtension = "png")
+    PlotByBirthInc(incidencePropdata = incCal,
+                   outputFolder = outputFolder)
     PlotByDiagnosisInc(incidencePropdata = incCal,
-                       ageSpetitle = paste(cancerList$cohortName[[i]],"Cancer","IncidencePropAgeSpe", sep = " "),
-                       ageAdjtitle =  paste(cancerList$cohortName[[i]], "Cancer", "IncidencePropAgeAdj", sep = " "),
-                       outputFolder = outputFolder,
-                       ageSpefileName = paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeSpe"),
-                       ageAdjfileName =  paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeAdj"),
-                       imageExtension = "png")
+                       outputFolder = outputFolder)
+    
+    saveIncidence(outputFolder,
+                  imageExtension = "png")
 }
 
 ####calculate the mortality####
@@ -233,6 +228,9 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
     write.csv(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
     
+    plotforCostPerMt(costData)
+
+        
     costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
                                       cdmDatabaseSchema=cdmDatabaseSchema,
                                       cohortDatabaseSchema=cohortDatabaseSchema,
@@ -246,6 +244,11 @@ for (i in seq(cancerList$cohortId)){
                                       conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
     saveRDS(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
     write.csv(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
+
+    plotforCostPerYr(costData)
+    
+    savecost(outputFolder,
+             imageExtension = "png")
 }
 
 disabilityWeight <- loadDisabilityWeight('KOR',2012)
