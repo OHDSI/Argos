@@ -26,7 +26,7 @@
 #'@import cowplot
 
 
-plotforCostPerMt<- function(costData,){
+plotforCostPerMt<- function(costData){
     costperMt<- costData %>%
                 filter( dateUnit<=12 & dateUnit>=-2) %>%
                 group_by(cohortStartYear, dateUnit) %>%
