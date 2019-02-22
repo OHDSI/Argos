@@ -18,13 +18,13 @@
 ## save incidence talbe and incidence proportion plot
 
 saveIncidence<-function(outputFolder,
-                      imageExtension = "png"){
-    dir.create(file.path(outputFolder, "incidence"))
+                        imageExtension = "png"){
+    ifelse(!dir.exists(file.path(outputFolder, "incidence")), dir.create(file.path(outputFolder, "incidence")), print("saving in incidence folder"))
     incidenceFolder<-paste(outputFolder, "incidence", sep = "/")
     
     saveRDS(incCal,file.path(incidenceFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".rds" )))
     write.csv(incCal,file.path(incidenceFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".csv" )))
-    
+
     ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidenceProporByBirthyr"),".",imageExtension) ), bybirthPlot, width = 30,height = 15,units = "cm" )  
     ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeSpe"),".",imageExtension) ),ageSpePlot,  width = 30,height = 15,units = "cm" ) 
     ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeAdj"),".",imageExtension) ), ageAdjPlot, width = 30,height = 15,units = "cm" ) 

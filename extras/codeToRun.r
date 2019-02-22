@@ -13,7 +13,6 @@ cohortTable <- "argos_cohort"
 outputFolder <- "D:/onco_achilles"
 options(fftempdir = "D:/FFtemp")
 
-
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
 
 connectionDetails<-DatabaseConnector::createConnectionDetails(dbms = 'sql server',
@@ -106,7 +105,7 @@ DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverall
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = TRUE, 
                                                                 useDemographicsAge = TRUE
 )
-
+i<-4
 for (i in seq(cancerList$cohortId)){
     ##get incidence Data
     incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails, 
@@ -140,12 +139,13 @@ for (i in seq(cancerList$cohortId)){
                                                           1975:1979, 1980:1989))
     saveRDS(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".rds" )))
     write.csv(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".csv" )))
-
-    PlotByBirthInc(incidencePropdata = incCal,
-                   outputFolder = outputFolder)
-    PlotByDiagnosisInc(incidencePropdata = incCal,
-                       outputFolder = outputFolder)
     
+    bybirthPlot<-PlotByBirthInc(incidencePropdata = incCal,
+                                outputFolder = outputFolder)
+    ageSpePlot<-PlotByDiagnosisIncAgeS(incidencePropdata = incCal,
+                                       outputFolder = outputFolder)
+    ageAdjPlot<-PlotByDiagnosisIncAgeAd(incidencePropdata = incCal,
+                                        outputFolder = outputFolder)
     saveIncidence(outputFolder,
                   imageExtension = "png")
 }
@@ -210,10 +210,10 @@ for (i in seq(cancerList$cohortId)){
         
     }
 }
-i<-1
+i<-2
 ##Extract Cost Data
 for (i in seq(cancerList$cohortId)){
-    costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
+    costMtData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
                                       cdmDatabaseSchema=cdmDatabaseSchema,
                                       cohortDatabaseSchema=cohortDatabaseSchema,
                                       vocabularyDatabaseSchema = vocabularyDatabaseSchema,
@@ -225,13 +225,12 @@ for (i in seq(cancerList$cohortId)){
                                       specifyCondition = FALSE,
                                       conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
     
-    saveRDS(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
-    write.csv(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
+    saveRDS(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
+    write.csv(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
     
-    plotforCostPerMt(costData)
-
+    plottotalCostperMt<-plotforCostPerMt(costData = costMtData)
         
-    costData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
+    costYrData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
                                       cdmDatabaseSchema=cdmDatabaseSchema,
                                       cohortDatabaseSchema=cohortDatabaseSchema,
                                       vocabularyDatabaseSchema = vocabularyDatabaseSchema,
@@ -242,10 +241,12 @@ for (i in seq(cancerList$cohortId)){
                                       minCostDateUnit = 'year',
                                       specifyCondition = FALSE,
                                       conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
-    saveRDS(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
-    write.csv(costData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
+    saveRDS(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
+    write.csv(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
 
-    plotforCostPerYr(costData)
+    PlottotalcostperYrdiv<-plotforCostPerYrdiv(costData = costYrData)
+    plotperYrBarplotPayer<-plotforCostPerYrBarPay(costData = costYrData)
+    plotperYrBarplotPatient<-plotforCostPerYrBarPat(costData = costMtData)
     
     savecost(outputFolder,
              imageExtension = "png")

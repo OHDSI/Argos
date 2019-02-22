@@ -25,7 +25,6 @@
 #'@import ggplot2
 #'@import cowplot
 
-
 plotforCostPerMt<- function(costData){
     costperMt<- costData %>%
                 filter( dateUnit<=12 & dateUnit>=-2) %>%
@@ -47,10 +46,12 @@ plotforCostPerMt<- function(costData){
                                         axis.text.x = element_text(size = 12),
                                         axis.title.x = element_text(size = 15),
                                         axis.text.y = element_text(size = 12),
-                                        axis.title.y = element_text(size = 15))     
+                                        axis.title.y = element_text(size = 15))
+    
+    return(plottotalCostperMt)
 }
 
-plotforCostPerYr<- function(costData){
+plotforCostPerYrdiv<- function(costData){
     costperYrTotalDiv<- costData %>%
         filter( dateUnit == 0 ) %>%
         mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
@@ -63,18 +64,6 @@ plotforCostPerYr<- function(costData){
         group_by(cohortStartYear) %>%
         summarise(avgCostSumperYr = ((sum(paidByPayerSum)+sum(paidByPatientSum))/sum(subjectCount))*0.001) %>%
         mutate( visitConceptId = "totalAverage") 
-    
-    costpayerperYr<- costData %>%
-        filter( dateUnit == 0 ) %>%
-        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
-        group_by(cohortStartYear, visitConceptId) %>%
-        summarise(avgCostSumperYr = (sum(paidByPayerSum)/sum(subjectCount))*0.001) 
-    
-    costpatientperYr<- costData %>%
-        filter( dateUnit == 0 ) %>%
-        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
-        group_by(cohortStartYear, visitConceptId) %>%
-        summarise(avgCostSumperYr = (sum(paidByPatientSum)/sum(subjectCount))*0.001) 
     
     PlottotalcostperYrdiv<-ggplot2::ggplot(data = costperYrTotalDiv, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, group = visitConceptId, colour = visitConceptId))+
         ggplot2::geom_point()+
@@ -93,6 +82,16 @@ plotforCostPerYr<- function(costData){
                        axis.text.y = element_text(size = 12),
                        axis.title.y = element_text(size = 15))
     
+    return(PlottotalcostperYrdiv)
+}
+
+plotforCostPerYrBarPay<- function(costData){
+    costpayerperYr<- costData %>%
+        filter( dateUnit == 0 ) %>%
+        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
+        group_by(cohortStartYear, visitConceptId) %>%
+        summarise(avgCostSumperYr = (sum(paidByPayerSum)/sum(subjectCount))*0.001) 
+    
     plotperYr_barplot_payer<- ggplot2::ggplot(data = costpayerperYr, ggplot2::aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
         ggplot2::geom_bar(position = "dodge", stat = "identity", width = 0.5)+
         ggplot2::xlab("diagnosis year")+
@@ -106,6 +105,16 @@ plotforCostPerYr<- function(costData){
                        axis.title.x = element_text(size = 15),
                        axis.text.y = element_text(size = 12),
                        axis.title.y = element_text(size = 15))
+    
+    return(plotperYr_barplot_payer)
+}
+
+plotforCostPerYrBarPat<- function(costData){
+    costpatientperYr<- costData %>%
+        filter( dateUnit == 0 ) %>%
+        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
+        group_by(cohortStartYear, visitConceptId) %>%
+        summarise(avgCostSumperYr = (sum(paidByPatientSum)/sum(subjectCount))*0.001) 
     
     plotperYr_barplot_patient<- ggplot2::ggplot(data = costpatientperYr, ggplot2::aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
         ggplot2::geom_bar(position = "dodge", stat = "identity", width = 0.5)+
@@ -122,4 +131,6 @@ plotforCostPerYr<- function(costData){
                        axis.text.y = element_text(size = 12),
                        axis.title.y = element_text(size = 15))
     
+    return(plotperYr_barplot_patient)
 }
+
