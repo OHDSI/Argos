@@ -2,16 +2,16 @@
 % Please edit documentation in R/calculateOutcome.r
 \name{getOutcomeData}
 \alias{getOutcomeData}
-\title{calculate outcome incidence data}
+\title{get outcome  data}
 \usage{
 getOutcomeData(connectionDetails = connectionDetails,
   cdmDatabaseSchema = cdmDatabaseSchema,
   cohortDatabaseSchema = cohortDatabaseSchema,
-  cohortTable = cohortTable, covariateSettings = covariateSettings,
   outcomeDatabaseSchema = cohortDatabaseSchema,
-  cohortId = cancerList$cohortId[i], outcomeId = outcomeId,
-  requireTimeAtRisk = TRUE, riskWindowStart = 0, riskWindowEnd = 365
-  * 2, removeSubjectsWithPriorOutcome = TRUE, minDateUnit = "year")
+  cohortTable = cohortTable, covariateSettings = covariateSettings,
+  targetCohortId, outcomeId, requireTimeAtRisk = TRUE,
+  riskWindowStart = 0, riskWindowEnd = 365 * 2,
+  removeSubjectsWithPriorOutcome = TRUE, minDateUnit = "year")
 }
 \arguments{
 \item{basePopulation}{}
@@ -19,5 +19,5 @@ getOutcomeData(connectionDetails = connectionDetails,
 \item{baseVar}{'startYear' or 'birthYear'}
 }
 \description{
-calculate outcome incidence data
+get outcome  data
 }

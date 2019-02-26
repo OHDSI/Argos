@@ -15,9 +15,7 @@ calculateIncidence(incidenceData = incidenceData,
   1980:1984, 1985:1989))
 }
 \arguments{
-\item{basePopulation}{}
-
-\item{baseVar}{'startYear' or 'birthYear'}
+\item{birthYearSet}{}
 }
 \description{
 calculate incidence data

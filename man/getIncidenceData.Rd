@@ -5,10 +5,12 @@
 \title{get incidence data}
 \usage{
 getIncidenceData(connectionDetails, cdmDatabaseSchema,
-  cohortDatabaseSchema, cohortTable, covariateSettings,
-  outcomeDatabaseSchema, cohortId, minDateUnit = "year")
+  cohortDatabaseSchema, outcomeDatabaseSchema, cohortTable, targetCohortId,
+  minDateUnit = "year")
 }
 \arguments{
+\item{cdmDatabaseSchema}{}
+
 \item{minDateUnit}{minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')}
 }
 \description{

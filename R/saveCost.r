@@ -14,13 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-#' @param outputFolder
-#' @param imageExtension
-#'@export
-#'
+#'saving tables and plot image which are the results cost analysis
+#'@param outputFolder
+#'@param imageExtension
 #'@import ggplot2
-# saving tables and plot image which are the results cost analysis
+#'@export
 savecost<-function(outputFolder,
                    imageExtension = "png"){
     ifelse(!dir.exists(file.path(outputFolder, "cost")), dir.create(file.path(outputFolder, "cost")), print("saving in cost folder"))
