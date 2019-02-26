@@ -48,7 +48,7 @@ PlotByBirthInc<- function (incidencePropdata,
 #'@import dplyr
 #'@import ggplot2
 #'@export
-## incidence proportion plot by diagnosis year 
+## Age specified incidence proportion plot by diagnosis year 
 PlotByDiagnosisIncAgeS <- function(incidencePropdata,
                             outputFolder){
     ageSpe<- incidencePropdata %>%
@@ -77,6 +77,10 @@ PlotByDiagnosisIncAgeS <- function(incidencePropdata,
     return(ageSpePlot)
   }
 
+#'@import dplyr
+#'@import ggplot2
+#'@export
+## Age adjusted incidence proportion plot by diagnosis year 
 PlotByDiagnosisIncAgeAd <- function(incidencePropdata,
                                    outputFolder){
     ageAdj<- incidencePropdata %>%
