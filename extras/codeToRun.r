@@ -10,8 +10,8 @@ vocabularyDatabaseSchema  <- "NHIS_NSC.dbo"
 cohortDatabaseSchema <- "ONCOACHILLES.dbo"
 
 cohortTable <- "argos_cohort"
-outputFolder <- "/home/dbwls5223/outputFolder"
-options(fftempdir = "/home/dbwls5223/FFtemp")
+outputFolder <- "D:/outputFolder"
+options(fftempdir = "D:/fftemp")
 
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
 
