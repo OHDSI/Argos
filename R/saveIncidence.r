@@ -13,12 +13,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#' @param outputFolder
-#' @param imageExtension
+#'saving tables and plot image which are the results incidence analysis
+#'@param outputFolder
+#'@param imageExtension
 #'@import ggplot2
 #'@export
-## saving tables and plot image which are the results incidence analysis
-
 saveIncidence<-function(outputFolder,
                         imageExtension = "png"){
     ifelse(!dir.exists(file.path(outputFolder, "incidence")), dir.create(file.path(outputFolder, "incidence")), print("saving in incidence folder"))
