@@ -24,7 +24,7 @@ savecost<-function(outputFolder,
     ifelse(!dir.exists(file.path(outputFolder, "cost")), dir.create(file.path(outputFolder, "cost")), print("saving in cost folder"))
     costFolder<-paste(outputFolder, "cost", sep = "/")
     
-    write.csv(costperMt, file = file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "csv")))
+    # write.csv(costperMt, file = file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", "csv")))
     
     ggsave(file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", imageExtension)), plottotalCostperMt, height = 15, width = 30, units = "cm")
     

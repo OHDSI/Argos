@@ -243,7 +243,7 @@ for (i in seq(cancerList$cohortId)){
 
     PlottotalcostperYrdiv<-Argos::plotforCostPerYrdiv(costData = costYrData)
     plotperYrBarplotPayer<-Argos::plotforCostPerYrBarPay(costData = costYrData)
-    plotperYrBarplotPatient<-Argos::plotforCostPerYrBarPat(costData = costMtData)
+    plotperYrBarplotPatient<-Argos::plotforCostPerYrBarPat(costData = costYrData)
     
     Argos::savecost(outputFolder,
                     imageExtension = "png")
