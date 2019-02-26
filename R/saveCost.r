@@ -28,10 +28,10 @@ savecost<-function(outputFolder,
     
     ggsave(file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperMt", ".", imageExtension)), plottotalCostperMt, height = 15, width = 30, units = "cm")
     
-    write.csv(costperYrTotalDiv, file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperYrDividedByVisit", ".", "csv")))
-    write.csv(costperYrTotal, file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperYrTotalAvg", ".", "csv")))
-    write.csv(costpayerperYr, file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PaidByPayer", ".", "csv")))
-    write.csv(costpatientperYr, file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PaidByPatient", ".", "csv")))
+    # write.csv(costperYrTotalDiv, file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperYrDividedByVisit", ".", "csv")))
+    # write.csv(costperYrTotal, file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperYrTotalAvg", ".", "csv")))
+    # write.csv(costpayerperYr, file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PaidByPayer", ".", "csv")))
+    # write.csv(costpatientperYr, file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PaidByPatient", ".", "csv")))
     
     ggsave(file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "TotalCostperYr", ".", imageExtension)), PlottotalcostperYrdiv, height = 10, width = 30, units = "cm")
     ggsave(file.path(costFolder, paste0(cancerList$cohortName[[i]], "Cancer", "PayerCostperYr", ".", imageExtension)), plotperYrBarplotPayer, height = 10, width = 30, units = "cm")
