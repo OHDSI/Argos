@@ -13,18 +13,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-#'get plot for cost 
 #'@param costData
 #'@param outputFolder  
 #' 
-#'@export
+
 #'
 #'@import dplyr
 #'@import ggplot2
-#'@import cowplot
-
+#'@export
+#'monthly cost from 2months before diagnosis to 12months after diagnosis
 plotforCostPerMt<- function(costData){
     costperMt<- costData %>%
                 filter( dateUnit<=12 & dateUnit>=-2) %>%
@@ -51,6 +48,11 @@ plotforCostPerMt<- function(costData){
     return(plottotalCostperMt)
 }
 
+#'
+#'@import dplyr
+#'@import ggplot2
+#'@export
+#'the total cost of the diagnosed year 
 plotforCostPerYrdiv<- function(costData){
     costperYrTotalDiv<- costData %>%
         filter( dateUnit == 0 ) %>%
@@ -85,6 +87,11 @@ plotforCostPerYrdiv<- function(costData){
     return(PlottotalcostperYrdiv)
 }
 
+#'
+#'@import dplyr
+#'@import ggplot2
+#'@export
+#'the cost of the diagnosed year paid by payer  
 plotforCostPerYrBarPay<- function(costData){
     costpayerperYr<- costData %>%
         filter( dateUnit == 0 ) %>%
@@ -109,6 +116,11 @@ plotforCostPerYrBarPay<- function(costData){
     return(plotperYr_barplot_payer)
 }
 
+#'
+#'@import dplyr
+#'@import ggplot2
+#'@export
+#'the cost of the diagnosed year paid by patient
 plotforCostPerYrBarPat<- function(costData){
     costpatientperYr<- costData %>%
         filter( dateUnit == 0 ) %>%
