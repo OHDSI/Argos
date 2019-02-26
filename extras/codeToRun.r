@@ -10,8 +10,8 @@ vocabularyDatabaseSchema  <- "NHIS_NSC.dbo"
 cohortDatabaseSchema <- "ONCOACHILLES.dbo"
 
 cohortTable <- "argos_cohort"
-outputFolder <- "D:/onco_achilles"
-options(fftempdir = "D:/FFtemp")
+outputFolder <- "/home/dbwls5223/outputFolder"
+options(fftempdir = "/home/dbwls5223/FFtemp")
 
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
 
@@ -140,14 +140,14 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".rds" )))
     write.csv(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".csv" )))
     
-    bybirthPlot<-PlotByBirthInc(incidencePropdata = incCal,
-                                outputFolder = outputFolder)
-    ageSpePlot<-PlotByDiagnosisIncAgeS(incidencePropdata = incCal,
+    bybirthPlot<-Argos::PlotByBirthInc(incidencePropdata = incCal,
                                        outputFolder = outputFolder)
-    ageAdjPlot<-PlotByDiagnosisIncAgeAd(incidencePropdata = incCal,
-                                        outputFolder = outputFolder)
-    saveIncidence(outputFolder,
-                  imageExtension = "png")
+    ageSpePlot<-Argos::PlotByDiagnosisIncAgeS(incidencePropdata = incCal,
+                                              outputFolder = outputFolder)
+    ageAdjPlot<-Argos::PlotByDiagnosisIncAgeAd(incidencePropdata = incCal,
+                                               outputFolder = outputFolder)
+    Argos::saveIncidence(outputFolder,
+                         imageExtension = "png")
 }
 
 ####calculate the mortality####
@@ -244,12 +244,12 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
     write.csv(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
 
-    PlottotalcostperYrdiv<-plotforCostPerYrdiv(costData = costYrData)
-    plotperYrBarplotPayer<-plotforCostPerYrBarPay(costData = costYrData)
-    plotperYrBarplotPatient<-plotforCostPerYrBarPat(costData = costMtData)
+    PlottotalcostperYrdiv<-Argos::plotforCostPerYrdiv(costData = costYrData)
+    plotperYrBarplotPayer<-Argos::plotforCostPerYrBarPay(costData = costYrData)
+    plotperYrBarplotPatient<-Argos::plotforCostPerYrBarPat(costData = costMtData)
     
-    savecost(outputFolder,
-             imageExtension = "png")
+    Argos::savecost(outputFolder,
+                    imageExtension = "png")
 }
 
 disabilityWeight <- loadDisabilityWeight('KOR',2012)
