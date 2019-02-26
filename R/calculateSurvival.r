@@ -107,10 +107,7 @@ calculateSurvival <- function(survivalData = survivalData,
                               genderSet = list(8507,8532),
                               startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
                               birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989)){
-    
-    
-    
-    
+
     settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet, birthYear = birthYearSet)
     expanded.set<-expand.grid(settings)
     
@@ -126,12 +123,22 @@ calculateSurvival <- function(survivalData = survivalData,
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear)) %>%
                 filter(birthYear %in% unlist(expanded.set[i,]$birthYear)) %>%
-                summarize(survivalrate1Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*1),
-                          survivalrate3Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*3),
-                          survivalrate5Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*5))
-            
-            if(df$survivalrate5Yr ==0 | is.null(df$survivalrate5Yr) | is.na(df$survivalrate5Yr)) next
+                filter(startYear <= 2013 - 5) 
             if(nrow(df)==0) next
+            
+            surv<-df %>%
+                summarise(survival1Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*1)$surv,
+                          survival3Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*3)$surv,
+                          survival5Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*5)$surv) %>%
+                mutate(age = min(unlist(expanded.set[i,]$age)),
+                       startYear = min(unlist(expanded.set[i,]$startYear)),
+                       birthYear = min(unlist(expanded.set[i,]$birthYear)),
+                       genderConceptId = unlist(expanded.set[i,]$gender))
+            
+            # if(df$survivalrate5Yr ==0 | is.null(df$survivalrate5Yr) | is.na(df$survivalrate5Yr)) next
+            # 
+            # 
+            # df<-dplyr::inner_join()
     #         
     #         df<-dplyr::inner_join(df,refPopulation,by=c("age"="startAge", "genderConceptId"="genderConceptId"))
     #         tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
@@ -165,10 +172,11 @@ calculateSurvival <- function(survivalData = survivalData,
     #                            outcomeProportion = survival)
     #         resultDf<-rbind(resultDf,tempDf)
     #     }
-    # }
+    
     # resultDf<-unique(resultDf)
     # return(resultDf)
-    
+        }
+    }
 }
 
 sum(df$outcomeNum, na.rm = TRUE)/sum(df$targetNum, na.rm = TRUE)
