@@ -147,6 +147,43 @@ for (i in seq(cancerList$cohortId)){
                          imageExtension = "png")
 }
 
+####calculate the survival####
+for (i in seq(cancerList$cohortId)){
+    SurvData<-readySurvData(connectionDetails = connectionDetails, 
+                          cdmDatabaseSchema = cdmDatabaseSchema,
+                          cohortDatabaseSchema = cohortDatabaseSchema,
+                          outcomeDatabaseSchema = cohortDatabaseSchema ,
+                          cohortTable = cohortTable,
+                          covariateSettings = covariateSettings,
+                          targetCohortId,
+                          outcomeId,
+                          requireTimeAtRisk = FALSE,
+                          riskWindowStart = 0,
+                          riskWindowEnd = 365*5,
+                          removeSubjectsWithPriorOutcome = TRUE,
+                          minDateUnit = "year")
+    
+    agedivSurvCal<-calculateSurvival(survivalData = survivalData,
+                                     refPopulation = refPop,
+                                     #standardization = "direct",
+                                     #Agestandardization = TRUE,
+                                     #genderStandardization = TRUE,
+                                     #startYearStandardization = TRUE,
+                                     AgeSet = list(30:39,
+                                                   40:49,
+                                                   50:59,
+                                                   60:69,
+                                                   70:79,
+                                                   80:99),
+                                     genderSet = list(8507,8532),
+                                     startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                     birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
+    
+    saveRDS(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    write.csv(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    
+}
+
 ####calculate the mortality####
 for (i in seq(cancerList$cohortId)){
     for (j in seq(survivalTime)){

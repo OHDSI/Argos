@@ -1,3 +1,9 @@
+
+#' get outcome, survivaltime, needed variables 
+#' @param plpData
+#' @param population
+#' @import dplyr
+#' @export
 getsurvData<-function(plpData = plpData,
                       population = population){
     #get age data
@@ -21,14 +27,17 @@ getsurvData<-function(plpData = plpData,
         select(subjectId, age, genderConceptId, startYear, birthYear, outcomeCount, survivalTime)
 }
 
-survivalCal<-function(data = data,
-                      survivalDuration = survivalTime,
+#' calculate survival rate using survival package
+#' @param survivalDuration
+#' @param outcomeCount
+#' @param survivalDurationTime
+#' @import survival
+#' @export
+survivalCal<-function(survivalDuration = survivalTime,
                       outcomeCount = outcomeCount,
-                      targetSurvivalTime = time){
+                      survivalDurationTime = survivalDurationTime){
     
-    survivalRate<-summary(survfit(Surv(survivalDuration, outcomeCount)~1, data = data), time = targetSurvivalTime)$surv
+    survivalRate<-summary(survfit(Surv(survivalDuration, outcomeCount)~1), time = survivalDurationTime)$surv
     return(survivalRate)
 }
-summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*1)$surv
 
-survivalCal(survivalDuration)
