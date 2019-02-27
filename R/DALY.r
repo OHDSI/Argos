@@ -74,27 +74,45 @@ calculateDALY <- function (outcomeData,
     cohort <- cohort %>%
         dplyr::inner_join(refLifeExpectancy, by = c("age"="startAge", "gender"="genderConceptId","startYear"= "startYear"))
     
-    #calculate YLL (Years of Life Lost)
-    ydd = burden(disabilityWeight= 1.00, 
-                 disabilityStartAge=cohort$ageAtOutcome, 
-                 duration= cohort$lifeExpAtOutcome, 
-                 ageWeighting=ageWeighting, 
-                 discount=discount, 
-                 age=cohort$age)
+    cohortWithOutcome<-cohort[cohort$outcomeCount>=1,]
     
-    yld = burden(disabilityWeight= disabilityWeight,
-                 disabilityStartAge = cohort2$startYear, 
-                 duration=cohort2$survivalTime/365, 
-                 ageWeighting=ageWeighting, 
-                 discount=discount, 
-                 age=cohort2$age)
-
+    #calculate YLL (Years of Life Lost)
+    yll<-apply(cohortWithOutcome,MARGIN = 1,FUN = function(x){
+        burden(disabilityWeight= 1.00, 
+               disabilityStartAge=as.numeric(x[["ageAtOutcome"]]), 
+               duration= as.numeric(x[["expectedLifeRemained"]]),
+               ageWeighting=ageWeighting, 
+               discount=discount, 
+               age=as.numeric(x[["age"]]))
+    })
+    
+    #calculate YLL (Years of Life Lost)
+    yll<-apply(cohortWithOutcome,MARGIN = 1,FUN = function(x){
+        burden(disabilityWeight= 1.00, 
+               disabilityStartAge=as.numeric(x[["ageAtOutcome"]]), 
+               duration= as.numeric(x[["expectedLifeRemained"]]),
+               ageWeighting=ageWeighting, 
+               discount=discount, 
+               age=as.numeric(x[["age"]]))
+    })
+    
+    #calculate YLD (Years Lost due to Disability)
+    yld<-apply(cohort,MARGIN = 1,FUN = function(x){
+        burden(disabilityWeight= disabilityWeight, 
+               disabilityStartAge=as.numeric(x[["age"]]), 
+               duration= as.numeric(x[["survivalTime"]])/365,
+               ageWeighting=ageWeighting, 
+               discount=discount, 
+               age=as.numeric(x[["age"]]))
+    })
+    
     result = data.frame(yllSum = sum(yll,na.rm =TRUE),
                         yldSum = sum(yld,na.rm =TRUE),
                         dalySum = sum(yll,na.rm =TRUE) + sum(yld,na.rm =TRUE),
-                        yllPerEvent = mean(yll, na.rm = TRUE),
-                        yldPerEvent = mean(yld, na.rm = TRUE),
-                        dalyPerEvent = mean(yll,na.rm =TRUE) + mean(yld,na.rm =TRUE))
+                        yllPerEvent = sum(yll, na.rm = TRUE)/nrow(cohort),
+                        yldPerEvent = sum(yld, na.rm = TRUE)/nrow(cohort),
+                        dalyPerEvent = sum(yll,yld,na.rm =TRUE)/nrow(cohort)
+                        )
     
     return (result)
 }
