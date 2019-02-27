@@ -21,5 +21,14 @@ getsurvData<-function(plpData = plpData,
         select(subjectId, age, genderConceptId, startYear, birthYear, outcomeCount, survivalTime)
 }
 
+survivalCal<-function(data = data,
+                      survivalDuration = survivalTime,
+                      outcomeCount = outcomeCount,
+                      targetSurvivalTime = time){
+    
+    survivalRate<-summary(survfit(Surv(survivalDuration, outcomeCount)~1, data = data), time = targetSurvivalTime)$surv
+    return(survivalRate)
+}
+summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*1)$surv
 
-
+survivalCal(survivalDuration)

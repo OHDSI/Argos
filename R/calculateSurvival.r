@@ -51,7 +51,7 @@ getSurvData<-function(connectionDetails = connectionDetails,
                          outcomeId,
                          requireTimeAtRisk = TRUE,
                          riskWindowStart = 0,
-                         riskWindowEnd = 365*11,
+                         riskWindowEnd = 0,
                          removeSubjectsWithPriorOutcome = TRUE,
                          minDateUnit = "year"){
     plpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails,
@@ -122,16 +122,43 @@ calculateSurvival <- function(survivalData = survivalData,
                 filter(age %in% unlist(expanded.set[i,]$age)) %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear)) %>%
-                filter(birthYear %in% unlist(expanded.set[i,]$birthYear)) %>%
-                filter(startYear <= 2013 - 5) 
+                filter(birthYear %in% unlist(expanded.set[i,]$birthYear)) 
             if(nrow(df)==0) next
             
+            surv<-as.data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
+                                age = min(unlist(expanded.set[i,]$age)),
+                                birthYear = min(unlist(expanded.set[i,]$birthYear)),
+                                genderConceptId = unlist(expanded.set[i,]$gender),
+                                survival1Yr = ifelse(df$startYear<=2012-1, 
+                                                     survivalCal(data = df,
+                                                                 survivalDuration = survivalTime,
+                                                                 outcomeCount = outcomeCount,
+                                                                 targetSurvivalTime = 365*1),
+                                                     NA),
+                                survival3Yr = ifelse(df$startYear<=2012-3, 
+                                                     survivalCal(survivalDuration = df$survivalTime,
+                                                                 outcomeCount = df$outcomeCount,
+                                                                 targetSurvivalTime = 365*3),
+                                                     NA),
+                                survival5Yr = ifelse(df$startYear<=2012-5, 
+                                                     survivalCal(survivalDuration = df$survivalTime,
+                                                                 outcomeCount = df$outcomeCount,
+                                                                 targetSurvivalTime = 365*5),
+                                                     NA))
             surv<-df %>%
-                summarise(survival1Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*1)$surv,
-                          survival3Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*3)$surv,
-                          survival5Yr = summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*5)$surv) %>%
+                group_by(startYear)%>%
+                summarise(survival1Yr = ifelse(startYear<=2012-1,
+                                               survivalCal(survivalDuration = survivalTime,
+                                                           outcomeCount = outcomeCount,
+                                                           targetSurvivalTime = 365*1),
+                                               NA),
+                          survival3Yr = ifelse(startYear<=2012-3,
+                                               summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*3)$surv,
+                                               NA),
+                          survival5Yr = ifelse(startYear<=2012-5, 
+                                               summary(survfit(Surv(survivalTime, outcomeCount)~1), time = 365*5)$surv, 
+                                               NA)) %>%
                 mutate(age = min(unlist(expanded.set[i,]$age)),
-                       startYear = min(unlist(expanded.set[i,]$startYear)),
                        birthYear = min(unlist(expanded.set[i,]$birthYear)),
                        genderConceptId = unlist(expanded.set[i,]$gender))
             
