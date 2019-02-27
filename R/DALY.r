@@ -27,11 +27,11 @@
 #' @export
 calculateDALY <- function (outcomeData,
                            refLifeExpectancy,
-                           disabilityWeight=0,
+                           disabilityWeight=0.5,
                            outcomeDisabilityWeight = 1,
                            minTimeAtRisk,
                            discount = 0.3,
-                           ageWeghting =TRUE,
+                           ageWeighting =TRUE,
                            outputFolder){
     
     #load covariates
@@ -43,45 +43,76 @@ calculateDALY <- function (outcomeData,
     covRef <- covRef [covRef$covariateId %in% unique(covariates$covariateId), ]
     cohort<-outcomeData$population
     
+    #extract only age/gender covariate from covariates
+    ageCov<-covariates[covariates$covariateId==covRef[covRef$covariateName=="age in years","covariateId"],c("rowId","covariateValue")]#covariateId 1002
+    maleCov <-covariates[covariates$covariateId==covRef[covRef$covariateName=="gender = MALE","covariateId"],c("rowId","covariateValue")]#covariateId 8507001 #8507
+    femaleCov <-covariates[covariates$covariateId==covRef[covRef$covariateName=="gender = FEMALE","covariateId"],c("rowId","covariateValue")]#covariateId 8532001 #8532
+    #replace covariate value with gender concept id
+    maleCov$covariateValue = maleCov$covariateValue*8507
+    femaleCov$covariateValue = femaleCov$covariateValue*8532
+    #row bind of maleCov and femaleCov to make gender Covariates
+    genderCov<-rbind(maleCov,femaleCov)
+    
+    #replace column names from covariate value to age/genderValue
+    colnames(ageCov)<-gsub("covariateValue","age",colnames(ageCov))
+    colnames(genderCov)<-gsub("covariateValue","gender",colnames(genderCov))
+    
+    #merge ageCov and genderCov with cohort, which 
+    cohort <- cohort %>%
+        dplyr::left_join(ageCov, by="rowId") %>%
+        dplyr::left_join(genderCov, by="rowId")
+    
     #make a age, age at outcome, and then life expectancy at the age of outcome
+    cohort<-cohort %>% 
+        dplyr::mutate(startYear = lubridate::year(cohortStartDate)) %>%
+        dplyr::mutate(ageAtOutcome = age + round(daysToEvent/365,0))
     
-    cohort %>% 
-        mutate(startYear = lubridate::year(cohortStartDate)) %>%
-        mutate(ageAtOutcome) = age + round(daysToEvent/365,0)
-    
+    #load reference life expectancy
     refLifeExpectancy= loadLifeExpectancy('KOR')
     
+    #add life expectance to the cohort
+    cohort <- cohort %>%
+        dplyr::inner_join(refLifeExpectancy, by = c("age"="startAge", "gender"="genderConceptId","startYear"= "startYear"))
+    
+    cohortWithOutcome<-cohort[cohort$outcomeCount>=1,]
+    
     #calculate YLL (Years of Life Lost)
-    ydd = burden(disabilityWeight= 1.00, 
-                 disabilityStartAge=ageAtOutcome, 
-                 duration= chort$lifeExpAtOutcome, 
-                 ageWeighting=ageWeighting, 
-                 discount=discount, 
-                 age=cohort$age)
+    yll<-apply(cohortWithOutcome,MARGIN = 1,FUN = function(x){
+        burden(disabilityWeight= 1.00, 
+               disabilityStartAge=as.numeric(x[["ageAtOutcome"]]), 
+               duration= as.numeric(x[["expectedLifeRemained"]]),
+               ageWeighting=ageWeighting, 
+               discount=discount, 
+               age=as.numeric(x[["age"]]))
+    })
     
-    yld = burden(disabilityWeight= disabilityWeight, 
-                 disabilityStartAge = cohort$startYear, 
-                 duration=cohort$survivalTime/365, 
-                 ageWeighting=ageWeighting, 
-                 discount=discount, 
-                 age=cohort$age)
+    #calculate YLL (Years of Life Lost)
+    yll<-apply(cohortWithOutcome,MARGIN = 1,FUN = function(x){
+        burden(disabilityWeight= 1.00, 
+               disabilityStartAge=as.numeric(x[["ageAtOutcome"]]), 
+               duration= as.numeric(x[["expectedLifeRemained"]]),
+               ageWeighting=ageWeighting, 
+               discount=discount, 
+               age=as.numeric(x[["age"]]))
+    })
     
-    #age at onset
-    #duration of disease
+    #calculate YLD (Years Lost due to Disability)
+    yld<-apply(cohort,MARGIN = 1,FUN = function(x){
+        burden(disabilityWeight= disabilityWeight, 
+               disabilityStartAge=as.numeric(x[["age"]]), 
+               duration= as.numeric(x[["survivalTime"]])/365,
+               ageWeighting=ageWeighting, 
+               discount=discount, 
+               age=as.numeric(x[["age"]]))
+    })
     
-    #Age 
-    #Age at death
-    #
-    
-    #life Expectancy at the age of the death
-    #age at death
-
     result = data.frame(yllSum = sum(yll,na.rm =TRUE),
                         yldSum = sum(yld,na.rm =TRUE),
                         dalySum = sum(yll,na.rm =TRUE) + sum(yld,na.rm =TRUE),
-                        yllPerEvent = mean(yll, na.rm = TRUE),
-                        yldPerEvent = mean(yld, na.rm = TRUE),
-                        dalyPerEvent = mean(yll,na.rm =TRUE) + mean(yld,na.rm =TRUE))
+                        yllPerEvent = sum(yll, na.rm = TRUE)/nrow(cohort),
+                        yldPerEvent = sum(yld, na.rm = TRUE)/nrow(cohort),
+                        dalyPerEvent = sum(yll,yld,na.rm =TRUE)/nrow(cohort)
+                        )
     
     return (result)
 }
