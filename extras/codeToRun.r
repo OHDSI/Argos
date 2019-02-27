@@ -155,7 +155,7 @@ for (i in seq(cancerList$cohortId)){
                           outcomeDatabaseSchema = cohortDatabaseSchema ,
                           cohortTable = cohortTable,
                           covariateSettings = covariateSettings,
-                          targetCohortId,
+                          targetCohortId = cancerList$cohortId[i],
                           outcomeId,
                           requireTimeAtRisk = FALSE,
                           riskWindowStart = 0,
@@ -163,12 +163,9 @@ for (i in seq(cancerList$cohortId)){
                           removeSubjectsWithPriorOutcome = TRUE,
                           minDateUnit = "year")
     
-    agedivSurvCal<-calculateSurvival(survivalData = survivalData,
+    agedivSurvCal<-calculateSurvival(survivalData = SurvData,
                                      refPopulation = refPop,
-                                     #standardization = "direct",
-                                     #Agestandardization = TRUE,
-                                     #genderStandardization = TRUE,
-                                     #startYearStandardization = TRUE,
+                                     Agedivided = TRUE,
                                      AgeSet = list(30:39,
                                                    40:49,
                                                    50:59,
@@ -179,9 +176,32 @@ for (i in seq(cancerList$cohortId)){
                                      startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
                                      birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
     
+    totalSurvCal<-calculateSurvival(survivalData = SurvData,
+                                    refPopulation = refPop,
+                                    Agedivided = FALSE,
+                                    AgeSet = list(30:39,
+                                                  40:49,
+                                                  50:59,
+                                                  60:69,
+                                                  70:79,
+                                                  80:99),
+                                    genderSet = list(8507,8532),
+                                    startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                    birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
+    
     saveRDS(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".rds" )))
     write.csv(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    saveRDS(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    write.csv(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".csv" )))
     
+    #plotting
+    plot1yrsurvival<-plotSurvival1Yr(agedivSurvCal = agedivSurvCal)
+    plot3yrsurvival<-plotSurvival3Yr(agedivSurvCal = agedivSurvCal)
+    plot5yrsurvival<-plotSurvival5Yr(agedivSurvCal = agedivSurvCal)
+    plottotalsurvival<-plotSurvivalTotal(totalSurvCal = totalSurvCal)
+    
+    saveSurvival(outputFolder,
+                 imageExtension = "png")
 }
 
 ####calculate the mortality####
