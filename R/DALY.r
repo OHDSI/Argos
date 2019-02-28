@@ -121,7 +121,6 @@ f<-function(x,ageWeighting,C = 0.1658, beta = 0.04, discount, age){
 #'@param ageWeighting
 #'@param discount
 #'@param age
-#'@export
 burden <- function(disabilityWeight,
                    disabilityStartAge,
                    duration,
