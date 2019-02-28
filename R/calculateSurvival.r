@@ -21,30 +21,29 @@
 #' @param outcomeDatabaseSchema
 #' @param cohortTable
 #' @param covariateSettings
-#' @param targetCohortId
-#' @param outcomeId
-#' @param requireTimeAtRisk
+#' @param targetCohortId                    cancer type cohort id
+#' @param outcomeId                         outcome = death
+#' @param requireTimeAtRisk                 must be FALSE (default)
 #' @param riskWindowStart
-#' @param riskWindowEnd
-#' @param incidenceData
+#' @param riskWindowEnd                     if you want to see max 5-year survival rate then 365*5
 #' @param removeSubjectsWithPriorOutcome      
-#' @param minDateUnit        
+#' @param minDateUnit                       minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')
 #' @export
 #'
 
 readySurvData<-function(connectionDetails , 
-                         cdmDatabaseSchema ,
-                         cohortDatabaseSchema ,
-                         outcomeDatabaseSchema  ,
-                         cohortTable,
-                         covariateSettings,
-                         targetCohortId ,
-                         outcomeId,
-                         requireTimeAtRisk = FALSE,
-                         riskWindowStart = 0,
-                         riskWindowEnd = 365*5,
-                         removeSubjectsWithPriorOutcome = TRUE,
-                         minDateUnit = "year"){
+                        cdmDatabaseSchema ,
+                        cohortDatabaseSchema ,
+                        outcomeDatabaseSchema  ,
+                        cohortTable,
+                        covariateSettings,
+                        targetCohortId ,
+                        outcomeId,
+                        requireTimeAtRisk = FALSE,
+                        riskWindowStart = 0,
+                        riskWindowEnd = 365*5,
+                        removeSubjectsWithPriorOutcome = TRUE,
+                        minDateUnit = "year"){
     plpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails,
                                                   cdmDatabaseSchema = cdmDatabaseSchema,
                                                   cohortDatabaseSchema = cohortDatabaseSchema,
@@ -76,11 +75,12 @@ readySurvData<-function(connectionDetails ,
 
 
 #' Calculating survival rate function
-#' @param survivalData
+#' @param survivalData          outcome of Argos package readySurvData code
 #' @param refPopulation
-#' @param AgeSet
-#' @param genderSet
-#' @param startYearSet
+#' @param Agedivided            TRUE then total patients survival rate will calculated, FALSE then age specified survival rate will calculated
+#' @param AgeSet                30-39, 40-49, 50-59, 60-69, 70-79, 80-99 will set as default
+#' @param genderSet             8507 as male, 8532 as female
+#' @param startYearSet          
 #' @param birthYearSet
 #' @export
 

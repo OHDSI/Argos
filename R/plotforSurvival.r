@@ -15,7 +15,7 @@
 # limitations under the License.
 
 #'total patients's survival rate plot by diagnosis year 
-#'@param totalSurvCal
+#'@param totalSurvCal outcome of Argos package calculateSurvival code if Agediv = FALSE 
 #'@import dplyr
 #'@import ggplot2
 #'@export
@@ -48,7 +48,7 @@ plotSurvivalTotal <- function(totalSurvCal){
 }
 
 #'1year survival rate plot by diagnosis year
-#'@param agedivSurvCal
+#'@param agedivSurvCal outcome of Argos package calculateSurvival code if Agediv = TRUE 
 #'@import dplyr
 #'@import ggplot2
 #'@export
@@ -77,7 +77,7 @@ plotSurvival1Yr <- function(agedivSurvCal){
 }
 
 #'3year survival rate plot by diagnosis year
-#'@param agedivSurvCal
+#'@param agedivSurvCal outcome of Argos package calculateSurvival code if Agediv = TRUE 
 #'@import dplyr
 #'@import ggplot2
 #'@export
@@ -107,7 +107,7 @@ plotSurvival3Yr <- function(agedivSurvCal){
 }    
 
 #'5year survival rate plot by diagnosis year
-#'@param agedivSurvCal
+#'@param agedivSurvCal outcome of Argos package calculateSurvival code if Agediv = TRUE 
 #'@import dplyr
 #'@import ggplot2
 #'@export

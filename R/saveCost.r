@@ -16,7 +16,7 @@
 
 #'saving tables and plot image which are the results cost analysis
 #'@param outputFolder
-#'@param imageExtension
+#'@param imageExtension plot file's extension
 #'@import ggplot2
 #'@export
 savecost<-function(outputFolder,

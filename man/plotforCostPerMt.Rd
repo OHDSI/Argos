@@ -6,6 +6,9 @@
 \usage{
 plotforCostPerMt(costData)
 }
+\arguments{
+\item{costData}{outcome of Argos package extractVisitCost code if minCostDateUnit = "month"}
+}
 \description{
 monthly cost from 2months before diagnosis to 12months after diagnosis
 }

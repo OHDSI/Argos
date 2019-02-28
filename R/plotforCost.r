@@ -15,7 +15,7 @@
 # limitations under the License.
 
 #'monthly cost from 2months before diagnosis to 12months after diagnosis
-#'@param costData
+#'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "month" 
 #'@import dplyr
 #'@import ggplot2
 #'@export
@@ -46,7 +46,7 @@ plotforCostPerMt<- function(costData){
 }
 
 #'the total cost of the diagnosed year 
-#'@param costData
+#'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "year" 
 #'@import dplyr
 #'@import ggplot2
 #'@export
@@ -85,7 +85,7 @@ plotforCostPerYrdiv<- function(costData){
 }
 
 #'the cost of the diagnosed year paid by payer 
-#'@param costData
+#'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "year" 
 #'@import dplyr
 #'@import ggplot2
 #'@export
@@ -114,7 +114,7 @@ plotforCostPerYrBarPay<- function(costData){
 }
 
 #'the cost of the diagnosed year paid by patient
-#'@param costData
+#'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "year" 
 #'@import dplyr
 #'@import ggplot2
 #'@export

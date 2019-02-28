@@ -1,7 +1,7 @@
 
 #' get outcome, survivaltime, needed variables 
-#' @param plpData
-#' @param population
+#' @param plpData           outcome of PatientLevelPrediction package getPlpData code
+#' @param population        outcome of PatientLevelPrediction package createStudyPopulation code
 #' @import dplyr
 #' @export
 getsurvData<-function(plpData = plpData,
@@ -28,9 +28,9 @@ getsurvData<-function(plpData = plpData,
 }
 
 #' calculate survival rate using survival package
-#' @param survivalDuration
-#' @param outcomeCount
-#' @param survivalDurationTime
+#' @param survivalDuration          time gap between first diagnosis date and death date or last observation date (survivalTime)
+#' @param outcomeCount              binary value (if outcome = death, death = 1 and alive = 0)
+#' @param survivalDurationTime      n-year survival -> 365*n
 #' @import survival
 #' @export
 survivalCal<-function(survivalDuration = survivalTime,

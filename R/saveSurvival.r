@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #'saving tables and plot image which are the results incidence analysis
-#'@param outputFolder
-#'@param imageExtension
+#'@param outputFolder 
+#'@param imageExtension plot file's extension
 #'@import ggplot2
 #'@export
 saveSurvival<-function(outputFolder,

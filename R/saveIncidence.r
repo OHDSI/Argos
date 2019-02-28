@@ -15,7 +15,7 @@
 # limitations under the License.
 #'saving tables and plot image which are the results incidence analysis
 #'@param outputFolder
-#'@param imageExtension
+#'@param imageExtension plot file's extension
 #'@import ggplot2
 #'@export
 saveIncidence<-function(outputFolder,

@@ -47,7 +47,7 @@ PlotByBirthInc<- function (incidencePropdata){
 }
 
 #'Age specified incidence proportion plot by diagnosis year
-#'@param incidencePropdata
+#'@param incidencePropdata  outcome of Argos package getIncidenceData code
 #'@import dplyr
 #'@import ggplot2
 #'@export
@@ -79,7 +79,7 @@ PlotByDiagnosisIncAgeS <- function(incidencePropdata){
 }
 
 #'Age adjusted incidence proportion plot by diagnosis year 
-#'@param incidencePropdata
+#'@param incidencePropdata  outcome of Argos package getIncidenceData code
 #'@import dplyr
 #'@import ggplot2
 #'@export
