@@ -4,9 +4,8 @@
 \alias{getIncidenceData}
 \title{get incidence data}
 \usage{
-getIncidenceData(connectionDetails, cdmDatabaseSchema,
-  cohortDatabaseSchema, outcomeDatabaseSchema, cohortTable, targetCohortId,
-  minDateUnit = "year")
+getIncidenceData(connectionDetails, cdmDatabaseSchema, cohortDatabaseSchema,
+  outcomeDatabaseSchema, cohortTable, targetCohortId, minDateUnit = "year")
 }
 \arguments{
 \item{cdmDatabaseSchema}{}

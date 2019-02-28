@@ -65,26 +65,18 @@ calculateDALY <- function (outcomeData,
     #make a age, age at outcome, and then life expectancy at the age of outcome
     cohort<-cohort %>% 
         dplyr::mutate(startYear = lubridate::year(cohortStartDate)) %>%
-        dplyr::mutate(ageAtOutcome = age + round(daysToEvent/365,0))
+        dplyr::mutate(ageAtOutcome = age + round(daysToEvent/365,0)) %>%
+        dplyr::mutate(yeartAtOutcome = startYear + round(daysToEvent/365,0))
     
+    #cohort only with outcome
+    cohortWithOutcome<-cohort[cohort$outcomeCount>=1,]
     #load reference life expectancy
     refLifeExpectancy= loadLifeExpectancy('KOR')
     
     #add life expectance to the cohort
-    cohort <- cohort %>%
-        dplyr::inner_join(refLifeExpectancy, by = c("age"="startAge", "gender"="genderConceptId","startYear"= "startYear"))
+    cohortWithOutcome <- cohortWithOutcome %>%
+        dplyr::inner_join(refLifeExpectancy, by = c("ageAtOutcome"="startAge", "gender"="genderConceptId","yeartAtOutcome"= "startYear"))
     
-    cohortWithOutcome<-cohort[cohort$outcomeCount>=1,]
-    
-    #calculate YLL (Years of Life Lost)
-    yll<-apply(cohortWithOutcome,MARGIN = 1,FUN = function(x){
-        burden(disabilityWeight= 1.00, 
-               disabilityStartAge=as.numeric(x[["ageAtOutcome"]]), 
-               duration= as.numeric(x[["expectedLifeRemained"]]),
-               ageWeighting=ageWeighting, 
-               discount=discount, 
-               age=as.numeric(x[["age"]]))
-    })
     
     #calculate YLL (Years of Life Lost)
     yll<-apply(cohortWithOutcome,MARGIN = 1,FUN = function(x){

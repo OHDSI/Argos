@@ -4,8 +4,7 @@
 \alias{calculateNumberPerCovTime}
 \title{function to calculate number per covariate per time unit}
 \usage{
-calculateNumberPerCovTime(plpData, population = NULL,
-  minDateUnit = "year")
+calculateNumberPerCovTime(plpData, population = NULL, minDateUnit = "year")
 }
 \arguments{
 \item{cohort}{cohort should be data frame with at least four columns 'rowId', 'subjectId', 'cohortId', 'cohortStartDate'}
