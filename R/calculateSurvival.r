@@ -86,10 +86,7 @@ readySurvData<-function(connectionDetails ,
 
 calculateSurvival <- function(survivalData = survivalData,
                               refPopulation = refPop,
-                              #standardization = "direct",
                               Agedivided = Agedivided,
-                              #genderStandardization = TRUE,
-                              #startYearStandardization = TRUE,
                               AgeSet = list(30:39,
                                             40:49,
                                             50:59,
@@ -110,13 +107,10 @@ calculateSurvival <- function(survivalData = survivalData,
                 filter(age %in% unlist(expanded.set[i,]$age)) %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear))
-            #%>%
-            #filter(birthYear %in% unlist(expanded.set[i,]$birthYear))
             if(nrow(df)==0) next
             
             surv<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                              age = min(unlist(expanded.set[i,]$age)),
-                             #birthYear = min(unlist(expanded.set[i,]$birthYear)),
                              genderConceptId = unlist(expanded.set[i,]$gender),
                              survival1Yr = ifelse( min(unlist(expanded.set[i,]$startYear)) <=2012-1,
                                                    ifelse( !is.null(survivalCal(survivalDuration = df$survivalTime,
@@ -156,16 +150,11 @@ calculateSurvival <- function(survivalData = survivalData,
             settings<-list(gender=genderSet, startYear=startYearSet)
             expanded.set<-expand.grid(settings)
             df<-survivalData %>%
-                #filter(age %in% unlist(expanded.set[i,]$age)) %>% 
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear))
-            #%>%
-            #filter(birthYear %in% unlist(expanded.set[i,]$birthYear))
             if(nrow(df)==0) next
             
             surv<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
-                             #age = min(unlist(expanded.set[i,]$age)),
-                             #birthYear = min(unlist(expanded.set[i,]$birthYear)),
                              genderConceptId = unlist(expanded.set[i,]$gender),
                              survival1Yr = ifelse( min(unlist(expanded.set[i,]$startYear)) <=2012-1,
                                                    ifelse( !is.null(survivalCal(survivalDuration = df$survivalTime,
@@ -194,7 +183,6 @@ calculateSurvival <- function(survivalData = survivalData,
                                                                       survivalDurationTime = 365*5),
                                                           NA),
                                                   NA)
-                             #standProp = sum(df$stdWt*(df$outcomeNum/df$targetNum))
             )
             observeSurvDf<-rbind(observeSurvDf, surv)
         }

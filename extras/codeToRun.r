@@ -150,18 +150,18 @@ for (i in seq(cancerList$cohortId)){
 ####calculate the survival####
 for (i in seq(cancerList$cohortId)){
     SurvData<-readySurvData(connectionDetails = connectionDetails, 
-                          cdmDatabaseSchema = cdmDatabaseSchema,
-                          cohortDatabaseSchema = cohortDatabaseSchema,
-                          outcomeDatabaseSchema = cohortDatabaseSchema ,
-                          cohortTable = cohortTable,
-                          covariateSettings = covariateSettings,
-                          targetCohortId = cancerList$cohortId[i],
-                          outcomeId,
-                          requireTimeAtRisk = FALSE,
-                          riskWindowStart = 0,
-                          riskWindowEnd = 365*5,
-                          removeSubjectsWithPriorOutcome = TRUE,
-                          minDateUnit = "year")
+                            cdmDatabaseSchema = cdmDatabaseSchema,
+                            cohortDatabaseSchema = cohortDatabaseSchema,
+                            outcomeDatabaseSchema = cohortDatabaseSchema ,
+                            cohortTable = cohortTable,
+                            covariateSettings = covariateSettings,
+                            targetCohortId = cancerList$cohortId[i],
+                            outcomeId,
+                            requireTimeAtRisk = FALSE,
+                            riskWindowStart = 0,
+                            riskWindowEnd = 365*5,
+                            removeSubjectsWithPriorOutcome = TRUE,
+                            minDateUnit = "year")
     
     agedivSurvCal<-calculateSurvival(survivalData = SurvData,
                                      refPopulation = refPop,
