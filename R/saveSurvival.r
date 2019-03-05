@@ -15,10 +15,18 @@
 # limitations under the License.
 #'saving tables and plot image which are the results incidence analysis
 #'@param outputFolder 
+#'@param plot1yrsurvival
+#'@param plot3yrsurvival
+#'@param plot5yrsurvival
+#'@param plottotalsurvival
 #'@param imageExtension plot file's extension
 #'@import ggplot2
 #'@export
 saveSurvival<-function(outputFolder,
+                       plot1yrsurvival,
+                       plot3yrsurvival,
+                       plot5yrsurvival,
+                       plottotalsurvival,
                        imageExtension = "png"){
     ifelse(!dir.exists(file.path(outputFolder, "survival")), dir.create(file.path(outputFolder, "survival")), print("saving in survival folder"))
     survivalFolder<-paste(outputFolder, "survival", sep = "/")

@@ -62,7 +62,7 @@ plotSurvival1Yr <- function(agedivSurvCal){
         ggplot2::xlab("Diagnosis Time") +
         ggplot2::ylab("1year survival rate") +
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","1year SurvivalRate", sep = " ")) +
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","1year Survival Rate", sep = " ")) +
         ggplot2::ylim(0,1)+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
@@ -92,7 +92,7 @@ plotSurvival3Yr <- function(agedivSurvCal){
         ggplot2::xlab("Diagnosis Time") +
         ggplot2::ylab("3year survival rate") +
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","3year SurvivalRate", sep = " ")) +
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","3year Survival Rate", sep = " ")) +
         ggplot2::ylim(0,1)+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
@@ -122,7 +122,7 @@ plotSurvival5Yr <- function(agedivSurvCal){
         ggplot2::xlab("Diagnosis Time") + 
         ggplot2::ylab("5year survival rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","5year SurvivalRate", sep = " ")) +  
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","5year Survival Rate", sep = " ")) +  
         ggplot2::ylim(0,1)+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),

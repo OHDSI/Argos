@@ -40,6 +40,7 @@ readySurvData<-function(connectionDetails ,
                         targetCohortId ,
                         outcomeId,
                         requireTimeAtRisk = FALSE,
+                        minTimeAtRisk = 365,
                         riskWindowStart = 0,
                         riskWindowEnd = 365*5,
                         removeSubjectsWithPriorOutcome = TRUE,
@@ -64,10 +65,11 @@ readySurvData<-function(connectionDetails ,
                                                                 riskWindowEnd = riskWindowEnd,
                                                                 addExposureDaysToStart = FALSE,
                                                                 addExposureDaysToEnd = FALSE,
-                                                                requireTimeAtRisk = TRUE,
+                                                                requireTimeAtRisk = requireTimeAtRisk,
+                                                                minTimeAtRisk = minTimeAtRisk,
                                                                 includeAllOutcomes = TRUE,
                                                                 verbosity = "DEBUG")
-
+    
     readySurv <- getsurvData(plpData = plpData,
                              population = population)
     return(readySurv)
@@ -95,7 +97,8 @@ calculateSurvival <- function(survivalData = survivalData,
                                             80:99),
                               genderSet = list(8507,8532),
                               startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
-                              birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989)){
+                              birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
+                              observationEndYear){
     settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet, birthYear = birthYearSet)
     expanded.set<-expand.grid(settings)
     if (Agedivided){
@@ -112,7 +115,7 @@ calculateSurvival <- function(survivalData = survivalData,
             surv<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                              age = min(unlist(expanded.set[i,]$age)),
                              genderConceptId = unlist(expanded.set[i,]$gender),
-                             survival1Yr = ifelse( min(unlist(expanded.set[i,]$startYear)) <=2012-1,
+                             survival1Yr = ifelse( min(unlist(expanded.set[i,]$startYear)) <=observationEndYear-1,
                                                    ifelse( !is.null(survivalCal(survivalDuration = df$survivalTime,
                                                                                 outcomeCount = df$outcomeCount,
                                                                                 survivalDurationTime = 365*1)),
@@ -121,7 +124,7 @@ calculateSurvival <- function(survivalData = survivalData,
                                                                        survivalDurationTime = 365*1),
                                                            NA),
                                                    NA),
-                             survival3Yr = ifelse( min(unlist(expanded.set[i,]$startYear)) <=2012-3,
+                             survival3Yr = ifelse( min(unlist(expanded.set[i,]$startYear)) <=observationEndYear-3,
                                                    ifelse( !is.null(survivalCal(survivalDuration = df$survivalTime,
                                                                                 outcomeCount = df$outcomeCount,
                                                                                 survivalDurationTime = 365*3)),
@@ -130,7 +133,7 @@ calculateSurvival <- function(survivalData = survivalData,
                                                                        survivalDurationTime = 365*3),
                                                            NA),
                                                    NA),
-                             survival5Yr = ifelse(min(unlist(expanded.set[i,]$startYear)) <=2012-5,
+                             survival5Yr = ifelse(min(unlist(expanded.set[i,]$startYear)) <=observationEndYear-5,
                                                   ifelse( !is.null(survivalCal(survivalDuration = df$survivalTime,
                                                                                outcomeCount = df$outcomeCount,
                                                                                survivalDurationTime = 365*5)),
@@ -188,5 +191,5 @@ calculateSurvival <- function(survivalData = survivalData,
         }
         return(observeSurvDf)
     }
-        
+    
 }

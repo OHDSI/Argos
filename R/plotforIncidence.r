@@ -32,7 +32,7 @@ PlotByBirthInc<- function (incidencePropdata){
         ggplot2::xlab("Year of Birth") + 
         ggplot2::ylab("incidence proportion") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer", "IncidenceProportionByBirthYr", sep = " ")) + 
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer", "Incidence Proportion By Birth Year", sep = " ")) + 
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),
@@ -64,7 +64,7 @@ PlotByDiagnosisIncAgeS <- function(incidencePropdata){
         ggplot2::xlab("Diagnosis Time") + 
         ggplot2::ylab("incidence proportion") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","IncidencePropAgeSpe", sep = " ")) +  
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","Incidence Proportion According to Age", sep = " ")) +  
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),
@@ -95,7 +95,7 @@ PlotByDiagnosisIncAgeAd <- function(incidencePropdata){
         ggplot2::xlab("Diagnosis Time") + 
         ggplot2::ylab("incidence proportion") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "IncidencePropAgeAdj", sep = " ")) + 
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Age standardized Incidence Proportion", sep = " ")) + 
         ggplot2::theme_bw()+
         ggplot2::theme(#legend.title = element_blank(),
             #legend.text = element_text(size = 15),
