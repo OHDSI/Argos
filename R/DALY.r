@@ -20,6 +20,8 @@
 #' @param disabilityWeight         disability weight for the certain condition of plpData to calculate YLD. if this is 0, YLD is 0. It should be float value (0~1).
 #' @param outcomeDisabilityWeight   Disability weight for outcome.  If the outcome is death, then disability weight should be 1. It should be float value (0~1).
 #' @param minTimeAtRisk            time at risk (days). usually it should be identical to the minTAR of plpData
+#' @param observeStartYr            From which year, the observation of DALY should be started?
+#' @param observeEndYr              Until which year, the observation of DALY should be ended?
 #' @param discount                 discount value, float(0~1). default value is 0.3.
 #' @param ageWeghting               logical value (TRUE or FALSE). 
 #' @param outputFolder             outputFolder
@@ -29,7 +31,9 @@ calculateDALY <- function (outcomeData,
                            refLifeExpectancy,
                            disabilityWeight=0.5,
                            outcomeDisabilityWeight = 1,
-                           minTimeAtRisk,
+                           minTimeAtRisk=1,
+                           observeStartYr = NULL,
+                           observeEndYr = NULL,
                            discount = 0.3,
                            ageWeighting =TRUE,
                            outputFolder){
@@ -42,6 +46,12 @@ calculateDALY <- function (outcomeData,
     #limit covarite Ref to the existing covarites in the population
     covRef <- covRef [covRef$covariateId %in% unique(covariates$covariateId), ]
     cohort<-outcomeData$population
+    
+    tryCatch({
+        if(minTimeAtRisk){
+            cohort<-cohort[ (cohort$timeAtRisk>=minTimeAtRisk)|(cohort$outcomeCount>=1), ]
+        }
+    })
     
     #extract only age/gender covariate from covariates
     ageCov<-covariates[covariates$covariateId==covRef[covRef$covariateName=="age in years","covariateId"],c("rowId","covariateValue")]#covariateId 1002
@@ -62,7 +72,7 @@ calculateDALY <- function (outcomeData,
         dplyr::left_join(ageCov, by="rowId") %>%
         dplyr::left_join(genderCov, by="rowId")
     
-    #make a age, age at outcome, and then life expectancy at the age of outcome
+        #make a age, age at outcome, and then life expectancy at the age of outcome
     cohort<-cohort %>% 
         dplyr::mutate(startYear = lubridate::year(cohortStartDate)) %>%
         dplyr::mutate(ageAtOutcome = age + round(daysToEvent/365,0)) %>%
@@ -77,34 +87,54 @@ calculateDALY <- function (outcomeData,
     cohortWithOutcome <- cohortWithOutcome %>%
         dplyr::inner_join(refLifeExpectancy, by = c("ageAtOutcome"="startAge", "gender"="genderConceptId","yeartAtOutcome"= "startYear"))
     
-    
-    #calculate YLL (Years of Life Lost)
-    yll<-apply(cohortWithOutcome,MARGIN = 1,FUN = function(x){
-        burden(disabilityWeight= 1.00, 
-               disabilityStartAge=as.numeric(x[["ageAtOutcome"]]), 
-               duration= as.numeric(x[["expectedLifeRemained"]]),
-               ageWeighting=ageWeighting, 
-               discount=discount, 
-               age=as.numeric(x[["age"]]))
-    })
+    #split cohort according to the start Year
+    cohortByYr<-split(cohort,cohort$startYear)
+    cohortWithOutcomeByYr <- split(cohortWithOutcome, cohortWithOutcome$startYear)
     
     #calculate YLD (Years Lost due to Disability)
-    yld<-apply(cohort,MARGIN = 1,FUN = function(x){
-        burden(disabilityWeight= disabilityWeight, 
-               disabilityStartAge=as.numeric(x[["age"]]), 
-               duration= as.numeric(x[["survivalTime"]])/365,
-               ageWeighting=ageWeighting, 
-               discount=discount, 
-               age=as.numeric(x[["age"]]))
+    yld<-lapply(cohortByYr, function(x){
+        apply(x,MARGIN = 1,FUN = function(y){
+            burden(disabilityWeight= disabilityWeight, 
+                   disabilityStartAge=as.numeric(y[["age"]]), 
+                   duration= as.numeric(y[["survivalTime"]])/365,
+                   ageWeighting=ageWeighting, 
+                   discount=discount, 
+                   age=as.numeric(y[["age"]]))
+        })
+    })
+    #calculate YLL (Years of Life Lost)
+    yll<-lapply(cohortWithOutcomeByYr, function(x){
+        apply(x,MARGIN = 1,FUN = function(y){
+            burden(disabilityWeight= 1.00, 
+                   disabilityStartAge=as.numeric(y[["ageAtOutcome"]]), 
+                   duration= as.numeric(y[["expectedLifeRemained"]]),
+                   ageWeighting=ageWeighting, 
+                   discount=discount, 
+                   age=as.numeric(y[["age"]]))
+        })
     })
     
-    result = data.frame(yllSum = sum(yll,na.rm =TRUE),
-                        yldSum = sum(yld,na.rm =TRUE),
-                        dalySum = sum(yll,na.rm =TRUE) + sum(yld,na.rm =TRUE),
-                        yllPerEvent = sum(yll, na.rm = TRUE)/nrow(cohort),
-                        yldPerEvent = sum(yld, na.rm = TRUE)/nrow(cohort),
-                        dalyPerEvent = sum(yll,yld,na.rm =TRUE)/nrow(cohort)
-                        )
+    yldPerEvent=sapply(yld,sum,na.rm=TRUE)/nrow(cohort)
+    yllPerEvent=sapply(yll,sum,na.rm=TRUE)/nrow(cohort)
+    
+    yldSum=sapply(yld,sum,na.rm=TRUE)
+    yllSum=sapply(yll,sum,na.rm=TRUE)
+    
+    result = data.frame(yldPerEvent = yldPerEvent,
+                        yllPerEvent =yllPerEvent,
+                        yldSum = yldSum,
+                        yllSum = yllSum,
+                        dalyPerEvent = (yldSum+yllSum)/nrow(cohort),
+                        dalySum = (yldSum+yllSum)
+    )
+    
+    
+    tryCatch({
+        if (observeStartYr & observeEndYr){
+            
+            result<-result[rownames(result) %in% as.character(observeStartYr:observeEndYr),]
+        }
+    })
     
     return (result)
 }
@@ -130,4 +160,3 @@ burden <- function(disabilityWeight,
     burdenValue=disabilityWeight * integrate(f, lower = disabilityStartAge, upper = disabilityStartAge+duration, ageWeighting=ageWeighting, discount=discount, age=age )$value
     return(burdenValue)
 }
-
