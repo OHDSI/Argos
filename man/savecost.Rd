@@ -6,6 +6,9 @@
 \usage{
 savecost(outputFolder, imageExtension = "png")
 }
+\arguments{
+\item{imageExtension}{plot file's extension}
+}
 \description{
 saving tables and plot image which are the results cost analysis
 }

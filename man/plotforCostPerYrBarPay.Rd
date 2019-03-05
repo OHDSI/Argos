@@ -6,6 +6,9 @@
 \usage{
 plotforCostPerYrBarPay(costData)
 }
+\arguments{
+\item{costData}{outcome of Argos package extractVisitCost code if minCostDateUnit = "year"}
+}
 \description{
 the cost of the diagnosed year paid by payer
 }

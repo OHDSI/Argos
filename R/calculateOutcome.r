@@ -110,7 +110,7 @@ calculateOutcome <- function(outcomeData=outcomeData,
     colnames(outcomeData$outcomeCohort)<-gsub("aggregatedNum","outcomeNum",colnames(outcomeData$outcomeCohort))
     
     pop<-dplyr::left_join(outcomeData$targetCohort,outcomeData$outcomeCohort,
-                             by = c("cohortStartYear"="cohortStartYear", "age" = "age", "genderConceptId"="genderConceptId") )
+                          by = c("cohortStartYear"="cohortStartYear", "age" = "age", "genderConceptId"="genderConceptId") )
     #set birthYear
     pop$birthYear <- pop$cohortStartYear-pop$age
     

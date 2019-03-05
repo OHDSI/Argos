@@ -11,7 +11,7 @@ cohortDatabaseSchema <- "ONCOACHILLES.dbo"
 
 cohortTable <- "argos_cohort"
 outputFolder <- "D:/outputFolder"
-options(fftempdir = "D:/fftemp")
+options(fftempdir = "D:/FFtemp")
 
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
 
@@ -26,7 +26,7 @@ cancerList<-list(cohortId = c(1,2,3,4,5,6),
                                      c(442139,4092217,4094876,4151250,4157333,258375),
                                      c(4149838,197803,4095320,4149837,4095319,4094856,4092061,443387,4095317),
                                      c(137809,4188544,4158563,4162253,4155292,4187850,4188545,432845#,81251
-                                       ),
+                                     ),
                                      c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
                                      c(4178976)),
                  representConceptId = c())
@@ -146,6 +146,65 @@ for (i in seq(cancerList$cohortId)){
     Argos::saveIncidence(outputFolder,
                          imageExtension = "png")
 }
+i<-1
+####calculate the survival####
+for (i in seq(cancerList$cohortId)){
+    SurvData<-readySurvData(connectionDetails = connectionDetails, 
+                            cdmDatabaseSchema = cdmDatabaseSchema,
+                            cohortDatabaseSchema = cohortDatabaseSchema,
+                            outcomeDatabaseSchema = cohortDatabaseSchema ,
+                            cohortTable = cohortTable,
+                            covariateSettings = covariateSettings,
+                            targetCohortId = cancerList$cohortId[i],
+                            outcomeId,
+                            requireTimeAtRisk = FALSE,
+                            riskWindowStart = 0,
+                            riskWindowEnd = 365*5,
+                            removeSubjectsWithPriorOutcome = TRUE,
+                            minDateUnit = "year")
+    
+    agedivSurvCal<-calculateSurvival(survivalData = SurvData,
+                                     refPopulation = refPop,
+                                     Agedivided = TRUE,
+                                     AgeSet = list(30:39,
+                                                   40:49,
+                                                   50:59,
+                                                   60:69,
+                                                   70:79,
+                                                   80:99),
+                                     genderSet = list(8507,8532),
+                                     startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                     birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
+                                     observationEndYear = 2013)
+    
+    totalSurvCal<-calculateSurvival(survivalData = SurvData,
+                                    refPopulation = refPop,
+                                    Agedivided = FALSE,
+                                    AgeSet = list(30:39,
+                                                  40:49,
+                                                  50:59,
+                                                  60:69,
+                                                  70:79,
+                                                  80:99),
+                                    genderSet = list(8507,8532),
+                                    startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                    birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
+                                    observationEndYear = 2013)
+    
+    saveRDS(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    write.csv(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    saveRDS(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    write.csv(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    
+    #plotting
+    plot1yrsurvival<-plotSurvival1Yr(agedivSurvCal = agedivSurvCal)
+    plot3yrsurvival<-plotSurvival3Yr(agedivSurvCal = agedivSurvCal)
+    plot5yrsurvival<-plotSurvival5Yr(agedivSurvCal = agedivSurvCal)
+    plottotalsurvival<-plotSurvivalTotal(totalSurvCal = totalSurvCal)
+    
+    saveSurvival(outputFolder,
+                 imageExtension = "png")
+}
 
 ####calculate the mortality####
 for (i in seq(cancerList$cohortId)){
@@ -159,7 +218,7 @@ for (i in seq(cancerList$cohortId)){
                                              outcomeDatabaseSchema = cohortDatabaseSchema ,
                                              targetCohortId = cancerList$cohortId[[i]],
                                              outcomeId = outcomeId,
-                                             requireTimeAtRisk = TRUE,
+                                             requireTimeAtRisk = FALSE,
                                              riskWindowStart = 0,
                                              riskWindowEnd = survivalTime[j],
                                              removeSubjectsWithPriorOutcome = TRUE,
@@ -211,36 +270,36 @@ i<-2
 ##Extract Cost Data
 for (i in seq(cancerList$cohortId)){
     costMtData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
-                                      cdmDatabaseSchema=cdmDatabaseSchema,
-                                      cohortDatabaseSchema=cohortDatabaseSchema,
-                                      vocabularyDatabaseSchema = vocabularyDatabaseSchema,
-                                      cohortTable=cohortTable,
-                                      cohortId=cancerList$cohortId[[i]],
-                                      costWindowStart = -60,
-                                      costWindowEnd =365,
-                                      minCostDateUnit = 'month',
-                                      specifyCondition = FALSE,
-                                      conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
+                                        cdmDatabaseSchema=cdmDatabaseSchema,
+                                        cohortDatabaseSchema=cohortDatabaseSchema,
+                                        vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+                                        cohortTable=cohortTable,
+                                        cohortId=cancerList$cohortId[[i]],
+                                        costWindowStart = -60,
+                                        costWindowEnd =365,
+                                        minCostDateUnit = 'month',
+                                        specifyCondition = FALSE,
+                                        conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
     
     saveRDS(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
     write.csv(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
     
     plottotalCostperMt<-plotforCostPerMt(costData = costMtData)
-        
+    
     costYrData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
-                                      cdmDatabaseSchema=cdmDatabaseSchema,
-                                      cohortDatabaseSchema=cohortDatabaseSchema,
-                                      vocabularyDatabaseSchema = vocabularyDatabaseSchema,
-                                      cohortTable=cohortTable,
-                                      cohortId=cancerList$cohortId[[i]],
-                                      costWindowStart = -60,
-                                      costWindowEnd =365*5,
-                                      minCostDateUnit = 'year',
-                                      specifyCondition = FALSE,
-                                      conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
+                                        cdmDatabaseSchema=cdmDatabaseSchema,
+                                        cohortDatabaseSchema=cohortDatabaseSchema,
+                                        vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+                                        cohortTable=cohortTable,
+                                        cohortId=cancerList$cohortId[[i]],
+                                        costWindowStart = -60,
+                                        costWindowEnd =365*5,
+                                        minCostDateUnit = 'year',
+                                        specifyCondition = FALSE,
+                                        conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
     saveRDS(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
     write.csv(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
-
+    
     PlottotalcostperYrdiv<-Argos::plotforCostPerYrdiv(costData = costYrData)
     plotperYrBarplotPayer<-Argos::plotforCostPerYrBarPay(costData = costYrData)
     plotperYrBarplotPatient<-Argos::plotforCostPerYrBarPat(costData = costYrData)

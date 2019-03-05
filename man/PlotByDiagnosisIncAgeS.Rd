@@ -6,6 +6,9 @@
 \usage{
 PlotByDiagnosisIncAgeS(incidencePropdata)
 }
+\arguments{
+\item{incidencePropdata}{outcome of Argos package getIncidenceData code}
+}
 \description{
 Age specified incidence proportion plot by diagnosis year
 }

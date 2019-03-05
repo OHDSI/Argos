@@ -16,10 +16,16 @@
 
 #'saving tables and plot image which are the results cost analysis
 #'@param outputFolder
-#'@param imageExtension
+#'@param PlottotalcostperYrdiv 
+#'@param plotperYrBarplotPayer 
+#'@param plotperYrBarplotPatient 
+#'@param imageExtension plot file's extension
 #'@import ggplot2
 #'@export
 savecost<-function(outputFolder,
+                   PlottotalcostperYrdiv,
+                   plotperYrBarplotPayer,
+                   plotperYrBarplotPatient,
                    imageExtension = "png"){
     ifelse(!dir.exists(file.path(outputFolder, "cost")), dir.create(file.path(outputFolder, "cost")), print("saving in cost folder"))
     costFolder<-paste(outputFolder, "cost", sep = "/")

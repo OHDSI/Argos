@@ -113,7 +113,7 @@ calculateIncidence<-function(incidenceData = incidenceData,
                                refPopulation = sum(df$standardPopulation, na.rm = TRUE),
                                proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rm = TRUE),
                                standProp = sum(df$stdWt* (df$aggregatedNum/df$population))
-                               )
+            )
             resultDf<-rbind(resultDf,tempDf)
         }
     }else{
