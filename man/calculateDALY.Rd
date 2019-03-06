@@ -5,7 +5,8 @@
 \title{Calculate Years of Life Lost (YLL), Years Lost due to Disability (YDD), and Disability-Adjusted Life Year (DALY)}
 \usage{
 calculateDALY(outcomeData, refLifeExpectancy, disabilityWeight = 0.5,
-  outcomeDisabilityWeight = 1, minTimeAtRisk, discount = 0.3,
+  outcomeDisabilityWeight = 1, minTimeAtRisk = 1,
+  observeStartYr = NULL, observeEndYr = NULL, discount = 0.3,
   ageWeighting = TRUE, outputFolder)
 }
 \arguments{
@@ -18,6 +19,10 @@ calculateDALY(outcomeData, refLifeExpectancy, disabilityWeight = 0.5,
 \item{outcomeDisabilityWeight}{Disability weight for outcome.  If the outcome is death, then disability weight should be 1. It should be float value (0~1).}
 
 \item{minTimeAtRisk}{time at risk (days). usually it should be identical to the minTAR of plpData}
+
+\item{observeStartYr}{From which year, the observation of DALY should be started?}
+
+\item{observeEndYr}{Until which year, the observation of DALY should be ended?}
 
 \item{discount}{discount value, float(0~1). default value is 0.3.}
 
