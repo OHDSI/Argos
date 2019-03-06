@@ -358,12 +358,10 @@ for (i  in seq(cancerList$cohortId)){
     saveRDS(DALY,file.path(outputFolder,paste0("DALY_cohortId_",cancerList$cohortId[[i]],".rds" )))
     write.csv(DALY,file.path(outputFolder,paste0("DALY_cohortId_",cancerList$cohortId[[i]],".csv" )))
     
-    plotforDALY<-plotforDALY(DALY)
-    plotforDALYratio<-plotforDALYratio(DALY)
+    plotDALY<-plotforDALY(DALYdata = DALY)
+    plotDALYratio<-plotforDALYratio(DALYdata = DALY)
     saveDALY(outputFolder,
-             plotforDALY,
-             plotforDALYratio,
+             plotDALY = plotDALY,
+             plotDALYratio = plotDALYratio,
              imageExtension = "png")
 }
-
-
