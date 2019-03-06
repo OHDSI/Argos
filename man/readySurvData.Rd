@@ -6,9 +6,9 @@
 \usage{
 readySurvData(connectionDetails, cdmDatabaseSchema, cohortDatabaseSchema,
   outcomeDatabaseSchema, cohortTable, covariateSettings, targetCohortId,
-  outcomeId, requireTimeAtRisk = FALSE, riskWindowStart = 0,
-  riskWindowEnd = 365 * 5, removeSubjectsWithPriorOutcome = TRUE,
-  minDateUnit = "year")
+  outcomeId, requireTimeAtRisk = FALSE, minTimeAtRisk = 365,
+  riskWindowStart = 0, riskWindowEnd = 365 * 5,
+  removeSubjectsWithPriorOutcome = TRUE, minDateUnit = "year")
 }
 \arguments{
 \item{targetCohortId}{cancer type cohort id}
