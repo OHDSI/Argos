@@ -15,13 +15,14 @@
 # limitations under the License.
 
 #'calculate Annual percent change of age adjusted incidence proportion 
-#'@param incidencePropdata
+#'@param incidencePropdata  
 #'@import dplyr
 #'@export
 
 
 ArgosResult<-data.frame()
 for(i in unique(cancerList$cohortId)){
+    i<-2
     incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails,
                                              cdmDatabaseSchema = cdmDatabaseSchema,
                                              cohortDatabaseSchema = cohortDatabaseSchema,
@@ -49,14 +50,13 @@ for(i in unique(cancerList$cohortId)){
                                                           1950:1959, 1960:1964,
                                                           1965:1969, 1970:1974,
                                                           1975:1979, 1980:1989))
-
+    
     ageAdj<- incCal %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
         group_by(startYear, genderConceptId) %>%
         summarize( AgeadjProp = sum(standProp)*100000)
     
     ageAdj_women_lm<-ageAdj %>%
-        filter(genderConceptId == 'women') %>%
         lm(formula = log(AgeadjProp)~startYear)
     female_slope<-summary(ageAdj_women_lm)$coefficients["startYear","Estimate"]
     female_p_value<-summary(ageAdj_women_lm)$coefficients["startYear","Pr(>|t|)"]
@@ -81,6 +81,7 @@ for(i in unique(cancerList$cohortId)){
     write.csv(ArgosResult, file.path(outputFolder, "incidenceAPCArgos.csv"))
 }
 
+##for comparing with reference 
 # data.frame()
 # refincCalMale<-list(cohortId_1<-data.frame(startYear = c(2003:2012),
 #                                            ageAdj = c(35.3,38.0,41.2,43.3,45.3,47.0,49.9,50.0,51.9,50.0)),
@@ -135,3 +136,39 @@ for(i in unique(cancerList$cohortId)){
 #     write.csv(RefResults, file.path(outputFolder, "RefAPC.csv"))
 # }
 # 
+
+for(i in unique(cancerList$cohortId)){
+    SurvData<-Argos::readySurvData(connectionDetails = connectionDetails, 
+                                   cdmDatabaseSchema = cdmDatabaseSchema,
+                                   cohortDatabaseSchema = cohortDatabaseSchema,
+                                   outcomeDatabaseSchema = cohortDatabaseSchema ,
+                                   cohortTable = cohortTable,
+                                   covariateSettings = covariateSettings,
+                                   targetCohortId = cancerList$cohortId[i],
+                                   outcomeId,
+                                   requireTimeAtRisk = FALSE,
+                                   riskWindowStart = 0,
+                                   riskWindowEnd = 365*5,
+                                   removeSubjectsWithPriorOutcome = TRUE,
+                                   minDateUnit = "year")
+    
+    totalSurvCal<-Argos::calculateSurvival(survivalData = SurvData,
+                                           refPopulation = refPop,
+                                           Agedivided = FALSE,
+                                           AgeSet = list(30:39,
+                                                         40:49,
+                                                         50:59,
+                                                         60:69,
+                                                         70:79,
+                                                         80:99),
+                                           genderSet = list(8507,8532),
+                                           startYearSet = startYearSet,
+                                           birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
+                                           observationEndYear = 2013)
+    SurvpercentChange<-totalSurvCal%>%
+        filter(genderConceptId == 8507) %>%
+        filter(!is.na(survival5Yr)) %>%
+        filter(startYear %in% c(max(startYear), min(startYear)) )%>%
+        summarise(survivalChange = survival5yr)
+    
+}
