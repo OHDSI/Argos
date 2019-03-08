@@ -39,7 +39,7 @@ basePop<-loadMidYearPopulation('KOR')
 basePop$population<-round(basePop$population*samplingPop,0)
 
 #set reference population as population in 2007
-refPop<-basePop[basePop$startYear==2007,]
+refPop<-basePop[basePop$startYear==2002,]
 refPop<-refPop[,c("startAge","endAge", "genderConceptId","population")]
 colnames(refPop)[4]<-"standardPopulation"
 
@@ -105,7 +105,7 @@ DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverall
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = TRUE, 
                                                                 useDemographicsAge = TRUE
 )
-#i<-4
+#i<-1
 for (i in seq(cancerList$cohortId)){
     ##get incidence Data
     incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails, 
@@ -176,7 +176,7 @@ for (i in seq(cancerList$cohortId)){
                                                           70:79,
                                                           80:99),
                                             genderSet = list(8507,8532),
-                                            startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                            startYearSet = startYearSet,
                                             birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
                                             observationEndYear = 2013)
     
@@ -190,7 +190,7 @@ for (i in seq(cancerList$cohortId)){
                                                          70:79,
                                                          80:99),
                                            genderSet = list(8507,8532),
-                                           startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                                           startYearSet = startYearSet,
                                            birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
                                            observationEndYear = 2013)
     

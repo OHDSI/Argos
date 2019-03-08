@@ -32,8 +32,6 @@ getIncidenceData<-function(connectionDetails,
                            cohortTable,
                            targetCohortId,
                            minDateUnit = 'year'){
-    
-    
     plpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails, 
                                                   cdmDatabaseSchema = cdmDatabaseSchema,
                                                   cohortDatabaseSchema = cohortDatabaseSchema,
@@ -137,4 +135,56 @@ calculateIncidence<-function(incidenceData = incidenceData,
     }
     resultDf<-unique(resultDf)
     return(resultDf)
+}
+
+#'sum age adjusted incidence proportion and calculate 95% lowerCI and 95% upperCI 
+#'@param  incidencePropdata output of Argos packages calculateIncidence code if standardization == 'direct' 
+#'@param  alpha 0.05
+#'@import dplyr
+#'@export
+ageadjust<-function(incidencePropdata,
+                    alpha = 0.05){
+    ageAdjudata<- incidencePropdata %>%
+        group_by(startYear, genderConceptId) %>%
+        summarize( AgeadjProp = sum(standProp),
+                   dsr_var = sum(((refPopulation*proportion)/sum(refPopulation, na.rm = T))^2/targetPopNum),
+                   wm = max((refPopulation/sum(refPopulation, na.rm = T))/basePop)) %>%
+        mutate(lci = qgamma(alpha/2, 
+                            shape = (AgeadjProp^2/dsr_var),
+                            scale = dsr_var/AgeadjProp),
+               uci = qgamma(1-alpha/2,
+                            shape = ((AgeadjProp+wm)^2/(dsr_var+wm^2)),
+                            scale = (dsr_var+wm^2)/(AgeadjProp+wm))) %>%
+        mutate(AgeadjProp = AgeadjProp*100000,
+               lci = lci*100000,
+               uci = uci*100000)
+    
+    return(ageAdjudata)
+}
+
+#'aggregate incidence proportion according to gender and age section
+#'@param  incidencePropdata output of Argos packages calculateIncidence code 
+#'@import dplyr
+#'@export
+
+agespe<- function(incidencePropdata){
+    ageSpecdata<-incidencePropdata %>%
+        group_by(startYear, age, genderConceptId) %>%
+        summarise( proportion = (sum(targetPopNum)/sum(refPopulation))*100000,
+                   stdproportion = sum(standProp)*100000)
+    
+    return(ageSpecdata)
+}
+
+#'aggregate incidence proportion according to gender and birth year section
+#'@param  incidencePropdata output of Argos packages calculateIncidence code  
+#'@import dplyr
+#'@export
+bybirth<- function(incidencePropdata){
+    bybirthdata<-incidencePropdata %>%
+        group_by(birthYear, age, genderConceptId) %>%
+        summarise( proportion = (sum(targetPopNum)/sum(refPopulation))*100000,
+                   stdproportion = sum(standProp)*100000)
+    
+    return(bybirthdata)
 }

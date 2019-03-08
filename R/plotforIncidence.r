@@ -20,43 +20,37 @@
 #'@import ggplot2
 #'@export
 PlotByBirthInc<- function (incidencePropdata){
-    bybirth<- incidencePropdata %>%
+    bybirth<- bybirth(incidencePropdata) %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
-        group_by(birthYear, age, genderConceptId) %>%
-        summarise( proportion = (sum(targetPopNum)/sum(refPopulation))*100000,
-                   stdproportion = sum(standProp)*100000)
-    
-    bybirthPlot<- ggplot2::ggplot(data = bybirth, ggplot2::aes(x = as.factor(birthYear), y = proportion, group = age, colour = as.factor(age))) + 
-        ggplot2::geom_point() + 
-        ggplot2::geom_line(size = 1) + 
-        ggplot2::xlab("Year of Birth") + 
-        ggplot2::ylab("incidence proportion") + 
-        ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer", "Incidence Proportion By Birth Year", sep = " ")) + 
-        ggplot2::theme_bw()+
-        ggplot2::theme(legend.title = element_blank(),
-                       legend.text = element_text(size = 15),
-                       plot.title = element_text(size = 17),
-                       axis.text.x = element_text(size = 12),
-                       axis.title.x = element_text(size = 15),
-                       axis.text.y = element_text(size = 12),
-                       axis.title.y = element_text(size = 15),
-                       strip.text.x = element_text(size = 15))
-    
-    return(bybirthPlot)
+        
+        bybirthPlot<- ggplot2::ggplot(data = bybirth, ggplot2::aes(x = as.factor(birthYear), y = proportion, group = age, colour = as.factor(age))) + 
+            ggplot2::geom_point() + 
+            ggplot2::geom_line(size = 1) + 
+            ggplot2::xlab("Year of Birth") + 
+            ggplot2::ylab("incidence proportion") + 
+            ggplot2::facet_wrap(~genderConceptId) +
+            ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer", "Incidence Proportion By Birth Year", sep = " ")) + 
+            ggplot2::theme_bw()+
+            ggplot2::theme(legend.title = element_blank(),
+                           legend.text = element_text(size = 15),
+                           plot.title = element_text(size = 17),
+                           axis.text.x = element_text(size = 12),
+                           axis.title.x = element_text(size = 15),
+                           axis.text.y = element_text(size = 12),
+                           axis.title.y = element_text(size = 15),
+                           strip.text.x = element_text(size = 15))
+        
+        return(bybirthPlot)
 }
 
 #'Age specified incidence proportion plot by diagnosis year
-#'@param incidencePropdata  outcome of Argos package getIncidenceData code
+#'@param incidencePropdata 
 #'@import dplyr
 #'@import ggplot2
 #'@export
 PlotByDiagnosisIncAgeS <- function(incidencePropdata){
-    ageSpe<- incidencePropdata %>%
-        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
-        group_by(startYear, age, genderConceptId) %>%
-        summarise( proportion = (sum(targetPopNum)/sum(refPopulation))*100000,
-                   stdproportion = sum(standProp)*100000)
+    ageSpe<- agespe(incidencePropdata) %>%
+        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) 
     
     ageSpePlot<- ggplot2::ggplot(data = ageSpe, ggplot2::aes(x = as.factor(startYear), y = proportion, group = age, colour = as.factor(age))) + 
         ggplot2::geom_point() + 
@@ -79,15 +73,13 @@ PlotByDiagnosisIncAgeS <- function(incidencePropdata){
 }
 
 #'Age adjusted incidence proportion plot by diagnosis year 
-#'@param incidencePropdata  outcome of Argos package getIncidenceData code
+#'@param incidencePropdata  
 #'@import dplyr
 #'@import ggplot2
 #'@export
 PlotByDiagnosisIncAgeAd <- function(incidencePropdata){
-    ageAdj<- incidencePropdata %>%
-        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
-        group_by(startYear, genderConceptId) %>%
-        summarize( AgeadjProp = sum(standProp)*100000)
+    ageAdj<- ageadjust(incidencePropdata) %>%
+        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women")))
     
     ageAdjPlot<- ggplot2::ggplot(data = ageAdj, ggplot2::aes(x = as.factor(startYear), y = AgeadjProp, group = 1)) + 
         ggplot2::geom_point() + 
