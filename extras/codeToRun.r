@@ -350,7 +350,7 @@ for (i  in seq(cancerList$cohortId)){
                         disabilityWeight=disabilityWeight,
                         outcomeDisabilityWeight = 1,
                         minTimeAtRisk=1,
-                        observeStartYr = 2007,
+                        observeStartYr = 2003,
                         observeEndYr = 2008,
                         discount = 0.3,
                         ageWeighting =TRUE,
