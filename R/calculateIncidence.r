@@ -153,8 +153,8 @@ ageadjust<-function(incidencePropdata,
                             shape = (AgeadjProp^2/dsr_var),
                             scale = dsr_var/AgeadjProp),
                uci = qgamma(1-alpha/2,
-                            shape = ((AgeadjProp+wm)^2/(dsr_var+wm)^2),
-                            scale = (dsr_var+wm)^2/(AgeadjProp+wm))) %>%
+                            shape = ((AgeadjProp+wm)^2/(dsr_var+wm^2)),
+                            scale = (dsr_var+wm^2)/(AgeadjProp+wm))) %>%
         mutate(AgeadjProp = AgeadjProp*100000,
                lci = lci*100000,
                uci = uci*100000)
