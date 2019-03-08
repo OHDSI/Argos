@@ -136,39 +136,3 @@ for(i in unique(cancerList$cohortId)){
 #     write.csv(RefResults, file.path(outputFolder, "RefAPC.csv"))
 # }
 # 
-
-for(i in unique(cancerList$cohortId)){
-    SurvData<-Argos::readySurvData(connectionDetails = connectionDetails, 
-                                   cdmDatabaseSchema = cdmDatabaseSchema,
-                                   cohortDatabaseSchema = cohortDatabaseSchema,
-                                   outcomeDatabaseSchema = cohortDatabaseSchema ,
-                                   cohortTable = cohortTable,
-                                   covariateSettings = covariateSettings,
-                                   targetCohortId = cancerList$cohortId[i],
-                                   outcomeId,
-                                   requireTimeAtRisk = FALSE,
-                                   riskWindowStart = 0,
-                                   riskWindowEnd = 365*5,
-                                   removeSubjectsWithPriorOutcome = TRUE,
-                                   minDateUnit = "year")
-    
-    totalSurvCal<-Argos::calculateSurvival(survivalData = SurvData,
-                                           refPopulation = refPop,
-                                           Agedivided = FALSE,
-                                           AgeSet = list(30:39,
-                                                         40:49,
-                                                         50:59,
-                                                         60:69,
-                                                         70:79,
-                                                         80:99),
-                                           genderSet = list(8507,8532),
-                                           startYearSet = startYearSet,
-                                           birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
-                                           observationEndYear = 2013)
-    SurvpercentChange<-totalSurvCal%>%
-        filter(genderConceptId == 8507) %>%
-        filter(!is.na(survival5Yr)) %>%
-        filter(startYear %in% c(max(startYear), min(startYear)) )%>%
-        summarise(survivalChange = survival5yr)
-    
-}
