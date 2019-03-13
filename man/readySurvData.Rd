@@ -6,7 +6,7 @@
 \usage{
 readySurvData(connectionDetails, cdmDatabaseSchema, cohortDatabaseSchema,
   outcomeDatabaseSchema, cohortTable, covariateSettings, targetCohortId,
-  outcomeId, requireTimeAtRisk = FALSE, minTimeAtRisk = 365,
+  outcomeId, requireTimeAtRisk = FALSE, minTimeAtRisk = 1,
   riskWindowStart = 0, riskWindowEnd = 365 * 5,
   removeSubjectsWithPriorOutcome = TRUE, minDateUnit = "year")
 }

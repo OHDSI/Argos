@@ -74,9 +74,9 @@ calculateIncidence<-function(incidenceData = incidenceData,
                              Agestandardization = TRUE,
                              genderStandardization = TRUE,
                              startYearStandardization = TRUE,
-                             AgeSet = list(30:39,40:49,50:59,60:69,70:79,80:99),
+                             AgeSet = list(20:29,30:39,40:49,50:59,60:69,70:79,80:99),
                              genderSet = list(8507,8532),
-                             startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012),
+                             startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013),
                              birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989)){
     
     incD<-incidenceData$data
@@ -109,9 +109,11 @@ calculateIncidence<-function(incidenceData = incidenceData,
                                targetPopNum = sum(df$aggregatedNum, na.rm = TRUE),
                                basePop = sum(df$population, na.rm = TRUE),
                                refPopulation = sum(df$standardPopulation, na.rm = TRUE),
-                               proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rm = TRUE),
-                               standProp = sum(df$stdWt* (df$aggregatedNum/df$population))
-            )
+                               standardPopWt = sum(df$stdWt, na.rm = T),
+                               proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rm = TRUE)
+                               #,standProp = sum(df$stdWt* (df$aggregatedNum/df$population)
+                               )
+            
             resultDf<-rbind(resultDf,tempDf)
         }
     }else{
@@ -137,30 +139,6 @@ calculateIncidence<-function(incidenceData = incidenceData,
     return(resultDf)
 }
 
-#'sum age adjusted incidence proportion and calculate 95% lowerCI and 95% upperCI 
-#'@param  incidencePropdata output of Argos packages calculateIncidence code if standardization == 'direct' 
-#'@param  alpha 0.05
-#'@import dplyr
-#'@export
-ageadjust<-function(incidencePropdata,
-                    alpha = 0.05){
-    ageAdjudata<- incidencePropdata %>%
-        group_by(startYear, genderConceptId) %>%
-        summarize( AgeadjProp = sum(standProp),
-                   dsr_var = sum(((refPopulation*proportion)/sum(refPopulation, na.rm = T))^2/targetPopNum),
-                   wm = max((refPopulation/sum(refPopulation, na.rm = T))/basePop)) %>%
-        mutate(lci = qgamma(alpha/2, 
-                            shape = (AgeadjProp^2/dsr_var),
-                            scale = dsr_var/AgeadjProp),
-               uci = qgamma(1-alpha/2,
-                            shape = ((AgeadjProp+wm)^2/(dsr_var+wm^2)),
-                            scale = (dsr_var+wm^2)/(AgeadjProp+wm))) %>%
-        mutate(AgeadjProp = AgeadjProp*100000,
-               lci = lci*100000,
-               uci = uci*100000)
-    
-    return(ageAdjudata)
-}
 
 #'aggregate incidence proportion according to gender and age section
 #'@param  incidencePropdata output of Argos packages calculateIncidence code 
@@ -170,11 +148,42 @@ ageadjust<-function(incidencePropdata,
 agespe<- function(incidencePropdata){
     ageSpecdata<-incidencePropdata %>%
         group_by(startYear, age, genderConceptId) %>%
-        summarise( proportion = (sum(targetPopNum)/sum(refPopulation))*100000,
-                   stdproportion = sum(standProp)*100000)
+        summarise( targetPop = sum(targetPopNum, na.rm = T),
+                   basePop = sum(basePop, na.rm = T),
+                   refPop = sum(refPopulation, na.rm = T),
+                   proportion = (sum(targetPopNum)/sum(basePop)),
+                   stdPopWt = sum(standardPopWt, na.rm = T))
     
     return(ageSpecdata)
 }
+
+#'sum age adjusted incidence proportion and calculate 95% lowerCI and 95% upperCI 
+#'@param  agespecifiedPropdata output of Argos packages calculateIncidence code, agespe 
+#'@param  alpha 0.05
+#'@import dplyr
+#'@export
+ageadjust<-function(agespecifiedPropdata,
+                    alpha = 0.05){
+    ageAdjudata<- agespecifiedPropdata %>%
+        group_by(startYear, genderConceptId) %>%
+        summarize( SumbasePop = sum(basePop),
+                   crudeProp = sum(targetPop) / sum(basePop),
+                   AgeadjProp = sum(proportion*stdPopWt, na.rm = T),
+                   dsr_var = sum(stdPopWt^2*proportion^2/basePop, na.rm = T),
+                   wm = max(stdPopWt/basePop)) %>%
+        mutate(lci = qgamma(alpha/2, 
+                            shape = (AgeadjProp^2/dsr_var),
+                            scale = dsr_var/AgeadjProp),
+               uci = qgamma(1-alpha/2,
+                            shape = ((AgeadjProp+wm)^2/(dsr_var+wm^2)),
+                            scale = (dsr_var+wm^2)/(AgeadjProp+wm))) %>%
+        mutate(crudeProp = crudeProp*100000,
+               AgeadjProp = AgeadjProp*100000,
+               lci = lci*100000,
+               uci = uci*100000)
+    return(ageAdjudata)
+}
+
 
 #'aggregate incidence proportion according to gender and birth year section
 #'@param  incidencePropdata output of Argos packages calculateIncidence code  

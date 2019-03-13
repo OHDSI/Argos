@@ -30,7 +30,7 @@
 #' @param minDateUnit                       minumal unit for cohort start date ('year' > 'quarter' > 'month' > 'day')
 #' @export
 #'
-
+#targetCohortId<-cancerList$cohortId[5]
 readySurvData<-function(connectionDetails , 
                         cdmDatabaseSchema ,
                         cohortDatabaseSchema ,
@@ -89,7 +89,7 @@ readySurvData<-function(connectionDetails ,
 
 calculateSurvival <- function(survivalData = survivalData,
                               refPopulation = refPop,
-                              Agedivided = Agedivided,
+                              Agedivided = TRUE,
                               AgeSet = list(30:39,
                                             40:49,
                                             50:59,
@@ -97,12 +97,12 @@ calculateSurvival <- function(survivalData = survivalData,
                                             70:79,
                                             80:99),
                               genderSet = list(8507,8532),
-                              startYearSet = startYearSet,
+                              startYearSet = list(2003:2004, 2005:2008, 2009:2013),
                               birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
-                              observationEndYear){
-    settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet, birthYear = birthYearSet)
-    expanded.set<-expand.grid(settings)
+                              observationEndYear=2013){
     if (Agedivided){
+        settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet)#, birthYear = birthYearSet)
+        expanded.set<-expand.grid(settings)
         observeSurvDf <- data.frame()
         for (i in seq(nrow(expanded.set))){
             settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet)
@@ -112,7 +112,7 @@ calculateSurvival <- function(survivalData = survivalData,
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear))
             if(nrow(df)==0) next
-            
+            summary(mexhaz::mexhaz(Surv(time = survivalTime, event = outcomeCount)~1, data = df))
             surv<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                              age = min(unlist(expanded.set[i,]$age)),
                              genderConceptId = unlist(expanded.set[i,]$gender),
@@ -142,17 +142,17 @@ calculateSurvival <- function(survivalData = survivalData,
                                                                       outcomeCount = df$outcomeCount,
                                                                       survivalDurationTime = 365*5),
                                                           NA),
-                                                  NA),
-                             standProp = sum(df$stdWt*(df$outcomeNum/df$targetNum))
+                                                  NA)
             )
             observeSurvDf<-rbind(observeSurvDf, surv)
         }
         return(observeSurvDf)
     }else{
+        settings<-list(gender=genderSet, startYear=startYearSet)
+        expanded.set<-expand.grid(settings)
         observeSurvDf <- data.frame()
+        
         for (i in seq(nrow(expanded.set))){
-            settings<-list(gender=genderSet, startYear=startYearSet)
-            expanded.set<-expand.grid(settings)
             df<-survivalData %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear))
@@ -186,7 +186,25 @@ calculateSurvival <- function(survivalData = survivalData,
                                                                       outcomeCount = df$outcomeCount,
                                                                       survivalDurationTime = 365*5),
                                                           NA),
-                                                  NA)
+                                                  NA),
+                             survival5YrUci = ifelse(min(unlist(expanded.set[i,]$startYear)) <= observationEndYear-5,
+                                                  ifelse( !is.null(survivalCal(survivalDuration = df$survivalTime,
+                                                                               outcomeCount = df$outcomeCount,
+                                                                               survivalDurationTime = 365*5)),
+                                                          survivalCalUCI(survivalDuration = df$survivalTime,
+                                                                      outcomeCount = df$outcomeCount,
+                                                                      survivalDurationTime = 365*5),
+                                                          NA),
+                                                  NA),
+                             survival5YrLci = ifelse(min(unlist(expanded.set[i,]$startYear)) <= observationEndYear-5,
+                                                     ifelse( !is.null(survivalCal(survivalDuration = df$survivalTime,
+                                                                                  outcomeCount = df$outcomeCount,
+                                                                                  survivalDurationTime = 365*5)),
+                                                             survivalCalLCI(survivalDuration = df$survivalTime,
+                                                                         outcomeCount = df$outcomeCount,
+                                                                         survivalDurationTime = 365*5),
+                                                             NA),
+                                                     NA)
             )
             observeSurvDf<-rbind(observeSurvDf, surv)
         }

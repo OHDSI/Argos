@@ -31,6 +31,7 @@ getsurvData<-function(plpData = plpData,
 #' @param survivalDuration          time gap between first diagnosis date and death date or last observation date (survivalTime)
 #' @param outcomeCount              binary value (if outcome = death, death = 1 and alive = 0)
 #' @param survivalDurationTime      n-year survival -> 365*n
+#' @param valueWant                 surv = survival rate, uci = upper CI, lci = lower CI
 #' @import survival
 #' @export
 survivalCal<-function(survivalDuration = survivalTime,
@@ -41,3 +42,23 @@ survivalCal<-function(survivalDuration = survivalTime,
     return(survivalRate)
 }
 
+survivalCalUCI<-function(survivalDuration = survivalTime,
+                      outcomeCount = outcomeCount,
+                      survivalDurationTime = survivalDurationTime){
+    
+    survivalRate<-summary(survfit(Surv(survivalDuration, outcomeCount)~1), time = survivalDurationTime)$upper
+    return(survivalRate)
+}
+
+survivalCalLCI<-function(survivalDuration = survivalTime,
+                      outcomeCount = outcomeCount,
+                      survivalDurationTime = survivalDurationTime){
+    
+    survivalRate<-summary(survfit(Surv(survivalDuration, outcomeCount)~1), time = survivalDurationTime)$lower
+    return(survivalRate)
+}
+#summary(survfit(Surv(s$time, s$out)~1), time = 365*1)$upper
+# survivalCal(survivalDuration = s$time,
+#             outcomeCount = s$out,
+#             survivalDurationTime = 365*5,
+#             valueWant = surv)

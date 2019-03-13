@@ -20,14 +20,20 @@ connectionDetails<-DatabaseConnector::createConnectionDetails(dbms = 'sql server
                                                               user = Sys.getenv("userID"),
                                                               password = Sys.getenv("userPW"))
 
-cancerList<-list(cohortId = c(1,2,3,4,5,6),
+
+cancerList<-list(cohortId = c(1545,1544,1543,1547,1546,1548),
                  cohortName = c("colon", 'lung', 'stomach','breast','liver','thyroid'),
-                 conceptIdSet = list(c(4089661,4180790,4180791,4180792,4181344,435754,443381,443382,443383,443384,443391),
-                                     c(442139,4092217,4094876,4151250,4157333,258375),
-                                     c(4149838,197803,4095320,4149837,4095319,4094856,4092061,443387,4095317),
-                                     c(137809,4188544,4158563,4162253,4155292,4187850,4188545,432845#,81251
+                 conceptIdSet = list(c(435754,443381,443382,443383,443384,443390,443391,4089661,4180790,4180791,4180792,4181344),
+                     #c(4089661,4180790,4180791,4180792,4181344,435754,443381,443382,443383,443384,443391),
+                                     c(4157333,4092217,4151250,442139),                
+                     #c(442139,4092217,4094876,4151250,4157333,258375),
+                                     c(443387,4094856,4095319,4095320),
+                     #c(4149838,197803,4095320,4149837,4095319,4094856,4092061,443387,4095317),
+                                     c(81251,432845,4158563,4162253               
+                     #c(137809,4188544,4158563,4162253,4155292,4187850,4188545,432845#,81251
                                      ),
                                      c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
+                     #c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
                                      c(4178976)),
                  representConceptId = c())
 outcomeId <- 99
@@ -39,7 +45,7 @@ basePop<-loadMidYearPopulation('KOR')
 basePop$population<-round(basePop$population*samplingPop,0)
 
 #set reference population as population in 2007
-refPop<-basePop[basePop$startYear==2002,]
+refPop<-basePop[basePop$startYear==2000,]
 refPop<-refPop[,c("startAge","endAge", "genderConceptId","population")]
 colnames(refPop)[4]<-"standardPopulation"
 
@@ -74,7 +80,7 @@ for (i in seq(cancerList$cohortId)){
                                              include_descendant = F,
                                              prior_observation_period = 365,
                                              specific_condition_type = T,
-                                             condition_type_concept_ids = paste0(conditionTypeConceptIds,collapse=","),
+                                             #condition_type_concept_ids = paste0(conditionTypeConceptIds,collapse=","),
                                              condition_concept_ids = paste(cancerList$conceptIdSet[[i]],collapse=","),
                                              target_cohort_id = cancerList$cohortId[i])
     # fileCon<-file(file.path(outputFolder,"output.txt"))
@@ -117,6 +123,13 @@ for (i in seq(cancerList$cohortId)){
                                              minDateUnit = "year")
     saveRDS(incidenceData,file.path(outputFolder,paste0("incidenceData_cohortId_",cancerList$cohortId[i], ".rds" )))
     ##calculate the incidence
+    
+    head(incidenceData$data)
+    
+    aggregate(incidenceData$data$aggregatedNum, by=list(incidenceData$data$cohortStartYear, incidenceData$data$genderConceptId), sum)
+    
+    
+    
     incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
                                       basePopulation = basePop,
                                       refPopulation = refPop,
@@ -124,7 +137,8 @@ for (i in seq(cancerList$cohortId)){
                                       Agestandardization = TRUE,
                                       genderStandardization = TRUE,
                                       startYearStandardization = TRUE,
-                                      AgeSet = list(30:39,
+                                      AgeSet = list(20:29,
+                                                    30:39,
                                                     40:49,
                                                     50:59,
                                                     60:69,
@@ -159,7 +173,7 @@ for (i in seq(cancerList$cohortId)){
                                    cohortTable = cohortTable,
                                    covariateSettings = covariateSettings,
                                    targetCohortId = cancerList$cohortId[i],
-                                   outcomeId,
+                                   outcomeId = outcomeId,
                                    requireTimeAtRisk = FALSE,
                                    riskWindowStart = 0,
                                    riskWindowEnd = 365*5,
@@ -350,7 +364,7 @@ for (i  in seq(cancerList$cohortId)){
                         disabilityWeight=disabilityWeight,
                         outcomeDisabilityWeight = 1,
                         minTimeAtRisk=1,
-                        observeStartYr = 2007,
+                        observeStartYr = 2003,
                         observeEndYr = 2008,
                         discount = 0.3,
                         ageWeighting =TRUE,
