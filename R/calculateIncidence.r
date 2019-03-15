@@ -88,10 +88,11 @@ calculateIncidence<-function(incidenceData = incidenceData,
     expanded.set<-expand.grid(settings)
     
     resultDf <- data.frame()
+    standardPopWt<-data.frame()
     ##for loop should be replaced by apply function
     
     if(standardization=="direct"){
-        refPopulation$stdWt<-refPopulation$standardPopulation/sum(refPopulation$standardPopulation)
+        #refPopulation$stdWt<-refPopulation$standardPopulation/sum(refPopulation$standardPopulation)
         
         for (i in seq(nrow(expanded.set))){
             df<-incPop %>% 
@@ -100,7 +101,7 @@ calculateIncidence<-function(incidenceData = incidenceData,
                 filter(cohortStartYear %in% unlist(expanded.set[i,]$startYear) ) %>%
                 filter(birthYear %in% unlist(expanded.set[i,]$birthYear) )
             if(nrow(df)==0) next
-            df<-dplyr::inner_join(df,refPopulation,by=c("age"="startAge", "endAge"="endAge","genderConceptId"="genderConceptId"))
+            #df<-dplyr::inner_join(df,refPopulation,by=c("age"="startAge", "endAge"="endAge","genderConceptId"="genderConceptId"))
             
             tempDf<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                                age = min(unlist(expanded.set[i,]$age)),
@@ -108,14 +109,42 @@ calculateIncidence<-function(incidenceData = incidenceData,
                                genderConceptId = unlist(expanded.set[i,]$gender),
                                targetPopNum = sum(df$aggregatedNum, na.rm = TRUE),
                                basePop = sum(df$population, na.rm = TRUE),
-                               refPopulation = sum(df$standardPopulation, na.rm = TRUE),
-                               standardPopWt = sum(df$stdWt, na.rm = T),
+                               #refPopulation = sum(df$standardPopulation, na.rm = TRUE),
+                               #standardPopWt = sum(df$stdWt, na.rm = T),
                                proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rm = TRUE)
-                               #,standProp = sum(df$stdWt* (df$aggregatedNum/df$population)
+                               #,
+                               #standProp = sum(df$stdWt* (df$aggregatedNum/df$population) ) 
                                )
             
             resultDf<-rbind(resultDf,tempDf)
+            
         }
+        
+        ##calculate standard population weight
+        for (i in seq(nrow(expanded.set))){
+            refdf<-refPopulation %>%
+                filter(startAge %in% unlist(expanded.set[i,]$age))  
+            #%>% filter(genderConceptId %in% unlist(expanded.set[i,]$gender) )
+            
+            refgenderPop <-sum(refpopulation$standardPopulation)
+            #<-sum(refPopulation[refPopulation$genderConceptId == unlist(expanded.set[i,]$gender),]$standardPopulation)
+            
+            tempDf<-data.frame(age = min(unlist(expanded.set[i,]$age)),
+                               #genderConceptId = unlist(expanded.set[i,]$gender),
+                               refPopulation = sum(refdf$standardPopulation, na.rm = TRUE),
+                               standardPopWt = sum(refdf$standardPopulation, na.rm = TRUE)/refgenderPop
+                               )
+            
+            standardPopWt<-rbind(standardPopWt,tempDf)
+        }
+        
+        standardPopWt<-unique(standardPopWt)
+        
+        results<-list(incidenceCalculate = resultDf,
+                      standardPopulationData = standardPopWt)
+        
+        return(results)
+        
     }else{
         for (i in seq(nrow(expanded.set))){
             df<-incPop %>% 
@@ -146,13 +175,14 @@ calculateIncidence<-function(incidenceData = incidenceData,
 #'@export
 
 agespe<- function(incidencePropdata){
-    ageSpecdata<-incidencePropdata %>%
-        group_by(startYear, age, genderConceptId) %>%
+
+    ageSpecdata<- incidencePropdata$incidenceCalculate %>%
+        group_by( startYear, age, genderConceptId) %>%
         summarise( targetPop = sum(targetPopNum, na.rm = T),
                    basePop = sum(basePop, na.rm = T),
-                   refPop = sum(refPopulation, na.rm = T),
-                   proportion = (sum(targetPopNum)/sum(basePop)),
-                   stdPopWt = sum(standardPopWt, na.rm = T))
+                   proportion = (sum(targetPopNum)/sum(basePop))) %>%
+        left_join(incidencePropdata$standardPopulationData, by = c("age" = "age"))
+                  #by = c("age" = "age","genderConceptId" = "genderConceptId" )) 
     
     return(ageSpecdata)
 }
@@ -164,21 +194,21 @@ agespe<- function(incidencePropdata){
 #'@export
 ageadjust<-function(agespecifiedPropdata,
                     alpha = 0.05){
+    
     ageAdjudata<- agespecifiedPropdata %>%
         group_by(startYear, genderConceptId) %>%
         summarize( SumbasePop = sum(basePop),
-                   crudeProp = sum(targetPop) / sum(basePop),
-                   AgeadjProp = sum(proportion*stdPopWt, na.rm = T),
-                   dsr_var = sum(stdPopWt^2*proportion^2/basePop, na.rm = T),
-                   wm = max(stdPopWt/basePop)) %>%
+                   SumtotalNum = sum(targetPop) ,
+                   AgeadjProp = sum(proportion*standardPopWt, na.rm = T),
+                   dsr_var = sum(standardPopWt^2*proportion/basePop, na.rm = T),
+                   wm = max(standardPopWt/basePop)) %>%
         mutate(lci = qgamma(alpha/2, 
                             shape = (AgeadjProp^2/dsr_var),
                             scale = dsr_var/AgeadjProp),
                uci = qgamma(1-alpha/2,
                             shape = ((AgeadjProp+wm)^2/(dsr_var+wm^2)),
                             scale = (dsr_var+wm^2)/(AgeadjProp+wm))) %>%
-        mutate(crudeProp = crudeProp*100000,
-               AgeadjProp = AgeadjProp*100000,
+        mutate(AgeadjProp = AgeadjProp*100000,
                lci = lci*100000,
                uci = uci*100000)
     return(ageAdjudata)

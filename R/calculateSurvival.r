@@ -88,7 +88,6 @@ readySurvData<-function(connectionDetails ,
 #' @export
 
 calculateSurvival <- function(survivalData = survivalData,
-                              refPopulation = refPop,
                               Agedivided = TRUE,
                               AgeSet = list(30:39,
                                             40:49,
@@ -97,8 +96,8 @@ calculateSurvival <- function(survivalData = survivalData,
                                             70:79,
                                             80:99),
                               genderSet = list(8507,8532),
-                              startYearSet = list(2003:2004, 2005:2008, 2009:2013),
-                              birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
+                              startYearSet = startYearSet,
+                              #birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
                               observationEndYear=2013){
     if (Agedivided){
         settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet)#, birthYear = birthYearSet)
@@ -112,7 +111,6 @@ calculateSurvival <- function(survivalData = survivalData,
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear))
             if(nrow(df)==0) next
-            summary(mexhaz::mexhaz(Surv(time = survivalTime, event = outcomeCount)~1, data = df))
             surv<-data.frame(startYear = min(unlist(expanded.set[i,]$startYear)),
                              age = min(unlist(expanded.set[i,]$age)),
                              genderConceptId = unlist(expanded.set[i,]$gender),
@@ -206,7 +204,8 @@ calculateSurvival <- function(survivalData = survivalData,
                                                              NA),
                                                      NA)
             )
-            observeSurvDf<-rbind(observeSurvDf, surv)
+            observeSurvDf<-rbind(observeSurvDf, surv) %>%
+                arrange(genderConceptId, startYear)
         }
         return(observeSurvDf)
     }
