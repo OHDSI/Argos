@@ -15,12 +15,12 @@
 # limitations under the License.
 
 #'incidence proportion plot by birth Year
-#'@param incidencePropdata
+#'@param birthcohortIncData output of Argos packages bybirth code 
 #'@import dplyr
 #'@import ggplot2
 #'@export
-PlotByBirthInc<- function (incidencePropdata){
-    bybirth<- bybirth(incidencePropdata) %>%
+PlotByBirthInc<- function (birthcohortIncData){
+    bybirth<- birthcohortIncData %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) 
     
     bybirthPlot<- ggplot2::ggplot(data = bybirth, aes(x = as.factor(birthYear), y = proportion, group = age, colour = as.factor(age))) + 
@@ -44,12 +44,12 @@ PlotByBirthInc<- function (incidencePropdata){
 }
 
 #'Age specified incidence proportion plot by diagnosis year
-#'@param incidencePropdata 
+#'@param agespecifiedIncData output of Argos packages agespe code 
 #'@import dplyr
 #'@import ggplot2
 #'@export
-PlotByDiagnosisIncAgeS <- function(incidencePropdata){
-    ageSpe<- agespe(incidencePropdata) %>%
+PlotByDiagnosisIncAgeS <- function(agespecifiedIncData){
+    ageSpe<- agespecifiedIncData %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) 
     
     ageSpePlot<- ggplot2::ggplot(data = ageSpe, aes(x = as.factor(startYear), y = proportion, group = age, colour = as.factor(age))) + 
@@ -73,12 +73,12 @@ PlotByDiagnosisIncAgeS <- function(incidencePropdata){
 }
 
 #'Age adjusted incidence proportion plot by diagnosis year 
-#'@param incidencePropdata  
+#'@param ageadjustIncData output of Argos packages ageadjust code   
 #'@import dplyr
 #'@import ggplot2
 #'@export
-PlotByDiagnosisIncAgeAd <- function(incidencePropdata){
-    ageAdj<- ageadjust(incidencePropdata) %>%
+PlotByDiagnosisIncAgeAd <- function(ageadjustIncData){
+    ageAdj<- ageadjustIncData %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women")))
     
     ageAdjPlot<- ggplot2::ggplot(data = ageAdj, aes(x = as.factor(startYear), y = AgeadjProp, group = 1)) + 
