@@ -220,10 +220,9 @@ ageadjust<-function(agespecifiedPropdata,
 #'@import dplyr
 #'@export
 bybirth<- function(incidencePropdata){
-    bybirthdata<-incidencePropdata %>%
+    bybirthdata<-incidencePropdata$incidenceCalculate %>%
         group_by(birthYear, age, genderConceptId) %>%
-        summarise( proportion = (sum(targetPopNum)/sum(refPopulation))*100000,
-                   stdproportion = sum(standProp)*100000)
+        summarise( proportion = ((sum(targetPopNum)/sum(refPopulation)))*100000)
     
     return(bybirthdata)
 }
