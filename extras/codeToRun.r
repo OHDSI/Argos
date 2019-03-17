@@ -22,13 +22,19 @@ connectionDetails<-DatabaseConnector::createConnectionDetails(dbms = 'sql server
 
 cancerList<-list(cohortId = c(1,2,3,4,5,6),
                  cohortName = c("colon", 'lung', 'stomach','breast','liver','thyroid'),
-                 conceptIdSet = list(c(4089661,4180790,4180791,4180792,4181344,435754,443381,443382,443383,443384,443391),
-                                     c(442139,4092217,4094876,4151250,4157333,258375),
-                                     c(4149838,197803,4095320,4149837,4095319,4094856,4092061,443387,4095317),
-                                     c(137809,4188544,4158563,4162253,4155292,4187850,4188545,432845#,81251
+                 conceptIdSet = list(c(435754,443381,443382,443383,443384,443390,443391,4089661,4180790,4180791,4180792,4181344),
+                     #c(4089661,4180790,4180791,4180792,4181344,435754,443381,443382,443383,443384,443391),
+                                     #c(4157333,4092217,4151250,442139),                
+                     c(442139,4092217,4094876,4151250,4157333,258375),
+                                     #c(443387,4094856,4095319,4095320),
+                     c(4149838,197803,4095320,4149837,4095319,4094856,4092061,443387,4095317),
+                                     #c(81251,432845,4158563,4162253               
+                     c(137809,4188544,4158563,4162253,4155292,4187850,4188545,432845#,81251
                                      ),
-                                     c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
-                                     c(4178976)),
+                                     #c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
+                     c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
+                                    c(4178976)) ,
+                 
                  representConceptId = c())
 outcomeId <- 99
 
@@ -39,7 +45,7 @@ basePop<-loadMidYearPopulation('KOR')
 basePop$population<-round(basePop$population*samplingPop,0)
 
 #set reference population as population in 2007
-refPop<-basePop[basePop$startYear==2002,]
+refPop<-basePop[basePop$startYear==2000,]
 refPop<-refPop[,c("startAge","endAge", "genderConceptId","population")]
 colnames(refPop)[4]<-"standardPopulation"
 
@@ -71,10 +77,10 @@ for (i in seq(cancerList$cohortId)){
                                              vocabulary_database_schema = vocabularyDatabaseSchema,
                                              target_database_schema = cohortDatabaseSchema,
                                              target_cohort_table = cohortTable,
-                                             include_descendant = F,
-                                             prior_observation_period = 365,
-                                             specific_condition_type = T,
-                                             condition_type_concept_ids = paste0(conditionTypeConceptIds,collapse=","),
+                                             #include_descendant = F,
+                                             prior_observation_period = 365*2,
+                                             #specific_condition_type = T,
+                                             #condition_type_concept_ids = paste0(conditionTypeConceptIds,collapse=","),
                                              condition_concept_ids = paste(cancerList$conceptIdSet[[i]],collapse=","),
                                              target_cohort_id = cancerList$cohortId[i])
     # fileCon<-file(file.path(outputFolder,"output.txt"))
@@ -116,7 +122,29 @@ for (i in seq(cancerList$cohortId)){
                                              targetCohortId = cancerList$cohortId[i],
                                              minDateUnit = "year")
     saveRDS(incidenceData,file.path(outputFolder,paste0("incidenceData_cohortId_",cancerList$cohortId[i], ".rds" )))
-    ##calculate the incidence
+    
+    ##calculate the age adjusted incidence rate
+    incCal<-calculateIncidence(incidenceData = incidenceData,
+                               basePopulation = basePop,
+                               refPopulation = refPop,
+                               standardization = "direct",
+                               Agestandardization = TRUE,
+                               genderStandardization = TRUE,
+                               startYearStandardization = TRUE,
+                               AgeSet = list(0:4,5:9,10:14,15:19,20:24,25:29,30:34,35:39,40:44,
+                                             45:49,50:54,55:59,60:64,65:69,70:74,75:79,80:84,85:100),
+                               genderSet = list(8507,8532),
+                               startYearSet = startYearSet,
+                               birthYearSet = list(1910:2005))
+    
+    ageSpecified<-agespe(incCal)
+    ageadjInc<-ageadjust(ageSpecified, alpha = 0.05) %>%
+        arrange(genderConceptId, startYear)
+    
+    write.csv(ageadjInc, file.path(outputFolder, paste0("ageadjustedInc_cohortId_", cancerList$cohortId[[i]], ".csv")))
+    saveRDS(ageadjInc,file.path(outputFolder,paste0("ageadjustedInc_cohortId_",cancerList$cohortId[i], ".rds" )))
+    
+    ##calculate the age specified incidence rate
     incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
                                       basePopulation = basePop,
                                       refPopulation = refPop,
@@ -137,20 +165,26 @@ for (i in seq(cancerList$cohortId)){
                                                           1950:1959, 1960:1964, 
                                                           1965:1969, 1970:1974, 
                                                           1975:1979, 1980:1989))
-    saveRDS(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".rds" )))
-    write.csv(incCal,file.path(outputFolder,paste0("incidenceCalData_cohortId_",cancerList$cohortId[i], ".csv" )))
     
-    bybirthPlot<-Argos::PlotByBirthInc(incidencePropdata = incCal)
-    ageSpePlot<-Argos::PlotByDiagnosisIncAgeS(incidencePropdata = incCal)
-    ageAdjPlot<-Argos::PlotByDiagnosisIncAgeAd(incidencePropdata = incCal)
-    Argos::saveIncidence(outputFolder,
-                         bybirthPlot,
-                         ageSpePlot,
-                         ageAdjPlot,
-                         imageExtension = "png")
+    ageSpecifiedIncData <- agespe(incidencePropdata = incCal)
+    birthcohortIncData<-bybirth(incidencePropdata = incCal)
+    
+    saveRDS(ageSpecifiedIncData,file.path(outputFolder,paste0("ageSpecifiedIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
+    write.csv(ageSpecifiedIncData,file.path(outputFolder,paste0("ageSpecifiedIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
+    saveRDS(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
+    write.csv(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
+
+    # bybirthPlot<-Argos::PlotByBirthInc(incidencePropdata = incCal)
+    # ageSpePlot<-Argos::PlotByDiagnosisIncAgeS(incidencePropdata = incCal)
+    # ageAdjPlot<-Argos::PlotByDiagnosisIncAgeAd(incidencePropdata = incCal)
+    # Argos::saveIncidence(outputFolder,
+    #                      bybirthPlot,
+    #                      ageSpePlot,
+    #                      ageAdjPlot,
+    #                      imageExtension = "png")
 }
-i<-1
-####calculate the survival####
+#i<-2
+###calculate the survival####
 for (i in seq(cancerList$cohortId)){
     SurvData<-Argos::readySurvData(connectionDetails = connectionDetails, 
                                    cdmDatabaseSchema = cdmDatabaseSchema,
@@ -159,58 +193,49 @@ for (i in seq(cancerList$cohortId)){
                                    cohortTable = cohortTable,
                                    covariateSettings = covariateSettings,
                                    targetCohortId = cancerList$cohortId[i],
-                                   outcomeId,
+                                   outcomeId = outcomeId,
                                    requireTimeAtRisk = FALSE,
                                    riskWindowStart = 0,
                                    riskWindowEnd = 365*5,
                                    removeSubjectsWithPriorOutcome = TRUE,
                                    minDateUnit = "year")
     
-    agedivSurvCal<-Argos::calculateSurvival(survivalData = SurvData,
-                                            refPopulation = refPop,
-                                            Agedivided = TRUE,
-                                            AgeSet = list(30:39,
-                                                          40:49,
-                                                          50:59,
-                                                          60:69,
-                                                          70:79,
-                                                          80:99),
-                                            genderSet = list(8507,8532),
-                                            startYearSet = startYearSet,
-                                            birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
-                                            observationEndYear = 2013)
+    agedivSurvCal<-calculateSurvival(survivalData = SurvData,
+                                     Agedivided = TRUE,
+                                     AgeSet = list(30:39,
+                                                   40:49,
+                                                   50:59,
+                                                   60:69,
+                                                   70:79,
+                                                   80:99),
+                                     genderSet = list(8507,8532),
+                                     startYearSet = startYearSet,
+                                     observationEndYear = 2013)
     
-    totalSurvCal<-Argos::calculateSurvival(survivalData = SurvData,
-                                           refPopulation = refPop,
-                                           Agedivided = FALSE,
-                                           AgeSet = list(30:39,
-                                                         40:49,
-                                                         50:59,
-                                                         60:69,
-                                                         70:79,
-                                                         80:99),
-                                           genderSet = list(8507,8532),
-                                           startYearSet = startYearSet,
-                                           birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989),
-                                           observationEndYear = 2013)
+    totalSurvCal<-calculateSurvival(survivalData = SurvData,
+                                    Agedivided = FALSE,
+                                    AgeSet = list(0:100),
+                                    genderSet = list(8507,8532),
+                                    startYearSet = list(2003:2005,2006:2008),
+                                    observationEndYear = 2013)
     
     saveRDS(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".rds" )))
     write.csv(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".csv" )))
     saveRDS(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".rds" )))
     write.csv(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".csv" )))
     
-    #plotting
-    plot1yrsurvival<-Argos::plotSurvival1Yr(agedivSurvCal = agedivSurvCal)
-    plot3yrsurvival<-Argos::plotSurvival3Yr(agedivSurvCal = agedivSurvCal)
-    plot5yrsurvival<-Argos::plotSurvival5Yr(agedivSurvCal = agedivSurvCal)
-    plottotalsurvival<-Argos::plotSurvivalTotal(totalSurvCal = totalSurvCal)
-    
-    Argos::saveSurvival(outputFolder,
-                        plot1yrsurvival,
-                        plot3yrsurvival,
-                        plot5yrsurvival,
-                        plottotalsurvival,
-                        imageExtension = "png")
+    ##plotting
+    # plot1yrsurvival<-Argos::plotSurvival1Yr(agedivSurvCal = agedivSurvCal)
+    # plot3yrsurvival<-Argos::plotSurvival3Yr(agedivSurvCal = agedivSurvCal)
+    # plot5yrsurvival<-Argos::plotSurvival5Yr(agedivSurvCal = agedivSurvCal)
+    # plottotalsurvival<-Argos::plotSurvivalTotal(totalSurvCal = totalSurvCal)
+    # 
+    # Argos::saveSurvival(outputFolder,
+    #                     plot1yrsurvival,
+    #                     plot3yrsurvival,
+    #                     plot5yrsurvival,
+    #                     plottotalsurvival,
+    #                     imageExtension = "png")
 }
 
 ####calculate the mortality####
@@ -337,20 +362,17 @@ for (i  in seq(cancerList$cohortId)){
                                          riskWindowEnd = 365*5,
                                          removeSubjectsWithPriorOutcome = TRUE,
                                          minDateUnit = "year")
-    if (cancerList$cohortName[[i]] %in% c("colon", "lung", "stomach", "breast", "thyroid")){
-        disabilityWeightData <- loadDisabilityWeight('KOR',2012) %>%
+    disabilityWeightData <- loadDisabilityWeight('KOR',2012) %>%
             filter(condition_concept_id %in% cancerList$conceptIdSet[[i]]) 
-        disabilityWeight<-disabilityWeightData$disability_weight
-    }else{
-        disabilityWeight<-0.5
-    }
+    disabilityWeight<-disabilityWeightData$disability_weight
+    
     lifeExp <- loadLifeExpectancy('KOR')
     DALY<-calculateDALY(outcomeData,
                         refLifeExpectancy,
                         disabilityWeight=disabilityWeight,
                         outcomeDisabilityWeight = 1,
                         minTimeAtRisk=1,
-                        observeStartYr = 2007,
+                        observeStartYr = 2003,
                         observeEndYr = 2008,
                         discount = 0.3,
                         ageWeighting =TRUE,

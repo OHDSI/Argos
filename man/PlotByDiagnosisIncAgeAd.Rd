@@ -7,7 +7,7 @@
 PlotByDiagnosisIncAgeAd(incidencePropdata)
 }
 \arguments{
-\item{incidencePropdata}{outcome of Argos package getIncidenceData code}
+\item{incidencePropdata}{}
 }
 \description{
 Age adjusted incidence proportion plot by diagnosis year

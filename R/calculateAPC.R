@@ -18,67 +18,35 @@
 #'@param incidencePropdata  
 #'@import dplyr
 #'@export
-
-
-ArgosResult<-data.frame()
-for(i in unique(cancerList$cohortId)){
-    i<-2
-    incidenceData <- Argos::getIncidenceData(connectionDetails = connectionDetails,
-                                             cdmDatabaseSchema = cdmDatabaseSchema,
-                                             cohortDatabaseSchema = cohortDatabaseSchema,
-                                             cohortTable = cohortTable,
-                                             outcomeDatabaseSchema = cohortDatabaseSchema ,
-                                             targetCohortId = cancerList$cohortId[i],
-                                             minDateUnit = "year")
-    incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
-                                      basePopulation = basePop,
-                                      refPopulation = refPop,
-                                      standardization = "direct",
-                                      Agestandardization = TRUE,
-                                      genderStandardization = TRUE,
-                                      startYearStandardization = TRUE,
-                                      AgeSet = list(30:39,
-                                                    40:49,
-                                                    50:59,
-                                                    60:69,
-                                                    70:79,
-                                                    80:99),
-                                      genderSet = list(8507,8532),
-                                      startYearSet = startYearSet,
-                                      birthYearSet = list(1910:1919, 1920:1929,
-                                                          1930:1939, 1940:1949,
-                                                          1950:1959, 1960:1964,
-                                                          1965:1969, 1970:1974,
-                                                          1975:1979, 1980:1989))
-    
-    ageAdj<- incCal %>%
+ageAdjAPC<-function(incidencePropdata){
+    ageAdj<- incidencePropdata %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
         group_by(startYear, genderConceptId) %>%
         summarize( AgeadjProp = sum(standProp)*100000)
     
     ageAdj_women_lm<-ageAdj %>%
-        lm(formula = log(AgeadjProp)~startYear)
-    female_slope<-summary(ageAdj_women_lm)$coefficients["startYear","Estimate"]
+        filter(genderConceptId == 8507) %>%
+        lm(formula = log(AgeadjProp)~startYear)%>%
+        female_slope<-summary(ageAdj_women_lm)$coefficients["startYear","Estimate"]
     female_p_value<-summary(ageAdj_women_lm)$coefficients["startYear","Pr(>|t|)"]
     female_APC<-(exp(female_slope)-1)*100
     
     ageAdj_male_lm<-ageAdj %>%
-        filter(genderConceptId == 'men') %>%
+        filter(genderConceptId == 8532) %>%
         lm(formula = log(AgeadjProp)~startYear)
     male_slope<-summary(ageAdj_male_lm)$coefficients["startYear","Estimate"]
     male_p_value<-summary(ageAdj_male_lm)$coefficients["startYear","Pr(>|t|)"]
     male_APC<-(exp(male_slope)-1)*100
     
     
-    df<-data.frame(cohortId = i,
-                   femaleSlope = female_slope,
-                   femalePValue = female_p_value,
-                   femaleAPC = female_APC,
-                   maleSlope = male_slope,
-                   malePValue = male_p_value,
-                   maleAPC = male_APC)
-    ArgosResult<-rbind(ArgosResult, df)
-    write.csv(ArgosResult, file.path(outputFolder, "incidenceAPCArgos.csv"))
+    results<-data.frame(femaleSlope = female_slope,
+                        femalePValue = female_p_value,
+                        femaleAPC = female_APC,
+                        maleSlope = male_slope,
+                        malePValue = male_p_value,
+                        maleAPC = male_APC)
+    
+    return(results)    
 }
 
 ##for comparing with reference 
