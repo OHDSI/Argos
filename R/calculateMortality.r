@@ -81,48 +81,48 @@ getMortalityData<-function(connectionDetails,
     return(result)
 }
 
-
-i<-3
-incidencePlpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails, 
-                                                       cdmDatabaseSchema = cdmDatabaseSchema,
-                                                       cohortDatabaseSchema = cohortDatabaseSchema,
-                                                       cohortTable = cohortTable,
-                                                       cohortId = cancerList$cohortId[i],
-                                                       covariateSettings = covariateSettings,
-                                                       outcomeDatabaseSchema = cohortDatabaseSchema,
-                                                       outcomeTable = cohortTable,
-                                                       outcomeIds = cancerList$cohortId[i],
-                                                       sampleSize = NULL)
-mortalitycohorts<- ff::as.ram(deathPlpData$cohorts) %>%
-    filter(subjectId %in% incidencePlpData$cohorts$subjectId)
-hist(lubridate::year(mortalitycohorts$cohortStartDate))
-t<-getMortalityData(connectionDetails,
-                 cdmDatabaseSchema,
-                 cohortDatabaseSchema,
-                 outcomeDatabaseSchema,
-                 cohortTable,
-                 targetCohortId = cancerList$cohortId[i],
-                 outcomeId = 99,
-                 minDateUnit = 'year')
-death<-getIncidenceData(connectionDetails, 
-                  cdmDatabaseSchema,
-                  cohortDatabaseSchema,
-                  outcomeDatabaseSchema,
-                  cohortTable,
-                  targetCohortId = 99,
-                  minDateUnit = 'year')
-calculatedeath<-calculateIncidence(incidenceData = death,
-                             basePopulation = basePop,
-                             standardization = "direct",
-                             refPopulation = refPop,
-                             Agestandardization = TRUE,
-                             genderStandardization = TRUE,
-                             startYearStandardization = TRUE,
-                             AgeSet = list(30:39,40:49,50:59,60:69,70:79,80:99),
-                             genderSet = list(8507,8532),
-                             startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013),
-                             birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
-out<-ageadjust(incidencePropdata = calculateMortality,
-                    alpha = 0.05)
-
-PlotByDiagnosisIncAgeAd(calculatedeath)
+# 
+# i<-3
+# incidencePlpData <- PatientLevelPrediction::getPlpData(connectionDetails = connectionDetails, 
+#                                                        cdmDatabaseSchema = cdmDatabaseSchema,
+#                                                        cohortDatabaseSchema = cohortDatabaseSchema,
+#                                                        cohortTable = cohortTable,
+#                                                        cohortId = cancerList$cohortId[i],
+#                                                        covariateSettings = covariateSettings,
+#                                                        outcomeDatabaseSchema = cohortDatabaseSchema,
+#                                                        outcomeTable = cohortTable,
+#                                                        outcomeIds = cancerList$cohortId[i],
+#                                                        sampleSize = NULL)
+# mortalitycohorts<- ff::as.ram(deathPlpData$cohorts) %>%
+#     filter(subjectId %in% incidencePlpData$cohorts$subjectId)
+# hist(lubridate::year(mortalitycohorts$cohortStartDate))
+# t<-getMortalityData(connectionDetails,
+#                  cdmDatabaseSchema,
+#                  cohortDatabaseSchema,
+#                  outcomeDatabaseSchema,
+#                  cohortTable,
+#                  targetCohortId = cancerList$cohortId[i],
+#                  outcomeId = 99,
+#                  minDateUnit = 'year')
+# death<-getIncidenceData(connectionDetails, 
+#                   cdmDatabaseSchema,
+#                   cohortDatabaseSchema,
+#                   outcomeDatabaseSchema,
+#                   cohortTable,
+#                   targetCohortId = 99,
+#                   minDateUnit = 'year')
+# calculatedeath<-calculateIncidence(incidenceData = death,
+#                              basePopulation = basePop,
+#                              standardization = "direct",
+#                              refPopulation = refPop,
+#                              Agestandardization = TRUE,
+#                              genderStandardization = TRUE,
+#                              startYearStandardization = TRUE,
+#                              AgeSet = list(30:39,40:49,50:59,60:69,70:79,80:99),
+#                              genderSet = list(8507,8532),
+#                              startYearSet = list(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013),
+#                              birthYearSet = list(1960:1964, 1965:1969, 1970:1974, 1975:1979, 1980:1984, 1985:1989))
+# out<-ageadjust(incidencePropdata = calculateMortality,
+#                     alpha = 0.05)
+# 
+# PlotByDiagnosisIncAgeAd(calculatedeath)
