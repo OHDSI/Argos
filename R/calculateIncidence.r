@@ -114,7 +114,7 @@ calculateIncidence<-function(incidenceData = incidenceData,
                                proportion = sum(df$aggregatedNum, na.rm = TRUE) / sum(df$population, na.rm = TRUE)
                                #,
                                #standProp = sum(df$stdWt* (df$aggregatedNum/df$population) ) 
-                               )
+            )
             
             resultDf<-rbind(resultDf,tempDf)
             
@@ -133,7 +133,7 @@ calculateIncidence<-function(incidenceData = incidenceData,
                                #genderConceptId = unlist(expanded.set[i,]$gender),
                                refPopulation = sum(refdf$standardPopulation, na.rm = TRUE),
                                standardPopWt = sum(refdf$standardPopulation, na.rm = TRUE)/refgenderPop
-                               )
+            )
             
             standardPopWt<-rbind(standardPopWt,tempDf)
         }
@@ -175,14 +175,14 @@ calculateIncidence<-function(incidenceData = incidenceData,
 #'@export
 
 agespe<- function(incidencePropdata){
-
+    
     ageSpecdata<- incidencePropdata$incidenceCalculate %>%
         group_by( startYear, age, genderConceptId) %>%
         summarise( targetPop = sum(targetPopNum, na.rm = T),
                    basePop = sum(basePop, na.rm = T),
                    proportion = (sum(targetPopNum)/sum(basePop))) %>%
         left_join(incidencePropdata$standardPopulationData, by = c("age" = "age"))
-                  #by = c("age" = "age","genderConceptId" = "genderConceptId" )) 
+    #by = c("age" = "age","genderConceptId" = "genderConceptId" )) 
     
     return(ageSpecdata)
 }
@@ -222,7 +222,7 @@ ageadjust<-function(agespecifiedPropdata,
 bybirth<- function(incidencePropdata){
     bybirthdata<-incidencePropdata$incidenceCalculate %>%
         group_by(birthYear, age, genderConceptId) %>%
-        summarise( proportion = ((sum(targetPopNum)/sum(refPopulation)))*100000)
+        summarise( proportion = ((sum(targetPopNum)/sum(basePop))))
     
     return(bybirthdata)
 }

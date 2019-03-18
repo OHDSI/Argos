@@ -21,7 +21,8 @@
 #'@export
 PlotByBirthInc<- function (birthcohortIncData){
     bybirth<- birthcohortIncData %>%
-        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) 
+        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
+        mutate( proportion = proportion*100000)
     
     bybirthPlot<- ggplot2::ggplot(data = bybirth, aes(x = as.factor(birthYear), y = proportion, group = age, colour = as.factor(age))) + 
         ggplot2::geom_point() + 
@@ -50,7 +51,8 @@ PlotByBirthInc<- function (birthcohortIncData){
 #'@export
 PlotByDiagnosisIncAgeS <- function(agespecifiedIncData){
     ageSpe<- agespecifiedIncData %>%
-        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) 
+        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
+        mutate( proportion = proportion*100000)
     
     ageSpePlot<- ggplot2::ggplot(data = ageSpe, aes(x = as.factor(startYear), y = proportion, group = age, colour = as.factor(age))) + 
         ggplot2::geom_point() + 

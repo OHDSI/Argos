@@ -173,15 +173,15 @@ for (i in seq(cancerList$cohortId)){
     write.csv(ageSpecifiedIncData,file.path(outputFolder,paste0("ageSpecifiedIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
     saveRDS(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
     write.csv(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
-
-    # bybirthPlot<-Argos::PlotByBirthInc(incidencePropdata = incCal)
-    # ageSpePlot<-Argos::PlotByDiagnosisIncAgeS(incidencePropdata = incCal)
-    # ageAdjPlot<-Argos::PlotByDiagnosisIncAgeAd(incidencePropdata = incCal)
-    # Argos::saveIncidence(outputFolder,
-    #                      bybirthPlot,
-    #                      ageSpePlot,
-    #                      ageAdjPlot,
-    #                      imageExtension = "png")
+    
+    bybirthPlot<-Argos::PlotByBirthInc(birthcohortIncData = birthcohortIncData)
+    ageSpePlot<-Argos::PlotByDiagnosisIncAgeS(agespecifiedIncData = ageSpecifiedIncData)
+    ageAdjPlot<-Argos::PlotByDiagnosisIncAgeAd(ageadjustIncData = ageadjInc)
+    Argos::saveIncidence(outputFolder,
+                         bybirthPlot,
+                         ageSpePlot,
+                         ageAdjPlot,
+                         imageExtension = "png")
 }
 #i<-2
 ###calculate the survival####
