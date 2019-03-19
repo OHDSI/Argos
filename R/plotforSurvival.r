@@ -34,7 +34,7 @@ plotSurvivalTotal <- function(totalSurvCal){
         ggplot2::ylab("Total survival rate") +
         ggplot2::facet_wrap(~genderConceptId) +
         ggplot2::ggtitle(paste( cancerList$cohortName[[i]],"Cancer","Total Survival Rate", sep = " ")) +
-        ggplot2::ylim(0.25,1)+
+        ggplot2::ylim(0,1)+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),

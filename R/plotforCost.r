@@ -57,18 +57,15 @@ plotforCostPerYrdiv<- function(costData){
         group_by(cohortStartYear, visitConceptId) %>%
         summarise(avgCostSumperYr = ((sum(paidByPayerSum)+sum(paidByPatientSum))/sum(subjectCount))*0.001) 
     
-    costperYrTotal<- costData %>%
-        filter( dateUnit == 0 ) %>%
-        mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
-        group_by(cohortStartYear) %>%
-        summarise(avgCostSumperYr = ((sum(paidByPayerSum)+sum(paidByPatientSum))/sum(subjectCount))*0.001) %>%
-        mutate( visitConceptId = "totalAverage") 
+    # costperYrTotal<- costData %>%
+    #     filter( dateUnit == 0 ) %>%
+    #     mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
+    #     group_by(cohortStartYear) %>%
+    #     summarise(avgCostSumperYr = ((sum(paidByPayerSum)+sum(paidByPatientSum))/sum(subjectCount))*0.001) %>%
+    #     mutate( visitConceptId = "totalAverage") 
     
-    PlottotalcostperYrdiv<-ggplot2::ggplot(data = costperYrTotalDiv, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, group = visitConceptId, colour = visitConceptId))+
-        ggplot2::geom_point()+
-        ggplot2::geom_line(size = 0.8)+
-        ggplot2::geom_point(data = costperYrTotal, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, group = 1))+
-        ggplot2::geom_line(data = costperYrTotal, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, group = 1), size = 1.5, linetype = "dashed")+
+    PlottotalcostperYrdiv<-ggplot2::ggplot(data = costperYrTotalDiv, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
+        ggplot2::geom_bar(stat = "identity", width = .5)+
         ggplot2::xlab("diagnosis year")+
         ggplot2::ylab("Total Cost per Year(1000 won)")+
         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Total Cost during 1year after diagnosis", sep = " "))+
@@ -97,7 +94,7 @@ plotforCostPerYrBarPay<- function(costData){
         summarise(avgCostSumperYr = (sum(paidByPayerSum)/sum(subjectCount))*0.001) 
     
     plotperYr_barplot_payer<- ggplot2::ggplot(data = costpayerperYr, ggplot2::aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
-        ggplot2::geom_bar(position = "dodge", stat = "identity", width = 0.5)+
+        ggplot2::geom_bar(stat = "identity", width = 0.5)+
         ggplot2::xlab("diagnosis year")+
         ggplot2::ylab("Total Cost per Year(1000 won)")+
         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Cost paid by payer during 1year after diagnosis", sep = " "))+
@@ -126,7 +123,7 @@ plotforCostPerYrBarPat<- function(costData){
         summarise(avgCostSumperYr = (sum(paidByPatientSum)/sum(subjectCount))*0.001) 
     
     plotperYr_barplot_patient<- ggplot2::ggplot(data = costpatientperYr, ggplot2::aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
-        ggplot2::geom_bar(position = "dodge", stat = "identity", width = 0.5)+
+        ggplot2::geom_bar(stat = "identity", width = 0.5)+
         #ggplot2::geom_line(aes(colour = visitConceptId, group = visitConceptId), size = 0.8)+
         ggplot2::xlab("diagnosis year")+
         ggplot2::ylab("Total Cost per Year(1000 won)")+
