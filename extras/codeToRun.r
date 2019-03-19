@@ -138,8 +138,7 @@ for (i in seq(cancerList$cohortId)){
                                birthYearSet = list(1910:2005))
     
     ageSpecified<-agespe(incCal)
-    ageadjInc<-ageadjust(ageSpecified, alpha = 0.05) %>%
-        arrange(genderConceptId, startYear)
+    ageadjInc<-ageadjust(ageSpecified, alpha = 0.05) 
     
     write.csv(ageadjInc, file.path(outputFolder, paste0("ageadjustedInc_cohortId_", cancerList$cohortId[[i]], ".csv")))
     saveRDS(ageadjInc,file.path(outputFolder,paste0("ageadjustedInc_cohortId_",cancerList$cohortId[i], ".rds" )))
@@ -354,10 +353,8 @@ for (i in seq(cancerList$cohortId)){
 }
 
 ##get DALY (disabilityweight has not been readied yet for livercancer)
-
+DW<-loadDisabilityWeight('KOR',2012)
 for (i  in seq(cancerList$cohortId)){
-    disabilityWeight <- loadDisabilityWeight('KOR',2012) %>%
-        filter(condition_concept_id %in% cancerList$conceptIdSet[[i]]) 
     lifeExp <- loadLifeExpectancy('KOR')
     outcomeData <- Argos::getOutcomeData(connectionDetails = connectionDetails, 
                                          cdmDatabaseSchema = cdmDatabaseSchema,
@@ -372,8 +369,7 @@ for (i  in seq(cancerList$cohortId)){
                                          riskWindowEnd = 365*5,
                                          removeSubjectsWithPriorOutcome = TRUE,
                                          minDateUnit = "year")
-    disabilityWeightData <- loadDisabilityWeight('KOR',2012) %>%
-            filter(condition_concept_id %in% cancerList$conceptIdSet[[i]]) 
+    disabilityWeightData <- DW[which(DW$condition_concept_id %in% cancerList$conceptIdSet[[i]]),] 
     disabilityWeight<-disabilityWeightData$disability_weight
     
     lifeExp <- loadLifeExpectancy('KOR')

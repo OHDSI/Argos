@@ -126,7 +126,7 @@ calculateIncidence<-function(incidenceData = incidenceData,
                 filter(startAge %in% unlist(expanded.set[i,]$age))  
             #%>% filter(genderConceptId %in% unlist(expanded.set[i,]$gender) )
             
-            refgenderPop <-sum(refpopulation$standardPopulation)
+            refgenderPop <-sum(refPopulation$standardPopulation)
             #<-sum(refPopulation[refPopulation$genderConceptId == unlist(expanded.set[i,]$gender),]$standardPopulation)
             
             tempDf<-data.frame(age = min(unlist(expanded.set[i,]$age)),
