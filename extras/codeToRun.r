@@ -216,26 +216,36 @@ for (i in seq(cancerList$cohortId)){
                                     Agedivided = FALSE,
                                     AgeSet = list(0:100),
                                     genderSet = list(8507,8532),
-                                    startYearSet = list(2003:2005,2006:2008),
+                                    startYearSet = startYearSet,
                                     observationEndYear = 2013)
+    
+    totalSurvCal_validation<-calculateSurvival(survivalData = SurvData,
+                                               Agedivided = FALSE,
+                                               AgeSet = list(0:100),
+                                               genderSet = list(8507,8532),
+                                               startYearSet = list(2004:2005,2006:2008),
+                                               observationEndYear = 2013)
     
     saveRDS(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".rds" )))
     write.csv(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".csv" )))
     saveRDS(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".rds" )))
     write.csv(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    saveRDS(totalSurvCal_validation,file.path(outputFolder,paste0("survivalData_Total_validation_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    write.csv(totalSurvCal_validation,file.path(outputFolder,paste0("survivalData_Total_validation_cohortId_",cancerList$cohortId[[i]],".csv" )))
     
-    ##plotting
-    # plot1yrsurvival<-Argos::plotSurvival1Yr(agedivSurvCal = agedivSurvCal)
-    # plot3yrsurvival<-Argos::plotSurvival3Yr(agedivSurvCal = agedivSurvCal)
-    # plot5yrsurvival<-Argos::plotSurvival5Yr(agedivSurvCal = agedivSurvCal)
-    # plottotalsurvival<-Argos::plotSurvivalTotal(totalSurvCal = totalSurvCal)
-    # 
-    # Argos::saveSurvival(outputFolder,
-    #                     plot1yrsurvival,
-    #                     plot3yrsurvival,
-    #                     plot5yrsurvival,
-    #                     plottotalsurvival,
-    #                     imageExtension = "png")
+    
+    #plotting
+    plot1yrsurvival<-plotSurvival1Yr(agedivSurvCal = agedivSurvCal)
+    plot3yrsurvival<-plotSurvival3Yr(agedivSurvCal = agedivSurvCal)
+    plot5yrsurvival<-plotSurvival5Yr(agedivSurvCal = agedivSurvCal)
+    plottotalsurvival<-plotSurvivalTotal(totalSurvCal = totalSurvCal)
+
+    Argos::saveSurvival(outputFolder,
+                        plot1yrsurvival,
+                        plot3yrsurvival,
+                        plot5yrsurvival,
+                        plottotalsurvival,
+                        imageExtension = "png")
 }
 
 ####calculate the mortality####
@@ -316,7 +326,7 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
     write.csv(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
     
-    # plottotalCostperMt<-plotforCostPerMt(costData = costMtData)
+    plottotalCostperMt<-plotforCostPerMt(costData = costMtData)
     
     costYrData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
                                         cdmDatabaseSchema=cdmDatabaseSchema,
@@ -332,15 +342,15 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
     write.csv(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
     
-    # PlottotalcostperYrdiv<-Argos::plotforCostPerYrdiv(costData = costYrData)
-    # plotperYrBarplotPayer<-Argos::plotforCostPerYrBarPay(costData = costYrData)
-    # plotperYrBarplotPatient<-Argos::plotforCostPerYrBarPat(costData = costYrData)
-    # 
-    # Argos::savecost(outputFolder,
-    #                 PlottotalcostperYrdiv,
-    #                 plotperYrBarplotPayer,
-    #                 plotperYrBarplotPatient,
-    #                 imageExtension = "png")
+    PlottotalcostperYrdiv<-plotforCostPerYrdiv(costData = costYrData)
+    plotperYrBarplotPayer<-plotforCostPerYrBarPay(costData = costYrData)
+    plotperYrBarplotPatient<-plotforCostPerYrBarPat(costData = costYrData)
+
+    Argos::savecost(outputFolder,
+                    PlottotalcostperYrdiv,
+                    plotperYrBarplotPayer,
+                    plotperYrBarplotPatient,
+                    imageExtension = "png")
 }
 
 ##get DALY (disabilityweight has not been readied yet for livercancer)
