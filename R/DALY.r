@@ -25,7 +25,7 @@
 #' @param discount                 discount value, float(0~1). default value is 0.3.
 #' @param ageWeghting               logical value (TRUE or FALSE). 
 #' @param outputFolder             outputFolder
-#' 
+#' @import dplyr
 #' @export
 calculateDALY <- function (outcomeData,
                            refLifeExpectancy,
