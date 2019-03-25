@@ -173,9 +173,9 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
     write.csv(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
     
-    bybirthPlot<-Argos::PlotByBirthInc(birthcohortIncData = birthcohortIncData)
-    ageSpePlot<-Argos::PlotByDiagnosisIncAgeS(agespecifiedIncData = ageSpecifiedIncData)
-    ageAdjPlot<-Argos::PlotByDiagnosisIncAgeAd(ageadjustIncData = ageadjInc)
+    bybirthPlot<-PlotByBirthInc(birthcohortIncData = birthcohortIncData)
+    ageSpePlot<-PlotByDiagnosisIncAgeS(agespecifiedIncData = ageSpecifiedIncData)
+    ageAdjPlot<-PlotByDiagnosisIncAgeAd(ageadjustIncData = ageadjInc)
     Argos::saveIncidence(outputFolder,
                          bybirthPlot,
                          ageSpePlot,
