@@ -28,19 +28,19 @@ plotforCostPerMt<- function(costData){
                    avgCostTotalperMt = ((sum(paidByPatientSum)+sum(paidByPayerSum))/sum(subjectCount))*0.001)
     
     plottotalCostperMt<- ggplot2::ggplot(data = costperMt, ggplot2::aes(x = as.factor(dateUnit), y = avgCostTotalperMt, group = cohortStartYear, colour = as.factor(cohortStartYear)))+
-                         ggplot2::geom_line()+ 
-                         ggplot2::xlab("0 = diagnosis month") + 
-                         ggplot2::ylab("Cost Paid by Patient per Month (won)") + 
-                         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Total Cost per month 2mt before and 11mt after diagnosis", sep = " ")) +
-                         ggplot2::theme_bw()+
-                         ggplot2::scale_color_discrete(name = "diagnosis year")+
-                         ggplot2::theme(legend.title = element_blank(),
-                                        legend.text = element_text(size = 15),
-                                        plot.title = element_text(size = 17),
-                                        axis.text.x = element_text(size = 12),
-                                        axis.title.x = element_text(size = 15),
-                                        axis.text.y = element_text(size = 12),
-                                        axis.title.y = element_text(size = 15))
+        ggplot2::geom_line()+ 
+        ggplot2::xlab("0 = diagnosis month") + 
+        ggplot2::ylab("Cost Paid by Patient per Month (1000 won)") + 
+        ggplot2::ggtitle(paste("Monthly Whole Medical Cost of",cancerList$cohortName[[i]], "Cancer", "from 2 months before diagnosis to a year after diagnosis", sep = " ")) +
+        ggplot2::theme_bw()+
+        ggplot2::scale_color_discrete(name = "diagnosis year")+
+        ggplot2::theme(legend.title = element_blank(),
+                       legend.text = element_text(size = 15),
+                       plot.title = element_text(size = 17),
+                       axis.text.x = element_text(size = 12),
+                       axis.title.x = element_text(size = 15),
+                       axis.text.y = element_text(size = 12),
+                       axis.title.y = element_text(size = 15))
     
     return(plottotalCostperMt)
 }
@@ -67,7 +67,7 @@ plotforCostPerYrdiv<- function(costData){
     PlottotalcostperYrdiv<-ggplot2::ggplot(data = costperYrTotalDiv, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
         ggplot2::geom_bar(stat = "identity", width = .5)+
         ggplot2::xlab("diagnosis year")+
-        ggplot2::ylab("Total Cost per Year(1000 won)")+
+        ggplot2::ylab("Total Cost per Year (1000 won)")+
         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Total Cost during 1year after diagnosis", sep = " "))+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
@@ -96,7 +96,7 @@ plotforCostPerYrBarPay<- function(costData){
     plotperYr_barplot_payer<- ggplot2::ggplot(data = costpayerperYr, ggplot2::aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId))+
         ggplot2::geom_bar(stat = "identity", width = 0.5)+
         ggplot2::xlab("diagnosis year")+
-        ggplot2::ylab("Total Cost per Year(1000 won)")+
+        ggplot2::ylab("Total Cost per Year (1000 won)")+
         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Cost paid by payer during 1year after diagnosis", sep = " "))+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
@@ -126,7 +126,7 @@ plotforCostPerYrBarPat<- function(costData){
         ggplot2::geom_bar(stat = "identity", width = 0.5)+
         #ggplot2::geom_line(aes(colour = visitConceptId, group = visitConceptId), size = 0.8)+
         ggplot2::xlab("diagnosis year")+
-        ggplot2::ylab("Total Cost per Year(1000 won)")+
+        ggplot2::ylab("Total Cost per Year (1000 won)")+
         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer Cost paid by patient during 1year after diagnosis", sep = " "))+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),

@@ -28,9 +28,9 @@ PlotByBirthInc<- function (birthcohortIncData){
         ggplot2::geom_point() + 
         ggplot2::geom_line(size = 1) + 
         ggplot2::xlab("Year of Birth") + 
-        ggplot2::ylab("incidence proportion") + 
+        ggplot2::ylab("incidence rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer", "Incidence Proportion By Birth Year", sep = " ")) + 
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer", "Incidence Rate By Birth Year", sep = " ")) + 
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),
@@ -58,9 +58,9 @@ PlotByDiagnosisIncAgeS <- function(agespecifiedIncData){
         ggplot2::geom_point() + 
         ggplot2::geom_line(size = 1) + 
         ggplot2::xlab("Diagnosis Time") + 
-        ggplot2::ylab("incidence proportion") + 
+        ggplot2::ylab("incidence rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","Incidence Proportion According to Age", sep = " ")) +  
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","Incidence Rate According to Age", sep = " ")) +  
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),
@@ -87,9 +87,9 @@ PlotByDiagnosisIncAgeAd <- function(ageadjustIncData){
         ggplot2::geom_point() + 
         ggplot2::geom_line(size = 1) +
         ggplot2::xlab("Diagnosis Time") + 
-        ggplot2::ylab("incidence proportion") + 
+        ggplot2::ylab("incidence rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Age standardized Incidence Proportion", sep = " ")) + 
+        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Age standardized Incidence Rate", sep = " ")) + 
         ggplot2::theme_bw()+
         ggplot2::theme(#legend.title = element_blank(),
             #legend.text = element_text(size = 15),

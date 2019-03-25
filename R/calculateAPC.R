@@ -18,16 +18,17 @@
 #'@param incidencePropdata  
 #'@import dplyr
 #'@export
-ageAdjAPC<-function(incidencePropdata){
-    ageAdj<- incidencePropdata %>%
+ageAdjAPC<-function(incidencePropdata = incCal){
+    
+    ageAdj<- incidencePropdata$incidenceCalculate %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
         group_by(startYear, genderConceptId) %>%
         summarize( AgeadjProp = sum(standProp)*100000)
     
     ageAdj_women_lm<-ageAdj %>%
         filter(genderConceptId == 8507) %>%
-        lm(formula = log(AgeadjProp)~startYear)%>%
-        female_slope<-summary(ageAdj_women_lm)$coefficients["startYear","Estimate"]
+        lm(formula = log(AgeadjProp)~startYear)
+    female_slope<-summary(ageAdj_women_lm)$coefficients["startYear","Estimate"]
     female_p_value<-summary(ageAdj_women_lm)$coefficients["startYear","Pr(>|t|)"]
     female_APC<-(exp(female_slope)-1)*100
     
@@ -48,59 +49,3 @@ ageAdjAPC<-function(incidencePropdata){
     
     return(results)    
 }
-
-##for comparing with reference 
-# data.frame()
-# refincCalMale<-list(cohortId_1<-data.frame(startYear = c(2003:2012),
-#                                            ageAdj = c(35.3,38.0,41.2,43.3,45.3,47.0,49.9,50.0,51.9,50.0)),
-#                     cohortId_2<-data.frame(startYear = c(2003:2012),
-#                                            ageAdj = c(50.0,50.8,50.9,49.2,48.7,47.6,47.5,47.5,46.4,44.3)),
-#                     cohortId_3<-data.frame(startYear = c(2003:2012),
-#                                            ageAdj = c(66.0,62.3,66.9,65.4,63.1,64.5,65.0,63.3,63.7,59.3)),
-#                     cohortId_4<-data.frame(startYear = c(2003:2012),
-#                                            ageAdj = c(0.2,0.2,0.2,0.2,0.1,0.3,0.2,0.2,0.2,0.2)),
-#                     cohortId_5<-data.frame(startYear = c(2003:2012),
-#                                            ageAdj = c(42.3,42.2,42.6,40.3,39.8,39.5,38.2,36.8,35.9,34.3)),
-#                     cohortId_6<-data.frame(startYear = c(2003:2012),
-#                                            ageAdj = c(3.7,4.8,5.9,7.5,10.0,13.3,15.6,18.6,20.4,23.0)))
-# refincCalFemale<-list(cohortId_1<-data.frame(startYear = c(2003:2012),
-#                                              ageAdj = c(20.5,21.5,23.0,24.1,24.6,25.2,26.3,26.1,26.7,26.8)),
-#                       cohortId_2<-data.frame(startYear = c(2003:2012),
-#                                              ageAdj = c(12.4,13.0,13.5,14.0,14.0,14.2,14.2,14.7,15.3,14.9)),
-#                       cohortId_3<-data.frame(startYear = c(2003:2012),
-#                                              ageAdj = c(25.9,24.7,26.8,25.1,24.8,25.1,25.7,25.3,25.3,23.5)),
-#                       cohortId_4<-data.frame(startYear = c(2003:2012),
-#                                              ageAdj = c(27.9,29.4,32.0,33.3,35.7,37.2,38.8,40.7,44.0,44.7)),
-#                       cohortId_5<-data.frame(startYear = c(2003:2012),
-#                                              ageAdj = c(11.5,11.3,11.4,11.1,11.1,10.7,10.6,10.4,10.4,9.5)),
-#                       cohortId_6<-data.frame(startYear = c(2003:2012),
-#                                              ageAdj = c(21.8,29.6,35.4,43.3,55.7,69.5,80.7,88.8,98.0,102.4)))
-# 
-# RefResults<-data.frame()                
-# for(i in unique(cancerList$cohortId)){                                      
-# 
-#     ageAdj_male<-refincCalMale[[i]]
-#     ageAdj_male_lm<-ageAdj_male %>%
-#         lm(formula = log(ageAdj)~startYear)
-#     male_slope<-summary(ageAdj_male_lm)$coefficients["startYear","Estimate"]
-#     male_p_value<-summary(ageAdj_male_lm)$coefficients["startYear","Pr(>|t|)"]
-#     male_APC<-(exp(male_slope)-1)*100
-#     
-#     ageAdj_female<-refincCalFemale[[i]]
-#     ageAdj_female_lm<-ageAdj_female %>%
-#         lm(formula = log(ageAdj)~startYear)
-#     female_slope<-summary(ageAdj_female_lm)$coefficients["startYear","Estimate"]
-#     female_p_value<-summary(ageAdj_female_lm)$coefficients["startYear","Pr(>|t|)"]
-#     female_APC<-(exp(female_slope)-1)*100
-#     
-#     df<-data.frame(cohortId = i,
-#                    femaleSlope = female_slope,
-#                    femalePValue = female_p_value,
-#                    femaleAPC = female_APC,
-#                    maleSlope = male_slope,
-#                    malePValue = male_p_value,
-#                    maleAPC = male_APC)
-#     RefResults<-rbind(RefResults, df)
-#     write.csv(RefResults, file.path(outputFolder, "RefAPC.csv"))
-# }
-# 
