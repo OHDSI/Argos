@@ -31,6 +31,7 @@ PlotByBirthInc<- function (birthcohortIncData){
         ggplot2::ylab("incidence rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
         ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer", "Incidence Rate By Birth Year", sep = " ")) + 
+        ggplot2::scale_color_brewer(palette = "Dark2")+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),
@@ -61,6 +62,7 @@ PlotByDiagnosisIncAgeS <- function(agespecifiedIncData){
         ggplot2::ylab("incidence rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
         ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","Incidence Rate According to Age", sep = " ")) +  
+        ggplot2::scale_color_brewer(palette = "Dark2")+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),
