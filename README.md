@@ -3,3 +3,6 @@ An R package for assessing the trends in incidence and outcome of the user-defin
 
 # Under-development
 Do not use
+
+# Poster
+![Poster](/ARGOS_poster.png)
