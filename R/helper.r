@@ -44,6 +44,15 @@ loadDisabilityWeight<-function(country,year){
     )
 }
 
+#' Load default mid-year population data
+#' @param country 'WHO' for world standard population publisehd by WHO, or 3-digit Coutry code (eg 'KOR' = 'Republic of Korea')
+#' @export
+loadSurvivalExpectancy<-function(country){
+    
+    return(
+        read.csv(system.file("census",paste0(country,"_" ,"survival_expectancy",".csv"), package = "Argos"))
+    )
+}
 
 # restricts to pop and saves/creates mapping
 MapCovariates <- function(covariates, covariateRef, population, map=NULL){

@@ -4,10 +4,10 @@
 \alias{ageadjust}
 \title{sum age adjusted incidence proportion and calculate 95% lowerCI and 95% upperCI}
 \usage{
-ageadjust(incidencePropdata, alpha = 0.05)
+ageadjust(agespecifiedPropdata, alpha = 0.05)
 }
 \arguments{
-\item{incidencePropdata}{output of Argos packages calculateIncidence code if standardization == 'direct'}
+\item{agespecifiedPropdata}{output of Argos packages calculateIncidence code, agespe}
 
 \item{alpha}{0.05}
 }

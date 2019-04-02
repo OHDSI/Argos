@@ -4,10 +4,10 @@
 \alias{PlotByDiagnosisIncAgeS}
 \title{Age specified incidence proportion plot by diagnosis year}
 \usage{
-PlotByDiagnosisIncAgeS(incidencePropdata)
+PlotByDiagnosisIncAgeS(agespecifiedIncData)
 }
 \arguments{
-\item{incidencePropdata}{}
+\item{agespecifiedIncData}{output of Argos packages agespe code}
 }
 \description{
 Age specified incidence proportion plot by diagnosis year

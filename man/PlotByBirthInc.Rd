@@ -4,7 +4,10 @@
 \alias{PlotByBirthInc}
 \title{incidence proportion plot by birth Year}
 \usage{
-PlotByBirthInc(incidencePropdata)
+PlotByBirthInc(birthcohortIncData)
+}
+\arguments{
+\item{birthcohortIncData}{output of Argos packages bybirth code}
 }
 \description{
 incidence proportion plot by birth Year

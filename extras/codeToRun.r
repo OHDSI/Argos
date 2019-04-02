@@ -49,7 +49,8 @@ refPop<-basePop[basePop$startYear==2000,]
 refPop<-refPop[,c("startAge","endAge", "genderConceptId","population")]
 colnames(refPop)[4]<-"standardPopulation"
 
-
+#set expected survival rate
+expSurv<-loadSurvivalExpectancy('KOR')
 #start log
 ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
 
@@ -173,16 +174,16 @@ for (i in seq(cancerList$cohortId)){
     saveRDS(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
     write.csv(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
     
-    bybirthPlot<-Argos::PlotByBirthInc(birthcohortIncData = birthcohortIncData)
-    ageSpePlot<-Argos::PlotByDiagnosisIncAgeS(agespecifiedIncData = ageSpecifiedIncData)
-    ageAdjPlot<-Argos::PlotByDiagnosisIncAgeAd(ageadjustIncData = ageadjInc)
+    bybirthPlot<-PlotByBirthInc(birthcohortIncData = birthcohortIncData)
+    ageSpePlot<-PlotByDiagnosisIncAgeS(agespecifiedIncData = ageSpecifiedIncData)
+    ageAdjPlot<-PlotByDiagnosisIncAgeAd(ageadjustIncData = ageadjInc)
     Argos::saveIncidence(outputFolder,
                          bybirthPlot,
                          ageSpePlot,
                          ageAdjPlot,
                          imageExtension = "png")
 }
-#i<-2
+#i<-1
 ###calculate the survival####
 for (i in seq(cancerList$cohortId)){
     SurvData<-Argos::readySurvData(connectionDetails = connectionDetails, 

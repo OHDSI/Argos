@@ -85,6 +85,8 @@ readySurvData<-function(connectionDetails ,
 #' @param genderSet             8507 as male, 8532 as female
 #' @param startYearSet          
 #' @param birthYearSet
+#' @import dplyr
+#' @import survival
 #' @export
 
 calculateSurvival <- function(survivalData = survivalData,
@@ -107,6 +109,9 @@ calculateSurvival <- function(survivalData = survivalData,
             settings<-list(age=AgeSet, gender=genderSet, startYear=startYearSet)
             expanded.set<-expand.grid(settings)
             df<-survivalData %>%
+                left_join(expSurv, by = c("genderConceptId" = "genderConceptId",
+                                          "age" = "startAge",
+                                          "startYear" = "startYear")) %>%
                 filter(age %in% unlist(expanded.set[i,]$age)) %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear))
@@ -141,7 +146,11 @@ calculateSurvival <- function(survivalData = survivalData,
                                                                       survivalDurationTime = 365*5),
                                                           NA),
                                                   NA)
-            )
+            ) %>%
+                mutate(relativesurvival1Yr = survival1Yr/mean(df$expectedSurvivalRate),
+                       relativesurvival3Yr = survival3Yr/mean(df$expectedSurvivalRate),
+                       relativesurvival5Yr = survival5Yr/mean(df$expectedSurvivalRate))
+                
             observeSurvDf<-rbind(observeSurvDf, surv)
         }
         return(observeSurvDf)
@@ -152,6 +161,9 @@ calculateSurvival <- function(survivalData = survivalData,
         
         for (i in seq(nrow(expanded.set))){
             df<-survivalData %>%
+                left_join(expSurv, by = c("genderConceptId" = "genderConceptId",
+                                          #"age" = "startAge",
+                                          "startYear" = "startYear")) %>%
                 filter(genderConceptId %in% unlist(expanded.set[i,]$gender) ) %>%
                 filter(startYear %in% unlist(expanded.set[i,]$startYear))
             if(nrow(df)==0) next
@@ -203,7 +215,11 @@ calculateSurvival <- function(survivalData = survivalData,
                                                                          survivalDurationTime = 365*5),
                                                              NA),
                                                      NA)
-            )
+            ) %>%
+                mutate(relativesurvival1Yr = survival1Yr/mean(df$expectedSurvivalRate),
+                       relativesurvival3Yr = survival3Yr/mean(df$expectedSurvivalRate),
+                       relativesurvival5Yr = survival5Yr/mean(df$expectedSurvivalRate))
+            
             observeSurvDf<-rbind(observeSurvDf, surv) %>%
                 arrange(genderConceptId, startYear)
         }
