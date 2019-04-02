@@ -86,6 +86,7 @@ readySurvData<-function(connectionDetails ,
 #' @param startYearSet          
 #' @param birthYearSet
 #' @import dplyr
+#' @import survival
 #' @export
 
 calculateSurvival <- function(survivalData = survivalData,
@@ -146,7 +147,9 @@ calculateSurvival <- function(survivalData = survivalData,
                                                           NA),
                                                   NA)
             ) %>%
-                mutate(relativesurvival5Yr = surviva5Yr/mean(df$expectedSurvivalRate))
+                mutate(relativesurvival1Yr = survival1Yr/mean(df$expectedSurvivalRate),
+                       relativesurvival3Yr = survival3Yr/mean(df$expectedSurvivalRate),
+                       relativesurvival5Yr = survival5Yr/mean(df$expectedSurvivalRate))
                 
             observeSurvDf<-rbind(observeSurvDf, surv)
         }
@@ -213,7 +216,9 @@ calculateSurvival <- function(survivalData = survivalData,
                                                              NA),
                                                      NA)
             ) %>%
-                mutate(relativesurvival5Yr = survival5Yr/mean(df$expectedSurvivalRate))
+                mutate(relativesurvival1Yr = survival1Yr/mean(df$expectedSurvivalRate),
+                       relativesurvival3Yr = survival3Yr/mean(df$expectedSurvivalRate),
+                       relativesurvival5Yr = survival5Yr/mean(df$expectedSurvivalRate))
             
             observeSurvDf<-rbind(observeSurvDf, surv) %>%
                 arrange(genderConceptId, startYear)

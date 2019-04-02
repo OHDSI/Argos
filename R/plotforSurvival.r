@@ -23,13 +23,13 @@ plotSurvivalTotal <- function(totalSurvCal){
     SurvCal<- totalSurvCal %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women")))
     
-    plottotalsurvival<-ggplot2::ggplot(data = SurvCal, ggplot2::aes(x = as.factor(startYear), y = survival1Yr, group = 1)) +
+    plottotalsurvival<-ggplot2::ggplot(data = SurvCal, ggplot2::aes(x = as.factor(startYear), y = relativesurvival1Yr, group = 1)) +
         ggplot2::geom_point() +
         ggplot2::geom_line(size = 1) +
-        ggplot2::geom_point(aes( y = survival3Yr)) +
-        ggplot2::geom_line(aes( y = survival3Yr), linetype = "dashed", size =1) +
-        ggplot2::geom_point(aes(y = survival5Yr))+
-        ggplot2::geom_line(aes( y = survival5Yr), linetype = "dotted", size = 1) +
+        ggplot2::geom_point(aes( y = relativesurvival3Yr)) +
+        ggplot2::geom_line(aes( y = relativesurvival3Yr), linetype = "dashed", size =1) +
+        ggplot2::geom_point(aes(y = relativesurvival5Yr))+
+        ggplot2::geom_line(aes( y = relativesurvival5Yr), linetype = "dotted", size = 1) +
         ggplot2::xlab("Diagnosis Time") +
         ggplot2::ylab("Total survival rate") +
         ggplot2::facet_wrap(~genderConceptId) +
@@ -56,7 +56,7 @@ plotSurvival1Yr <- function(agedivSurvCal){
     SurvCal<- agedivSurvCal %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women")))
     
-    plot1yrsurvival<-ggplot2::ggplot(data = SurvCal, ggplot2::aes(x = as.factor(startYear), y = survival1Yr , group = age, colour = as.factor(age))) +
+    plot1yrsurvival<-ggplot2::ggplot(data = SurvCal, ggplot2::aes(x = as.factor(startYear), y = relativesurvival1Yr , group = age, colour = as.factor(age))) +
         ggplot2::geom_point() +
         ggplot2::geom_line(size = 1) +
         ggplot2::xlab("Diagnosis Time") +
@@ -86,7 +86,7 @@ plotSurvival3Yr <- function(agedivSurvCal){
     SurvCal<- agedivSurvCal %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women")))
     
-    plot3yrsurvival<-ggplot2::ggplot(data = SurvCal, ggplot2::aes(x = as.factor(startYear), y = survival3Yr , group = age, colour = as.factor(age))) +
+    plot3yrsurvival<-ggplot2::ggplot(data = SurvCal, ggplot2::aes(x = as.factor(startYear), y = relativesurvival3Yr , group = age, colour = as.factor(age))) +
         ggplot2::geom_point() +
         ggplot2::geom_line(size = 1) +
         ggplot2::xlab("Diagnosis Time") +
@@ -116,7 +116,7 @@ plotSurvival5Yr <- function(agedivSurvCal){
     SurvCal<- agedivSurvCal %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women")))
     
-    plot5yrsurvival<-ggplot2::ggplot(data = SurvCal, ggplot2::aes(x = as.factor(startYear), y = survival5Yr , group = age, colour = as.factor(age))) + 
+    plot5yrsurvival<-ggplot2::ggplot(data = SurvCal, ggplot2::aes(x = as.factor(startYear), y = relativesurvival5Yr , group = age, colour = as.factor(age))) + 
         ggplot2::geom_point() + 
         ggplot2::geom_line(size = 1) + 
         ggplot2::xlab("Diagnosis Time") + 
