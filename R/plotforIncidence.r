@@ -91,6 +91,8 @@ PlotByDiagnosisIncAgeAd <- function(ageadjustIncData){
         ggplot2::xlab("Diagnosis Time") + 
         ggplot2::ylab("incidence rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
+        # ggplot2::annotate("text",label = ageAdjAPC,
+        #                   x = max(ageAdj$startYear), y = min(ageAdj$AgeadjProp))+ 
         ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Age standardized Incidence Rate", sep = " ")) + 
         ggplot2::theme_bw()+
         ggplot2::theme(#legend.title = element_blank(),
