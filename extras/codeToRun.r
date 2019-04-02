@@ -49,7 +49,8 @@ refPop<-basePop[basePop$startYear==2000,]
 refPop<-refPop[,c("startAge","endAge", "genderConceptId","population")]
 colnames(refPop)[4]<-"standardPopulation"
 
-
+#set expected survival rate
+expSurv<-loadSurvivalExpectancy('KOR')
 #start log
 ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
 
@@ -182,7 +183,7 @@ for (i in seq(cancerList$cohortId)){
                          ageAdjPlot,
                          imageExtension = "png")
 }
-#i<-2
+#i<-1
 ###calculate the survival####
 for (i in seq(cancerList$cohortId)){
     SurvData<-Argos::readySurvData(connectionDetails = connectionDetails, 
