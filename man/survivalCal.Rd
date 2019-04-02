@@ -14,6 +14,8 @@ survivalCal(survivalDuration = survivalTime,
 \item{outcomeCount}{binary value (if outcome = death, death = 1 and alive = 0)}
 
 \item{survivalDurationTime}{n-year survival -> 365*n}
+
+\item{valueWant}{surv = survival rate, uci = upper CI, lci = lower CI}
 }
 \description{
 calculate survival rate using survival package
