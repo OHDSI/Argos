@@ -22,7 +22,7 @@ ageAdjAPC<-function(ageAdjustedInc = ageadjInc){
 
     ageadjSplit <- split(ageAdjustedInc, ageAdjustedInc$genderConceptId)
     
-    ageadj_APC<-lapply(ageadjSplit, FUN = function(x){
+    ageadj_APC_Cal<-lapply(ageadjSplit, FUN = function(x){
         
         lm <- x %>%
             lm(formula = log(AgeadjProp)~startYear)
@@ -30,12 +30,16 @@ ageAdjAPC<-function(ageAdjustedInc = ageadjInc){
         p_value <- summary(lm)$coefficients["startYear","Pr(>|t|)"]
         APC <- (exp(slope)-1)*100
         
-        result<-data.frame(slope = slope,
-                           p_value = p_value,
-                           APC = APC)
+        result<-c(slope = slope,
+                  p_value = p_value,
+                  APC = APC)
         
         return(result)
     })
     
-    return(ageadj_APC)
+    outcome<-data.frame(t(data.frame(ageadj_APC_Cal)), row.names = NULL)
+    
+    outcome<-transform(outcome, genderConceptId = as.numeric(names(ageadj_APC_Cal)))
+    
+    return(outcome)
 }
