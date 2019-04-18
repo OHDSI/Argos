@@ -15,37 +15,31 @@
 # limitations under the License.
 
 #'calculate Annual percent change of age adjusted incidence proportion 
-#'@param incidencePropdata  
+#'@param ageAdjustedInc  
 #'@import dplyr
 #'@export
-ageAdjAPC<-function(incidencePropdata = incCal){
+ageAdjAPC<-function(ageAdjustedInc = ageadjInc){
+
+    ageadjSplit <- split(ageAdjustedInc, ageAdjustedInc$genderConceptId)
     
-    ageAdj<- incidencePropdata$incidenceCalculate %>%
-        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
-        group_by(startYear, genderConceptId) %>%
-        summarize( AgeadjProp = sum(standProp)*100000)
+    ageadj_APC_Cal<-lapply(ageadjSplit, FUN = function(x){
+        
+        lm <- x %>%
+            lm(formula = log(AgeadjProp)~startYear)
+        slope <- summary(lm)$coefficients["startYear","Estimate"]
+        p_value <- summary(lm)$coefficients["startYear","Pr(>|t|)"]
+        APC <- (exp(slope)-1)*100
+        
+        result<-c(slope = slope,
+                  p_value = p_value,
+                  APC = APC)
+        
+        return(result)
+    })
     
-    ageAdj_women_lm<-ageAdj %>%
-        filter(genderConceptId == 8507) %>%
-        lm(formula = log(AgeadjProp)~startYear)
-    female_slope<-summary(ageAdj_women_lm)$coefficients["startYear","Estimate"]
-    female_p_value<-summary(ageAdj_women_lm)$coefficients["startYear","Pr(>|t|)"]
-    female_APC<-(exp(female_slope)-1)*100
+    outcome<-data.frame(t(data.frame(ageadj_APC_Cal)), row.names = NULL)
     
-    ageAdj_male_lm<-ageAdj %>%
-        filter(genderConceptId == 8532) %>%
-        lm(formula = log(AgeadjProp)~startYear)
-    male_slope<-summary(ageAdj_male_lm)$coefficients["startYear","Estimate"]
-    male_p_value<-summary(ageAdj_male_lm)$coefficients["startYear","Pr(>|t|)"]
-    male_APC<-(exp(male_slope)-1)*100
+    outcome<-transform(outcome, genderConceptId = as.numeric(names(ageadj_APC_Cal)))
     
-    
-    results<-data.frame(femaleSlope = female_slope,
-                        femalePValue = female_p_value,
-                        femaleAPC = female_APC,
-                        maleSlope = male_slope,
-                        malePValue = male_p_value,
-                        maleAPC = male_APC)
-    
-    return(results)    
+    return(outcome)
 }
