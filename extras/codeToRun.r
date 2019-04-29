@@ -4,7 +4,7 @@ startYearSetHIRA = list(2008,2009,2010,2011,2012,2013,2014,2015,2016,2017)
 startYearSetNHIS = list(2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013)
 startYearSet=startYearSetNHIS
 
-##Settings
+#Settings
 cdmDatabaseSchema <-"NHIS_NSC.dbo"
 vocabularyDatabaseSchema  <- "NHIS_NSC.dbo"
 cohortDatabaseSchema <- "ONCOACHILLES.dbo"
@@ -12,7 +12,7 @@ cohortDatabaseSchema <- "ONCOACHILLES.dbo"
 cohortTable <- "argos_cohort"
 outputFolder <- "D:/outputFolder"
 options(fftempdir = "D:/FFtemp")
-
+Sys.setlocale(category = "LC_ALL", locale = "us")
 survivalTime<-c(365,365*2,365*3,365*4,365*5)
 
 connectionDetails<-DatabaseConnector::createConnectionDetails(dbms = 'sql server',
@@ -54,9 +54,9 @@ expSurv<-loadSurvivalExpectancy('KOR')
 #start log
 ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
 
-#Connection
+####Connection
 connection<-DatabaseConnector::connect(connectionDetails)
-####Create cohort####
+####Create cohort
 #create the cohort table
 ParallelLogger::logInfo("Creating table for the cohorts")
 sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "CreateCohortTable.sql",
@@ -122,7 +122,7 @@ for (i in seq(cancerList$cohortId)){
                                              outcomeDatabaseSchema = cohortDatabaseSchema ,
                                              targetCohortId = cancerList$cohortId[i],
                                              minDateUnit = "year")
-    saveRDS(incidenceData,file.path(outputFolder,paste0("incidenceData_cohortId_",cancerList$cohortId[i], ".rds" )))
+    # saveRDS(incidenceData,file.path(outputFolder,paste0("incidenceData_cohortId_",cancerList$cohortId[i], ".rds" )))
     
     ##calculate the age adjusted incidence rate
     incCal<-calculateIncidence(incidenceData = incidenceData,
@@ -138,11 +138,12 @@ for (i in seq(cancerList$cohortId)){
                                startYearSet = startYearSet,
                                birthYearSet = list(1910:2005))
     
-    ageSpecified<-agespe(incCal)
-    ageadjInc<-ageadjust(ageSpecified, alpha = 0.05) 
+    ageSpecified <- agespe(incCal)
+    ageadjInc <- ageadjust(ageSpecified, alpha = 0.05) 
+    ageAdjTable <- tableAgeAdjusted(ageadjIncData = ageadjInc)
     
-    write.csv(ageadjInc, file.path(outputFolder, paste0("ageadjustedInc_cohortId_", cancerList$cohortId[[i]], ".csv")))
-    saveRDS(ageadjInc,file.path(outputFolder,paste0("ageadjustedInc_cohortId_",cancerList$cohortId[i], ".rds" )))
+    # write.csv(ageadjInc, file.path(outputFolder, paste0("ageadjustedInc_cohortId_", cancerList$cohortId[[i]], ".csv")))
+    # saveRDS(ageadjInc,file.path(outputFolder,paste0("ageadjustedInc_cohortId_",cancerList$cohortId[i], ".rds" )))
     
     ##calculate the age specified incidence rate
     incCal<-Argos::calculateIncidence(incidenceData = incidenceData,
@@ -167,21 +168,19 @@ for (i in seq(cancerList$cohortId)){
                                                           1975:1979, 1980:1989))
     
     ageSpecifiedIncData <- agespe(incidencePropdata = incCal)
+    ageSpeTable <- tableAgeSpecified(ageSpecifiedData = ageSpecifiedIncData)
     birthcohortIncData<-bybirth(incidencePropdata = incCal)
-    
-    saveRDS(ageSpecifiedIncData,file.path(outputFolder,paste0("ageSpecifiedIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
-    write.csv(ageSpecifiedIncData,file.path(outputFolder,paste0("ageSpecifiedIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
-    saveRDS(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
-    write.csv(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
-    
+    bybirthTable <- tablebirthCohortInc(birthIncData = birthcohortIncData)
+    # saveRDS(ageSpecifiedIncData,file.path(outputFolder,paste0("ageSpecifiedIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
+    # write.csv(ageSpecifiedIncData,file.path(outputFolder,paste0("ageSpecifiedIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
+    # saveRDS(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".rds" )))
+    # write.csv(birthcohortIncData,file.path(outputFolder,paste0("birthcohortIncData_cohortId_",cancerList$cohortId[i], ".csv" )))
+     
     bybirthPlot<-PlotByBirthInc(birthcohortIncData = birthcohortIncData)
     ageSpePlot<-PlotByDiagnosisIncAgeS(agespecifiedIncData = ageSpecifiedIncData)
     ageAdjPlot<-PlotByDiagnosisIncAgeAd(ageadjustIncData = ageadjInc)
-    Argos::saveIncidence(outputFolder,
-                         bybirthPlot,
-                         ageSpePlot,
-                         ageAdjPlot,
-                         imageExtension = "png")
+    
+    saveIncidence()
 }
 #i<-1
 ###calculate the survival####
@@ -226,13 +225,15 @@ for (i in seq(cancerList$cohortId)){
                                                startYearSet = list(2004:2005,2006:2008),
                                                observationEndYear = 2013)
     
-    saveRDS(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".rds" )))
-    write.csv(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".csv" )))
-    saveRDS(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".rds" )))
-    write.csv(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".csv" )))
-    saveRDS(totalSurvCal_validation,file.path(outputFolder,paste0("survivalData_Total_validation_cohortId_",cancerList$cohortId[[i]],".rds" )))
-    write.csv(totalSurvCal_validation,file.path(outputFolder,paste0("survivalData_Total_validation_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    # saveRDS(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    # write.csv(agedivSurvCal,file.path(outputFolder,paste0("survivalData_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    # saveRDS(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    # write.csv(totalSurvCal,file.path(outputFolder,paste0("survivalData_Total_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    # saveRDS(totalSurvCal_validation,file.path(outputFolder,paste0("survivalData_Total_validation_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    # write.csv(totalSurvCal_validation,file.path(outputFolder,paste0("survivalData_Total_validation_cohortId_",cancerList$cohortId[[i]],".csv" )))
     
+    #table
+    tableSurvivalRate <- tableSurvTotal(totalSurvData = totalSurvCal)
     
     #plotting
     plot1yrsurvival<-plotSurvival1Yr(agedivSurvCal = agedivSurvCal)
@@ -240,12 +241,7 @@ for (i in seq(cancerList$cohortId)){
     plot5yrsurvival<-plotSurvival5Yr(agedivSurvCal = agedivSurvCal)
     plottotalsurvival<-plotSurvivalTotal(totalSurvCal = totalSurvCal)
 
-    Argos::saveSurvival(outputFolder,
-                        plot1yrsurvival,
-                        plot3yrsurvival,
-                        plot5yrsurvival,
-                        plottotalsurvival,
-                        imageExtension = "png")
+    saveSurvival()
 }
 
 ####calculate the mortality####
@@ -309,7 +305,7 @@ for (i in seq(cancerList$cohortId)){
     }
 }
 i<-2
-##Extract Cost Data
+####Extract Cost Data####
 for (i in seq(cancerList$cohortId)){
     costMtData<-Argos::extractVisitCost(connectionDetails=connectionDetails, 
                                         cdmDatabaseSchema=cdmDatabaseSchema,
@@ -323,8 +319,8 @@ for (i in seq(cancerList$cohortId)){
                                         specifyCondition = FALSE,
                                         conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
     
-    saveRDS(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
-    write.csv(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
+    # saveRDS(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".rds" )))
+    # write.csv(costMtData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","365",".csv" )))
     
     plottotalCostperMt<-plotforCostPerMt(costData = costMtData)
     
@@ -339,8 +335,8 @@ for (i in seq(cancerList$cohortId)){
                                         minCostDateUnit = 'year',
                                         specifyCondition = FALSE,
                                         conditionConceptIds=paste0(cancerList$conceptIdSet[[i]],collapse=","))
-    saveRDS(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
-    write.csv(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
+    # saveRDS(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".rds" )))
+    # write.csv(costYrData,file.path(outputFolder,paste0("costData_cohortId_",cancerList$cohortId[[i]],"costWindowEnd_","1825",".csv" )))
     
     PlottotalcostperYrdiv<-plotforCostPerYrdiv(costData = costYrData)
     plotperYrBarplotPayer<-plotforCostPerYrBarPay(costData = costYrData)
@@ -353,7 +349,7 @@ for (i in seq(cancerList$cohortId)){
                     imageExtension = "png")
 }
 
-##get DALY (disabilityweight has not been readied yet for livercancer)
+####get DALY####
 DW<-loadDisabilityWeight('KOR',2012)
 for (i  in seq(cancerList$cohortId)){
     lifeExp <- loadLifeExpectancy('KOR')
@@ -384,13 +380,11 @@ for (i  in seq(cancerList$cohortId)){
                         discount = 0.3,
                         ageWeighting =TRUE,
                         outputFolder)
-    saveRDS(DALY,file.path(outputFolder,paste0("DALY_cohortId_",cancerList$cohortId[[i]],".rds" )))
-    write.csv(DALY,file.path(outputFolder,paste0("DALY_cohortId_",cancerList$cohortId[[i]],".csv" )))
+    # saveRDS(DALY,file.path(outputFolder,paste0("DALY_cohortId_",cancerList$cohortId[[i]],".rds" )))
+    # write.csv(DALY,file.path(outputFolder,paste0("DALY_cohortId_",cancerList$cohortId[[i]],".csv" )))
     
     plotDALY<-plotforDALY(DALYdata = DALY)
     plotDALYratio<-plotforDALYratio(DALYdata = DALY)
-    saveDALY(outputFolder,
-             plotDALY = plotDALY,
-             plotDALYratio = plotDALYratio,
-             imageExtension = "png")
+    
+    saveDALY()
 }

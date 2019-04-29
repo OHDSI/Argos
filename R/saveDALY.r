@@ -15,19 +15,20 @@
 # limitations under the License.
 
 #'saving plot images which are the results DALY calculate
-#'@param outputFolder
-#'@param plotforDALY 
-#'@param plotforDALYratio 
-#'@param imageExtension plot file's extension
 #'@import ggplot2
 #'@export
-saveDALY<-function(outputFolder,
-                   plotDALY,
-                   plotDALYratio,
-                   imageExtension = "png"){
+saveDALY<-function(){
+    
+    outputFolder = outputFolder
+    plotDALY = plotDALY
+    plotDALYratio = plotDALYratio
+    DALY = DALY
+    imageExtension = "png"
+    
     ifelse(!dir.exists(file.path(outputFolder, "DALY")), dir.create(file.path(outputFolder, "DALY")), print("saving in DALY folder"))
     DALYFolder<-paste(outputFolder, "DALY", sep = "/")
     
     ggsave(file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALY", ".", imageExtension)), plotDALY, height = 15, width = 15, units = "cm")
     ggsave(file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALY_ratio", ".", imageExtension)), plotDALYratio, height = 15, width = 15, units = "cm")
+    write.csv(DALY,file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALYresult", ".csv")) )
 }

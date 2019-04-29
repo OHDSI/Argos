@@ -24,17 +24,20 @@
 tableAgeAdjusted <- function(ageadjIncData){
     
     df <- ageadjIncData %>%
-        select(startYear,genderConceptId,AgeadjProp)
+        select(startYear,genderConceptId,AgeadjProp) %>%
+        mutate(AgeadjProp = round(AgeadjProp,3) )
     
     df_cast <- reshape2::dcast(df,df$genderConceptId~df$startYear)
     colnames(df_cast)[1] <- c("genderConceptId")
     
-    APC <- Argos::ageAdjAPC(ageAdjustedInc = ageadjIncData)
+    APC <- Argos::ageAdjAPC(ageAdjustedInc = ageadjIncData) %>%
+        mutate(slope = round(slope,3), p_value = round(p_value,3), APC = round(APC,3) )
     
     df_APC_join <- left_join(df_cast,APC,by = "genderConceptId")
+    colnames(df_APC_join)[1] <- c("gender")
     
-    result <- mutate(df_APC_join, genderConceptId = case_when(genderConceptId == 8532 ~ 'women',
-                                                              genderConceptId == 8507 ~ 'men') )
+    result <- mutate(df_APC_join, gender = case_when(gender == 8532 ~ 'women',
+                                                     gender == 8507 ~ 'men') )
     
     return(result)
 }

@@ -1,7 +1,9 @@
 ---
 title: "Argos_document"
-subtitle : "Cancer epidemiology"
-output: word_document
+subtitle: Cancer epidemiology
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -29,43 +31,134 @@ cancerList<-list(cohortId = c(1,2,3,4,5,6),
 # **Incidence Rate**
 
 ### Age Adjusted Incidence Rate according to Diagnosis Year
-1. colon cancer
+1. `r cancerList$cohortName[1]` cancer
 ![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.png"))` )
 
 ```{r}
-library(dplyr)
-cohort_1 <- readRDS(file.path(outputFolder,"incidenceData_cohortId_1.rds") )
-df_1 <- cohort_1$data %>% group_by(cohortStartYear,genderConceptId) %>% summarise(cohortCount = sum(aggregatedNum) ) %>% mutate(genderConceptId = case_when(genderConceptId == 8532 ~ "women", genderConceptId == 8507 ~ "men") )
-t<- reshape2::dcast(df_1,df_1$genderConceptId~df_1$cohortStartYear)
-colnames(t)[1] <- "gender"
-knitr::kable(t)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
 ```
 
-2. stomach cancer
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
+
+3. `r cancerList$cohortName[3]` cancer
 ![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.png"))` )
 
 ```{r}
 library(dplyr)
-cohort_1 <- readRDS(file.path(outputFolder,"incidenceData_cohortId_3.rds") )
-df_1 <- cohort_1$data %>% group_by(cohortStartYear,genderConceptId) %>% summarise(cohortCount = sum(aggregatedNum) ) %>% mutate(genderConceptId = case_when(genderConceptId == 8532 ~ "women", genderConceptId == 8507 ~ "men") )
-t<- reshape2::dcast(df_1,df_1$genderConceptId~df_1$cohortStartYear)
-colnames(t)[1] <- "gender"
-knitr::kable(t)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
 ```
 
-3. lung cancer
-![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.png"))` )
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeAdj.png"))` )
 
 ```{r}
 library(dplyr)
-cohort_1 <- readRDS(file.path(outputFolder,"incidenceData_cohortId_2.rds") )
-df_1 <- cohort_1$data %>% group_by(cohortStartYear,genderConceptId) %>% summarise(cohortCount = sum(aggregatedNum) ) %>% mutate(genderConceptId = case_when(genderConceptId == 8532 ~ "women", genderConceptId == 8507 ~ "men") )
-t<- reshape2::dcast(df_1,df_1$genderConceptId~df_1$cohortStartYear)
-colnames(t)[1] <- "gender"
-knitr::kable(t)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
 ```
 
 ### Age Specified Incidence Rate according to Diagnosis Year
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
+colnames(df) <- gsub("X","",colnames(df))
+df <- df[,-1]
+knitr::kable(df)
+```
 
 ### Age Specified Incidence Rate according to Birth Cohort
 
