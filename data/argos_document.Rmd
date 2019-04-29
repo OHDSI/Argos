@@ -100,8 +100,7 @@ knitr::kable(df)
 ![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.png"))` )
 
 ```{r}
-df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
-colnames(df) <- gsub("X","",colnames(df))
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
 df <- df[,-1]
 knitr::kable(df)
 ```
@@ -110,8 +109,7 @@ knitr::kable(df)
 ![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.png"))` )
 
 ```{r}
-df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
-colnames(df) <- gsub("X","",colnames(df))
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
 df <- df[,-1]
 knitr::kable(df)
 ```
@@ -121,8 +119,7 @@ knitr::kable(df)
 
 ```{r}
 library(dplyr)
-df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
-colnames(df) <- gsub("X","",colnames(df))
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
 df <- df[,-1]
 knitr::kable(df)
 ```
@@ -132,8 +129,7 @@ knitr::kable(df)
 
 ```{r}
 library(dplyr)
-df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
-colnames(df) <- gsub("X","",colnames(df))
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
 df <- df[,-1]
 knitr::kable(df)
 ```
@@ -143,8 +139,7 @@ knitr::kable(df)
 
 ```{r}
 library(dplyr)
-df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
-colnames(df) <- gsub("X","",colnames(df))
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
 df <- df[,-1]
 knitr::kable(df)
 ```
@@ -154,8 +149,7 @@ knitr::kable(df)
 
 ```{r}
 library(dplyr)
-df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeAdj.csv") ), header = TRUE)
-colnames(df) <- gsub("X","",colnames(df))
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
 df <- df[,-1]
 knitr::kable(df)
 ```
