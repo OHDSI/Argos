@@ -1,0 +1,86 @@
+---
+title: "Argos_document"
+subtitle : "Cancer epidemiology"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(error = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+
+library(dplyr)
+outputFolder <- "C:/Users/youjin/Documents/project/output"
+cancerList<-list(cohortId = c(1,2,3,4,5,6),
+                 cohortName = c("colon", 'lung', 'stomach','breast','liver','thyroid'),
+                 conceptIdSet = list(c(435754,443381,443382,443383,443384,443390,443391,4089661,4180790,4180791,4180792,4181344),              
+                                     c(442139,4092217,4094876,4151250,4157333,258375),
+                                     c(4149838,197803,4095320,4149837,4095319,4094856,4092061,443387,4095317),
+                                     c(137809,4188544,4158563,4162253,4155292,4187850,4188545,432845),
+                                     c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
+                                     c(4178976)) ,
+                 
+                 representConceptId = c())
+
+```
+
+# **Incidence Rate**
+
+### Age Adjusted Incidence Rate according to Diagnosis Year
+1. colon cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+cohort_1 <- readRDS(file.path(outputFolder,"incidenceData_cohortId_1.rds") )
+df_1 <- cohort_1$data %>% group_by(cohortStartYear,genderConceptId) %>% summarise(cohortCount = sum(aggregatedNum) ) %>% mutate(genderConceptId = case_when(genderConceptId == 8532 ~ "women", genderConceptId == 8507 ~ "men") )
+t<- reshape2::dcast(df_1,df_1$genderConceptId~df_1$cohortStartYear)
+colnames(t)[1] <- "gender"
+knitr::kable(t)
+```
+
+2. stomach cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+cohort_1 <- readRDS(file.path(outputFolder,"incidenceData_cohortId_3.rds") )
+df_1 <- cohort_1$data %>% group_by(cohortStartYear,genderConceptId) %>% summarise(cohortCount = sum(aggregatedNum) ) %>% mutate(genderConceptId = case_when(genderConceptId == 8532 ~ "women", genderConceptId == 8507 ~ "men") )
+t<- reshape2::dcast(df_1,df_1$genderConceptId~df_1$cohortStartYear)
+colnames(t)[1] <- "gender"
+knitr::kable(t)
+```
+
+3. lung cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+library(dplyr)
+cohort_1 <- readRDS(file.path(outputFolder,"incidenceData_cohortId_2.rds") )
+df_1 <- cohort_1$data %>% group_by(cohortStartYear,genderConceptId) %>% summarise(cohortCount = sum(aggregatedNum) ) %>% mutate(genderConceptId = case_when(genderConceptId == 8532 ~ "women", genderConceptId == 8507 ~ "men") )
+t<- reshape2::dcast(df_1,df_1$genderConceptId~df_1$cohortStartYear)
+colnames(t)[1] <- "gender"
+knitr::kable(t)
+```
+
+### Age Specified Incidence Rate according to Diagnosis Year
+
+### Age Specified Incidence Rate according to Birth Cohort
+
+```{r}
+paste0()
+```
+
+# **Survival Rate**
+
+### 1,3,5 year Survival Rate (Relative)
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

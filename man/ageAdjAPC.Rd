@@ -4,10 +4,10 @@
 \alias{ageAdjAPC}
 \title{calculate Annual percent change of age adjusted incidence proportion}
 \usage{
-ageAdjAPC(incidencePropdata = incCal)
+ageAdjAPC(ageAdjustedInc = ageadjInc)
 }
 \arguments{
-\item{incidencePropdata}{}
+\item{ageAdjustedInc}{}
 }
 \description{
 calculate Annual percent change of age adjusted incidence proportion
