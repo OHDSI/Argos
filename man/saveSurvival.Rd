@@ -4,13 +4,7 @@
 \alias{saveSurvival}
 \title{saving tables and plot image which are the results incidence analysis}
 \usage{
-saveSurvival(outputFolder, plot1yrsurvival, plot3yrsurvival,
-  plot5yrsurvival, plottotalsurvival, imageExtension = "png")
-}
-\arguments{
-\item{outputFolder}{}
-
-\item{imageExtension}{plot file's extension}
+saveSurvival()
 }
 \description{
 saving tables and plot image which are the results incidence analysis

@@ -6,10 +6,10 @@
 make_report <- function(){
     tryCatch({
         file.copy(from = paste0(.libPaths()[1], "/Argos/data/Argos_md.Rmd"), 
-                  to   = getwd(), overwrite = T)
+                  to   = outputFolder, overwrite = T)
         
-        markdown::render(paste0(getwd(),"/Argos_md.Rmd"), encoding = "UTF-8")
-        browseURL(url = paste0(getwd(),"/Argos_md.html"))
+        markdown::render(file.path(outputFolder,"argos_document.Rmd"), encoding = "UTF-8")
+        browseURL(url = file.path(outputFolder,"argos_document.html"))
         
     }, error = function(x){
         message("Need Rmd file.")

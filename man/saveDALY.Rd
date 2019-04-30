@@ -4,14 +4,7 @@
 \alias{saveDALY}
 \title{saving plot images which are the results DALY calculate}
 \usage{
-saveDALY(outputFolder, plotDALY, plotDALYratio, imageExtension = "png")
-}
-\arguments{
-\item{imageExtension}{plot file's extension}
-
-\item{plotforDALY}{}
-
-\item{plotforDALYratio}{}
+saveDALY()
 }
 \description{
 saving plot images which are the results DALY calculate
