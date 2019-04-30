@@ -70,7 +70,6 @@ tableAgeSpecified <- function(ageSpecifiedData){
 #'@export
 #'
 tablebirthCohortInc <- function(birthIncData){
-unique(incCal$incidenceCalculate$birthYear)
     df <- birthIncData %>%
         select(birthYear,age,genderConceptId,proportion)%>%
         mutate(proportion = round(proportion*100000,2))

@@ -14,8 +14,8 @@ Argos <- function(){
     
     
 }
-head(incidenceData_cohortId_1$data)
-A <- incidenceData_cohortId_1$data %>%
-    group_by(cohortStartYear,genderConceptId) %>%
-    summarise(cohortCount = sum(aggregatedNum) )
-reshape2::dcast(A,A$genderConceptId~A$cohortStartYear)
+# head(incidenceData_cohortId_1$data)
+# A <- incidenceData_cohortId_1$data %>%
+#     group_by(cohortStartYear,genderConceptId) %>%
+#     summarise(cohortCount = sum(aggregatedNum) )
+# reshape2::dcast(A,A$genderConceptId~A$cohortStartYear)
