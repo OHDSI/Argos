@@ -8,9 +8,11 @@ Argos <- function(){
     check.packages('ggplot2')
     check.packages('dplyr')
     check.packages('rmarkdown')
+    check.pachages('markdown')
     check.packages('survival')
     check.packages('knitr')
     check.packages('reshape2')
+    check.packages('PatientLevelPrediction')
     
     
 }

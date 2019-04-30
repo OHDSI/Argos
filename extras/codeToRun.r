@@ -388,3 +388,5 @@ for (i  in seq(cancerList$cohortId)){
     
     saveDALY()
 }
+
+make_report()
