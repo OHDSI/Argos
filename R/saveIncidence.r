@@ -31,9 +31,9 @@ saveIncidence<-function(){
     ifelse(!dir.exists(file.path(outputFolder, "incidence")), dir.create(file.path(outputFolder, "incidence")), print("saving in incidence folder"))
     incidenceFolder<-paste(outputFolder, "incidence", sep = "/")
     
-    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidenceProporByBirthyr"),".",imageExtension) ), bybirthPlot, width = 30,height = 15,units = "cm" )  
-    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeSpe"),".",imageExtension) ),ageSpePlot,  width = 30,height = 15,units = "cm" ) 
-    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeAdj"),".",imageExtension) ), ageAdjPlot, width = 30,height = 15,units = "cm" ) 
+    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidenceProporByBirthyr"),".",imageExtension) ), bybirthPlot, width = 25,height = 12,units = "cm" )  
+    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeSpe"),".",imageExtension) ),ageSpePlot,  width = 25,height = 12,units = "cm" ) 
+    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeAdj"),".",imageExtension) ), ageAdjPlot, width = 25,height = 12,units = "cm" ) 
     write.csv(bybirthTable, file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidenceProporByBirthyr"),".csv") ) )
     write.csv(ageSpeTable, file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeSpe"),".csv") ) )
     write.csv(ageAdjTable, file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeAdj"),".csv") ) )

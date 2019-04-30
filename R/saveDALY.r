@@ -28,7 +28,7 @@ saveDALY<-function(){
     ifelse(!dir.exists(file.path(outputFolder, "DALY")), dir.create(file.path(outputFolder, "DALY")), print("saving in DALY folder"))
     DALYFolder<-paste(outputFolder, "DALY", sep = "/")
     
-    ggsave(file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALY", ".", imageExtension)), plotDALY, height = 15, width = 15, units = "cm")
-    ggsave(file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALY_ratio", ".", imageExtension)), plotDALYratio, height = 15, width = 15, units = "cm")
+    ggsave(file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALY", ".", imageExtension)), plotDALY, height = 10, width = 10, units = "cm")
+    ggsave(file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALY_ratio", ".", imageExtension)), plotDALYratio, height = 10, width = 10, units = "cm")
     write.csv(DALY,file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALYresult", ".csv")) )
 }

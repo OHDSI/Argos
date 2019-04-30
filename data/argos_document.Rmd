@@ -2,6 +2,8 @@
 title: "Argos_document"
 subtitle: Cancer epidemiology
 output:
+  html_document:
+    df_print: paged
   word_document: default
 ---
 
