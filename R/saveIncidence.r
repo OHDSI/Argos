@@ -13,23 +13,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 #'saving tables and plot image which are the results incidence analysis
-#'@param outputFolder
-#'@param bybirthPlot
-#'@param ageSpePlot
-#'@param ageAdjPlot
-#'@param imageExtension plot file's extension
 #'@import ggplot2
 #'@export
-saveIncidence<-function(outputFolder,
-                        bybirthPlot,
-                        ageSpePlot,
-                        ageAdjPlot,
-                        imageExtension = "png"){
+saveIncidence<-function(){
+    
+    outputFolder = outputFolder
+    bybirthPlot = bybirthPlot
+    ageSpePlot = ageSpePlot
+    ageAdjPlot = ageAdjPlot
+    bybirthTable = bybirthTable
+    ageSpeTable = ageSpeTable
+    ageAdjTable = ageAdjTable
+    imageExtension = "png"
+    
     ifelse(!dir.exists(file.path(outputFolder, "incidence")), dir.create(file.path(outputFolder, "incidence")), print("saving in incidence folder"))
     incidenceFolder<-paste(outputFolder, "incidence", sep = "/")
     
-    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidenceProporByBirthyr"),".",imageExtension) ), bybirthPlot, width = 30,height = 15,units = "cm" )  
-    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeSpe"),".",imageExtension) ),ageSpePlot,  width = 30,height = 15,units = "cm" ) 
-    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeAdj"),".",imageExtension) ), ageAdjPlot, width = 30,height = 15,units = "cm" ) 
+    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidenceProporByBirthyr"),".",imageExtension) ), bybirthPlot, width = 25,height = 12,units = "cm" )  
+    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeSpe"),".",imageExtension) ),ageSpePlot,  width = 25,height = 12,units = "cm" ) 
+    ggplot2::ggsave(file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeAdj"),".",imageExtension) ), ageAdjPlot, width = 25,height = 12,units = "cm" ) 
+    write.csv(bybirthTable, file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidenceProporByBirthyr"),".csv") ) )
+    write.csv(ageSpeTable, file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeSpe"),".csv") ) )
+    write.csv(ageAdjTable, file.path(incidenceFolder, paste0(paste0(cancerList$cohortName[[i]],"Cancer", "IncidencePropAgeAdj"),".csv") ) )
 }

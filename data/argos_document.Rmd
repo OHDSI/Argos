@@ -1,0 +1,382 @@
+---
+title: "Argos_document"
+subtitle: Cancer epidemiology
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(error = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+
+library(dplyr)
+outputFolder <- "C:/Users/youjin/Documents/project/output"
+cancerList<-list(cohortId = c(1,2,3,4,5,6),
+                 cohortName = c("colon", 'lung', 'stomach','breast','liver','thyroid'),
+                 conceptIdSet = list(c(435754,443381,443382,443383,443384,443390,443391,4089661,4180790,4180791,4180792,4181344),              
+                                     c(442139,4092217,4094876,4151250,4157333,258375),
+                                     c(4149838,197803,4095320,4149837,4095319,4094856,4092061,443387,4095317),
+                                     c(137809,4188544,4158563,4162253,4155292,4187850,4188545,432845),
+                                     c(201519,4001171,4001172,4001664,4003021,4095432,4246127),
+                                     c(4178976)) ,
+                 
+                 representConceptId = c())
+
+```
+
+# **Incidence Rate**
+
+### Age Adjusted Incidence Rate according to Diagnosis Year
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeAdj.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeAdj.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+### Age Specified Incidence Rate according to Diagnosis Year
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeSpe.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidencePropAgeSpe.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeSpe.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidencePropAgeSpe.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeSpe.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidencePropAgeSpe.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeSpe.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidencePropAgeSpe.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeSpe.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidencePropAgeSpe.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeSpe.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidencePropAgeSpe.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+### Age Specified Incidence Rate according to Birth Cohort
+
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidenceProporByBirthyr.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[1],"CancerIncidenceProporByBirthyr.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidenceProporByBirthyr.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[2],"CancerIncidenceProporByBirthyr.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidenceProporByBirthyr.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[3],"CancerIncidenceProporByBirthyr.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidenceProporByBirthyr.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[4],"CancerIncidenceProporByBirthyr.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidenceProporByBirthyr.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[5],"CancerIncidenceProporByBirthyr.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidenceProporByBirthyr.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("incidence/",cancerList$cohortName[6],"CancerIncidenceProporByBirthyr.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+# **Survival Rate**
+
+### 1,3,5 year Survival Rate (Relative)
+
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("survival/",cancerList$cohortName[1],"CancerTotalSurvivalRate.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("survival/",cancerList$cohortName[1],"CancerTotalSurvivalRate.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("survival/",cancerList$cohortName[2],"CancerTotalSurvivalRate.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("survival/",cancerList$cohortName[2],"CancerTotalSurvivalRate.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("survival/",cancerList$cohortName[3],"CancerTotalSurvivalRate.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("survival/",cancerList$cohortName[3],"CancerTotalSurvivalRate.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("survival/",cancerList$cohortName[4],"CancerTotalSurvivalRate.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("survival/",cancerList$cohortName[4],"CancerTotalSurvivalRate.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("survival/",cancerList$cohortName[5],"CancerTotalSurvivalRate.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("survival/",cancerList$cohortName[5],"CancerTotalSurvivalRate.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("survival/",cancerList$cohortName[6],"CancerTotalSurvivalRate.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("survival/",cancerList$cohortName[6],"CancerTotalSurvivalRate.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+# **Cost Analysis**
+
+### Medical cost for both Insurer and Patient per year of diagnosis (won)
+
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[1],"CancerTotalCostperYr.png"))` )
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[2],"CancerTotalCostperYr.png"))` )
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[3],"CancerTotalCostperYr.png"))` )
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[4],"CancerTotalCostperYr.png"))` )
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[5],"CancerTotalCostperYr.png"))` )
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[6],"CancerTotalCostperYr.png"))` )
+
+### Medical cost for both Insurer per year of diagnosis (won)
+
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[1],"CancerPayerCostperYr.png"))` )
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[2],"CancerPayerCostperYr.png"))` )
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[3],"CancerPayerCostperYr.png"))` )
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[4],"CancerPayerCostperYr.png"))` )
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[5],"CancerPayerCostperYr.png"))` )
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[6],"CancerTotalCostperYr.png"))` )
+
+### Monthly Medical cost from before 2 months and after 12 months diagnosis (won)
+
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[1],"CancerTotalCostperMt.png"))` )
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[2],"CancerTotalCostperMt.png"))` )
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[3],"CancerTotalCostperMt.png"))` )
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[4],"CancerTotalCostperMt.png"))` )
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[5],"CancerTotalCostperMt.png"))` )
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("cost/",cancerList$cohortName[6],"CancerTotalCostperMt.png"))` )
+
+# **DALY (disability adjusted year of life)**
+
+### DALY total and ratio result
+
+1. `r cancerList$cohortName[1]` cancer
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[1],"CancerDALY.png"))` )
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[1],"CancerDALY_ratio.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("DALY/",cancerList$cohortName[1],"CancerDALYresult.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+2. `r cancerList$cohortName[2]` cancer
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[2],"CancerDALY.png"))` )
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[2],"CancerDALY_ratio.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("DALY/",cancerList$cohortName[2],"CancerDALYresult.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+3. `r cancerList$cohortName[3]` cancer
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[3],"CancerDALY.png"))` )
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[3],"CancerDALY_ratio.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("DALY/",cancerList$cohortName[3],"CancerDALYresult.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+4. `r cancerList$cohortName[4]` cancer
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[4],"CancerDALY.png"))` )
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[4],"CancerDALY_ratio.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("DALY/",cancerList$cohortName[4],"CancerDALYresult.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+5. `r cancerList$cohortName[5]` cancer
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[5],"CancerDALY.png"))` )
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[5],"CancerDALY_ratio.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("DALY/",cancerList$cohortName[5],"CancerDALYresult.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
+
+6. `r cancerList$cohortName[6]` cancer
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[6],"CancerDALY.png"))` )
+![](`r file.path(outputFolder,paste0("DALY/",cancerList$cohortName[6],"CancerDALY_ratio.png"))` )
+
+```{r}
+df <- read.csv(file.path(outputFolder,paste0("DALY/",cancerList$cohortName[6],"CancerDALYresult.csv") ), header = TRUE, check.names = FALSE)
+df <- df[,-1]
+knitr::kable(df)
+```
