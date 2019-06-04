@@ -4,7 +4,7 @@
 \alias{plotforDALY}
 \title{DALY value plot according to diagnosis year}
 \usage{
-plotforDALY(DALYdata)
+plotforDALY(DALYdata, diseaseList = diseaseList)
 }
 \arguments{
 \item{DALYdata}{outcome of Argos package DALY code}

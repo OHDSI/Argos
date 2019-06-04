@@ -22,10 +22,10 @@
 #'@import dplyr
 ## mortality proportion plot by birth Year
 PlotByBirthMort<- function (mortalityPropdata,
-                        title,
-                        outputFolder,
-                        fileName,
-                        imageExtension = "png"){
+                            title,
+                            outputFolder,
+                            fileName,
+                            imageExtension = "png"){
     bybirth<- mortalityPropdata %>%
               mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
               group_by(birthYear, age, genderConceptId) %>%
@@ -51,14 +51,14 @@ PlotByBirthMort<- function (mortalityPropdata,
 #'@import dplyr
 ## mortality proportion plot by diagnosis year 
 PlotByDiagnosisMort <- function(mortalityPropdata,
-                            ageSpetitle,
-                            ageAdjtitle,
-                            outputFolder,
-                            ageSpefileName,
-                            ageAdjfileName,
-                            imageExtension = "png"){
+                                ageSpetitle,
+                                ageAdjtitle,
+                                outputFolder,
+                                ageSpefileName,
+                                ageAdjfileName,
+                                imageExtension = "png"){
     ageSpe<- mortalityPropdata %>%
-             mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
+        mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
              group_by(startYear, age, genderConceptId) %>%
              summarise( proportion = sum(outcomePopNum)/sum(targetPopNum),
                         stdproportion = sum(standProp))

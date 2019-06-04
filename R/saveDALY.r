@@ -23,12 +23,13 @@ saveDALY<-function(){
     plotDALY = plotDALY
     plotDALYratio = plotDALYratio
     DALY = DALY
+    diseaseList = diseaseList
     imageExtension = "png"
     
     ifelse(!dir.exists(file.path(outputFolder, "DALY")), dir.create(file.path(outputFolder, "DALY")), print("saving in DALY folder"))
     DALYFolder<-paste(outputFolder, "DALY", sep = "/")
     
-    ggsave(file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALY", ".", imageExtension)), plotDALY, height = 10, width = 10, units = "cm")
-    ggsave(file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALY_ratio", ".", imageExtension)), plotDALYratio, height = 10, width = 10, units = "cm")
-    write.csv(DALY,file.path(DALYFolder, paste0(cancerList$cohortName[[i]], "Cancer", "DALYresult", ".csv")) )
+    ggsave(file.path(DALYFolder, paste0(diseaseList$cohortName[[i]], "DALY", ".", imageExtension)), plotDALY, height = 10, width = 10, units = "cm")
+    ggsave(file.path(DALYFolder, paste0(diseaseList$cohortName[[i]], "DALY_ratio", ".", imageExtension)), plotDALYratio, height = 10, width = 10, units = "cm")
+    write.csv(DALY,file.path(DALYFolder, paste0(diseaseList$cohortName[[i]], "DALYresult", ".csv")) )
 }

@@ -5,7 +5,7 @@
 \title{saving tables and plot image which are the results cost analysis}
 \usage{
 savecost(outputFolder, PlottotalcostperYrdiv, plotperYrBarplotPayer,
-  plotperYrBarplotPatient, imageExtension = "png")
+  plotperYrBarplotPatient, diseaseList, imageExtension = "png")
 }
 \arguments{
 \item{PlottotalcostperYrdiv}{}

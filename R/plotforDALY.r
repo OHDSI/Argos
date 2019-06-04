@@ -16,10 +16,12 @@
 
 #'DALY value plot according to diagnosis year
 #'@param DALYdata   outcome of Argos package DALY code 
+#'@param diseaseList
 #'@import dplyr
 #'@import ggplot2
 #'@export
-plotforDALY<-function(DALYdata){
+plotforDALY<-function(DALYdata,
+                      diseaseList = diseaseList){
     DALYdata$startYear<-as.numeric(row.names(DALYdata))
     DALYdata <-DALYdata %>%
         mutate( yllSumPop = yllSum*(1/(samplingPop*500)),
@@ -33,7 +35,7 @@ plotforDALY<-function(DALYdata){
         geom_bar(stat = "identity", width = .5)+
         ggplot2::xlab("diagnosis year")+
         ggplot2::ylab("DALY (YLL + YLD) per 100,000 persons")+
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer DALY (YLL + YLD) according to diagnosis year", sep = " "))+
+        ggplot2::ggtitle(paste(diseaseList$cohortName[[i]], "DALY (YLL + YLD) according to diagnosis year", sep = " "))+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),
                        plot.title = element_text(size = 17),
@@ -49,10 +51,12 @@ plotforDALY<-function(DALYdata){
 
 #'YLL:YLD ratio according to diagnosis year
 #'@param DALYdata   outcome of Argos package DALY code 
+#'@param diseaseList
 #'@import dplyr
 #'@import ggplot2
 #'@export
-plotforDALYratio<-function(DALYdata){
+plotforDALYratio<-function(DALYdata,
+                           diseaseList = diseaseList){
     DALYdata$startYear<-as.numeric(row.names(DALYdata))
     DALYdata <-DALYdata %>%
         mutate( yllSumPop = yllSum*(1/(samplingPop*500)),
@@ -66,7 +70,7 @@ plotforDALYratio<-function(DALYdata){
         geom_bar(stat = "identity", position = "fill", width = .5)+
         ggplot2::xlab("diagnosis year")+
         ggplot2::ylab("YLL:YLD ratio")+
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer YLL:YLD ratio according to diagnosis year", sep = " "))+
+        ggplot2::ggtitle(paste(diseaseList$cohortName[[i]], "YLL:YLD ratio according to diagnosis year", sep = " "))+
         ggplot2::theme(legend.title = element_blank(),
                        legend.text = element_text(size = 15),
                        plot.title = element_text(size = 17),

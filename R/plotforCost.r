@@ -16,10 +16,12 @@
 
 #'monthly cost from 2months before diagnosis to 12months after diagnosis
 #'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "month" 
+#'@param diseaseList
 #'@import dplyr
 #'@import ggplot2
 #'@export
-plotforCostPerMt<- function(costData){
+plotforCostPerMt<- function(costData,
+                            diseaseList = diseaseList){
     costperMt<- costData %>%
         filter( dateUnit<=12 & dateUnit>=-2) %>%
         group_by(cohortStartYear, dateUnit) %>%
@@ -31,7 +33,7 @@ plotforCostPerMt<- function(costData){
         ggplot2::geom_line()+ 
         ggplot2::xlab("0 = diagnosis month") + 
         ggplot2::ylab("Cost Paid by Patient per Month (1000 won)") +
-        ggplot2::ggtitle(paste("Monthly medical cost of",cancerList$cohortName[[i]], "Cancer", sep = " ")) +
+        ggplot2::ggtitle(paste("Monthly medical cost of",diseaseList$cohortName[[i]], sep = " ")) +
         ggplot2::theme_bw()+
         ggplot2::scale_color_discrete(name = "diagnosis year")+
         ggplot2::theme(legend.title = element_blank(),
@@ -47,10 +49,12 @@ plotforCostPerMt<- function(costData){
 
 #'the total cost of the diagnosed year 
 #'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "year" 
+#'@param diseaseList
 #'@import dplyr
 #'@import ggplot2
 #'@export
-plotforCostPerYrdiv<- function(costData){
+plotforCostPerYrdiv<- function(costData,
+                               diseaseList = diseaseList){
     costperYrTotalDiv<- costData %>%
         filter( dateUnit == 0 ) %>%
         mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
@@ -73,7 +77,7 @@ plotforCostPerYrdiv<- function(costData){
         ggplot2::geom_bar(data = costperYrTotalDiv, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId), stat = "identity", width = .5)+
         ggplot2::xlab("diagnosis year")+
         ggplot2::ylab("Medical Cost (1000 won)")+
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "cancer medical cost for both Insurer and Patient", sep = " "))+
+        ggplot2::ggtitle(paste(diseaseList$cohortName[[i]], "medical cost for both Insurer and Patient", sep = " "))+
         ggplot2::scale_fill_brewer(palette = "Accent")+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
@@ -83,16 +87,18 @@ plotforCostPerYrdiv<- function(costData){
                        axis.title.x = element_text(size = 15),
                        axis.text.y = element_text(size = 12),
                        axis.title.y = element_text(size = 15))
-    aggregate(costperYrTotalDiv$avgCostSumperYr, by = list(costperYrTotalDiv$cohortStartYear),FUN = sum)
+    #aggregate(costperYrTotalDiv$avgCostSumperYr, by = list(costperYrTotalDiv$cohortStartYear),FUN = sum)
     return(PlottotalcostperYrdiv)
 }
 
 #'the cost of the diagnosed year paid by payer 
-#'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "year" 
+#'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "year"
+#'@param diseaseList 
 #'@import dplyr
 #'@import ggplot2
 #'@export
-plotforCostPerYrBarPay<- function(costData){
+plotforCostPerYrBarPay<- function(costData,
+                                  diseaseList = diseaseList){
     costpayerperYr<- costData %>%
         filter( dateUnit == 0 ) %>%
         mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
@@ -109,7 +115,7 @@ plotforCostPerYrBarPay<- function(costData){
         ggplot2::geom_bar(data = costpayerperYr, aes(x = as.factor(cohortStartYear), y = avgCostSumperYr, fill = visitConceptId), stat = "identity", width = .5)+
         ggplot2::xlab("diagnosis year")+
         ggplot2::ylab("Total Cost per Year (1000 won)")+
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "cancer medical cost for Insurer", sep = " "))+
+        ggplot2::ggtitle(paste(diseaseList$cohortName[[i]], "medical cost for Insurer", sep = " "))+
         ggplot2::scale_fill_brewer(palette = "Accent")+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
@@ -125,10 +131,12 @@ plotforCostPerYrBarPay<- function(costData){
 
 #'the cost of the diagnosed year paid by patient
 #'@param costData   outcome of Argos package extractVisitCost code if minCostDateUnit = "year" 
+#'@param diseaseList
 #'@import dplyr
 #'@import ggplot2
 #'@export
-plotforCostPerYrBarPat<- function(costData){
+plotforCostPerYrBarPat<- function(costData,
+                                  diseaseList = diseaseList){
     costpatientperYr<- costData %>%
         filter( dateUnit == 0 ) %>%
         mutate( visitConceptId = factor(visitConceptId, levels = c(9201, 9202, 9203), labels = c("inpatient", "outpatient", "emergency room"))) %>%
@@ -147,7 +155,7 @@ plotforCostPerYrBarPat<- function(costData){
         #ggplot2::geom_line(aes(colour = visitConceptId, group = visitConceptId), size = 0.8)+
         ggplot2::xlab("diagnosis year")+
         ggplot2::ylab("Total Cost per Year (1000 won)")+
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "cancer medical cost for Patient", sep = " "))+
+        ggplot2::ggtitle(paste(diseaseList$cohortName[[i]], "medical cost for Patient", sep = " "))+
         ggplot2::theme_bw()+
         ggplot2::scale_fill_brewer(palette = "Accent")+
         ggplot2::theme(legend.title = element_blank(),

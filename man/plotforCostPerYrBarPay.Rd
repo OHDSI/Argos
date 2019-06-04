@@ -4,10 +4,12 @@
 \alias{plotforCostPerYrBarPay}
 \title{the cost of the diagnosed year paid by payer}
 \usage{
-plotforCostPerYrBarPay(costData)
+plotforCostPerYrBarPay(costData, diseaseList = diseaseList)
 }
 \arguments{
 \item{costData}{outcome of Argos package extractVisitCost code if minCostDateUnit = "year"}
+
+\item{diseaseList}{}
 }
 \description{
 the cost of the diagnosed year paid by payer

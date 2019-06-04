@@ -4,7 +4,7 @@
 \alias{plotforCostPerMt}
 \title{monthly cost from 2months before diagnosis to 12months after diagnosis}
 \usage{
-plotforCostPerMt(costData)
+plotforCostPerMt(costData, diseaseList = diseaseList)
 }
 \arguments{
 \item{costData}{outcome of Argos package extractVisitCost code if minCostDateUnit = "month"}

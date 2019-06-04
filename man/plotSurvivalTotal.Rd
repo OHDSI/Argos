@@ -4,7 +4,7 @@
 \alias{plotSurvivalTotal}
 \title{total patients's survival rate plot by diagnosis year}
 \usage{
-plotSurvivalTotal(totalSurvCal)
+plotSurvivalTotal(totalSurvCal, diseaseList = diseaseList)
 }
 \arguments{
 \item{totalSurvCal}{outcome of Argos package calculateSurvival code if Agediv = FALSE}

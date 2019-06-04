@@ -4,7 +4,7 @@
 \alias{plotforDALYratio}
 \title{YLL:YLD ratio according to diagnosis year}
 \usage{
-plotforDALYratio(DALYdata)
+plotforDALYratio(DALYdata, diseaseList = diseaseList)
 }
 \arguments{
 \item{DALYdata}{outcome of Argos package DALY code}

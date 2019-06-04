@@ -16,10 +16,12 @@
 
 #'incidence proportion plot by birth Year
 #'@param birthcohortIncData output of Argos packages bybirth code 
+#'@param diseaseList        cancerList or psychoticList  
 #'@import dplyr
 #'@import ggplot2
 #'@export
-PlotByBirthInc<- function (birthcohortIncData){
+PlotByBirthInc<- function (birthcohortIncData, 
+                           diseaseList = diseaseList){
     bybirth<- birthcohortIncData %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
         mutate( proportion = proportion*100000)
@@ -30,7 +32,7 @@ PlotByBirthInc<- function (birthcohortIncData){
         ggplot2::xlab("Year of Birth") + 
         ggplot2::ylab("incidence rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer", "Incidence Rate By Birth Year", sep = " ")) + 
+        ggplot2::ggtitle(paste(diseaseList$cohortName[[1]],"Incidence Rate By Birth Year", sep = " ")) + 
         ggplot2::scale_color_brewer(palette = "Dark2")+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
@@ -47,10 +49,12 @@ PlotByBirthInc<- function (birthcohortIncData){
 
 #'Age specified incidence proportion plot by diagnosis year
 #'@param agespecifiedIncData output of Argos packages agespe code 
+#'@param diseaseList         cancerList or psychoticList  
 #'@import dplyr
 #'@import ggplot2
 #'@export
-PlotByDiagnosisIncAgeS <- function(agespecifiedIncData){
+PlotByDiagnosisIncAgeS <- function(agespecifiedIncData,
+                                   diseaseList = diseaseList){
     ageSpe<- agespecifiedIncData %>%
         mutate( genderConceptId = factor(genderConceptId, levels = c(8507, 8532), labels = c("men", "women"))) %>%
         mutate( proportion = proportion*100000)
@@ -61,7 +65,7 @@ PlotByDiagnosisIncAgeS <- function(agespecifiedIncData){
         ggplot2::xlab("Diagnosis Time") + 
         ggplot2::ylab("incidence rate") + 
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]],"Cancer","Incidence Rate According to Age", sep = " ")) +  
+        ggplot2::ggtitle(paste(diseaseList$cohortName[[i]],"Incidence Rate According to Age", sep = " ")) +  
         ggplot2::scale_color_brewer(palette = "Dark2")+
         ggplot2::theme_bw()+
         ggplot2::theme(legend.title = element_blank(),
@@ -78,11 +82,13 @@ PlotByDiagnosisIncAgeS <- function(agespecifiedIncData){
 
 #'Age adjusted incidence proportion plot by diagnosis year 
 #'@param ageadjustIncData output of Argos packages ageadjust code   
+#'@param diseaseList      cancerList or psychoticList  
 #'@import dplyr
 #'@import ggplot2
 #'@import grid
 #'@export
-PlotByDiagnosisIncAgeAd <- function(ageadjustIncData){
+PlotByDiagnosisIncAgeAd <- function(ageadjustIncData,
+                                    diseaseList = diseaseList){
     ageadjAPC <- ageAdjAPC(ageadjustIncData) %>%
         mutate(slope = round(slope, digits = 3),
                p_value = round(p_value, digits = 3),
@@ -100,7 +106,7 @@ PlotByDiagnosisIncAgeAd <- function(ageadjustIncData){
         # ggplot2::annotation_custom(grobTree(textGrob(paste("APC = ",ageadjAPC$APC, sep = ""),
         #                                              x = 0.9, y = 0.1)))+
         ggplot2::facet_wrap(~genderConceptId) +
-        ggplot2::ggtitle(paste(cancerList$cohortName[[i]], "Cancer", "Age standardized Incidence Rate", sep = " ")) +
+        ggplot2::ggtitle(paste(diseaseList$cohortName[[i]],"Age standardized Incidence Rate", sep = " ")) +
         ggplot2::theme_bw()+
         ggplot2::theme(#legend.title = element_blank(),
             #legend.text = element_text(size = 15),

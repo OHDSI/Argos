@@ -65,7 +65,8 @@ getIncidenceData<-function(connectionDetails,
 #'@param AgeSet
 #'@param genderSet
 #'@param startYearSet
-#'@param birthYearSet           
+#'@param birthYearSet     
+#'@import dplyr      
 #'@export
 calculateIncidence<-function(incidenceData = incidenceData,
                              basePopulation = basePop,

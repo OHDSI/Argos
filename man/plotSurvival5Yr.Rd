@@ -4,7 +4,7 @@
 \alias{plotSurvival5Yr}
 \title{5year survival rate plot by diagnosis year}
 \usage{
-plotSurvival5Yr(agedivSurvCal)
+plotSurvival5Yr(agedivSurvCal, diseaseList = diseaseList)
 }
 \arguments{
 \item{agedivSurvCal}{outcome of Argos package calculateSurvival code if Agediv = TRUE}
